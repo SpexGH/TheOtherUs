@@ -40,7 +40,6 @@ namespace TheOtherRoles
 
         public static void play(string path, float volume=0.8f)
         {
-            if (!MapOptions.enableSoundEffects) return;
             AudioClip clipToPlay = get(path);
             // if (false) clipToPlay = get("exampleClip"); for april fools?
             stop(path);

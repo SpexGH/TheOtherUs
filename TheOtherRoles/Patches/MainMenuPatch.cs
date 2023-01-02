@@ -21,7 +21,7 @@ namespace TheOtherRoles.Modules {
             CustomHatLoader.LaunchHatFetcher();
             var template = GameObject.Find("ExitGameButton");
             if (template == null) return;
-
+/*
             var buttonDiscord = UnityEngine.Object.Instantiate(template, null);
             buttonDiscord.transform.localPosition = new Vector3(buttonDiscord.transform.localPosition.x, buttonDiscord.transform.localPosition.y + 0.6f, buttonDiscord.transform.localPosition.z);
 
@@ -41,7 +41,7 @@ namespace TheOtherRoles.Modules {
             passiveButtonDiscord.OnMouseOut.AddListener((System.Action)delegate {
                 buttonSpriteDiscord.color = textDiscord.color = discordColor;
             });
-
+*/
 
             // Horse mode stuff
             var horseModeSelectionBehavior = new ClientOptionsPatch.SelectionBehaviour("Enable Horse Mode", () => MapOptions.enableHorseMode = TheOtherRolesPlugin.EnableHorseMode.Value = !TheOtherRolesPlugin.EnableHorseMode.Value, TheOtherRolesPlugin.EnableHorseMode.Value);
@@ -76,59 +76,6 @@ namespace TheOtherRoles.Modules {
                     particles.Start();
                 }
             });
-
-            // TOR credits button
-            if (bottomTemplate == null) return;
-            var creditsButton = Object.Instantiate(bottomTemplate, bottomTemplate.transform.parent);
-            var passiveCreditsButton = creditsButton.GetComponent<PassiveButton>();
-            var spriteCreditsButton = creditsButton.GetComponent<SpriteRenderer>();
-
-            spriteCreditsButton.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.CreditsButton.png", 75f);
-
-            passiveCreditsButton.OnClick = new ButtonClickedEvent();
-
-            passiveCreditsButton.OnClick.AddListener((System.Action)delegate {
-                // do stuff
-                if (popUp != null) Object.Destroy(popUp);
-                popUp = Object.Instantiate(Object.FindObjectOfType<AnnouncementPopUp>(true));
-                popUp.gameObject.SetActive(true);
-                popUp.Init();
-                //SelectableHyperLinkHelper.DestroyGOs(popUp.selectableHyperLinks, "test");
-                string creditsString = @$"<align=""center"">Github Contributors:
-Gendelo
-Alex2911    amsyarasyiq    MaximeGillot     Psynomit
-probablyadnf    JustASysAdmin     Mr-Fluuff    SpexGH
-
-";
-                creditsString += $@"<size=60%> Other Credits & Resources:
-OxygenFilter - For all the version v2.3.0 to v2.6.1, we were using the OxygenFilter for automatic deobfuscation
-Reactor - The framework used for all version before v2.0.0
-BepInEx - Used to hook game functions
-Essentials - Custom game options by DorCoMaNdO:
-
-Before v1.6: We used the default Essentials release
-v1.6-v1.8: We slightly changed the default Essentials. The changes can be found on this branch of our fork.
-v2.0.0 and later: As we're not using Reactor anymore, we are using our own implementation, inspired by the one from DorCoMaNdO
-Jackal and Sidekick - Original idea for the Jackal and Sidekick comes from Dhalucard
-Among-Us-Love-Couple-Mod - Idea for the Lovers role comes from Woodi-dev
-Jester - Idea for the Jester role comes from Maartii
-ExtraRolesAmongUs - Idea for the Engineer and Medic role comes from NotHunter101. Also some code snippets come of the implementation were used.
-Among-Us-Sheriff-Mod - Idea for the Sheriff role comes from Woodi-dev
-TooManyRolesMods - Idea for the Detective and Time Master roles comes from Hardel-DW. Also some code snippets of the implementation were used.
-TownOfUs - Idea for the Swapper, Shifter, Arsonist and a similar Mayor role come from Slushiegoose
-Ottomated - Idea for the Morphling, Snitch and Camouflager role come from Ottomated
-Crowded-Mod - Our implementation for 10+ player lobbies is inspired by the one from the Crowded Mod Team
-Goose-Goose-Duck - Idea for the Vulture role come from Slushygoose</size>";
-                creditsString += "</align>";
-                popUp.AnnounceTextMeshPro.text = creditsString;
-                __instance.StartCoroutine(Effects.Lerp(0.01f, new Action<float>((p) => {
-                    if (p == 1) {
-                        var titleText = GameObject.Find("Title_Text").GetComponent<TMPro.TextMeshPro>();
-                        if (titleText != null) titleText.text = "Credits and Contributors";
-                    }
-                })));
-            });
-            
         }
 
         public static void Postfix(MainMenuManager __instance) {
@@ -143,20 +90,4 @@ Goose-Goose-Duck - Idea for the Vulture role come from Slushygoose</size>";
 
         }
     }
-
-    [HarmonyPatch(typeof(AnnouncementPopUp), nameof(AnnouncementPopUp.UpdateAnnounceText))]
-    public static class Announcement
-    {
-        public static ModUpdateBehaviour.UpdateData updateData = null;
-        public static bool Prefix(AnnouncementPopUp __instance)
-        {
-            if (ModUpdateBehaviour.showPopUp || updateData == null) return true;
-
-            var text = __instance.AnnounceTextMeshPro;            
-            text.text = $"<size=150%><color=#FC0303>THE OTHER US </color> {(updateData.Tag)}\n{(updateData.Content)}";
-
-            return false;
-        }
-    }
-
 }

@@ -166,7 +166,7 @@ namespace TheOtherRoles {
         private static void createClassicTabs(GameOptionsMenu __instance) {
             bool isReturn = setNames(
                 new Dictionary<string, string>() {
-                    ["TORSettings"] = "The Other Us Settings",
+                    ["TORSettings"] = "The Epic Roles Settings",
                     ["ImpostorSettings"] = "Impostor Roles Settings",
                     ["NeutralSettings"] = "Neutral Roles Settings",
                     ["CrewmateSettings"] = "Crewmate Roles Settings",
@@ -289,7 +289,7 @@ namespace TheOtherRoles {
         private static void createGuesserTabs(GameOptionsMenu __instance) {
             bool isReturn = setNames(
                 new Dictionary<string, string>() {
-                    ["TORSettings"] = "The Other Us Settings",
+                    ["TORSettings"] = "The Epic Roles Settings",
                     ["GuesserSettings"] = "Guesser Mode Settings",
                     ["ImpostorSettings"] = "Impostor Roles Settings",
                     ["NeutralSettings"] = "Neutral Roles Settings",
@@ -424,7 +424,7 @@ namespace TheOtherRoles {
         private static void createHideNSeekTabs(GameOptionsMenu __instance) {
             bool isReturn = setNames(
                 new Dictionary<string, string>(){ 
-                    ["TORSettings"] = "The Other Us Settings", 
+                    ["TORSettings"] = "The Epic Roles Settings", 
                     ["HideNSeekSettings"] = "Hide 'N Seek Settings" 
                 });
 
@@ -802,7 +802,7 @@ namespace TheOtherRoles {
                         hudString += "Page 1: Vanilla Settings \n\n" + __result;
                         break;
                     case 1:
-                        hudString += "Page 2: The Other Us Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.General, false);
+                        hudString += "Page 2: The Epic Roles Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.General, false);
                         break;
                     case 2:
                         hudString += "Page 3: Role and Modifier Rates \n\n" + buildRoleOptions();

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using TheOtherRoles.Objects;
-using TheOtherRoles.CustomGameModes;
 using PowerTools;
 
 namespace TheOtherRoles.Patches {
@@ -28,32 +27,6 @@ namespace TheOtherRoles.Patches {
                 canUse = couldUse = false;
                 __result = num;
                 return false;
-            }
-
-            // Submerged Compatability if needed:
-            if (SubmergedCompatibility.IsSubmerged) {
-                // as submerged does, only change stuff for vents 9 and 14 of submerged. Code partially provided by AlexejheroYTB
-                if (SubmergedCompatibility.getInTransition()) {
-                    __result = float.MaxValue;
-                    return canUse = couldUse = false;
-                }                
-                switch (__instance.Id) {
-                    case 9:  // Cannot enter vent 9 (Engine Room Exit Only Vent)!
-                        if (CachedPlayer.LocalPlayer.PlayerControl.inVent) break;
-                        __result = float.MaxValue;
-                        return canUse = couldUse = false;                    
-                    case 14: // Lower Central
-                        __result = float.MaxValue;
-                        couldUse = roleCouldUse && !pc.IsDead && (@object.CanMove || @object.inVent);
-                        canUse = couldUse;
-                        if (canUse) {
-                            Vector3 center = @object.Collider.bounds.center;
-                            Vector3 position = __instance.transform.position;
-                            __result = Vector2.Distance(center, position);
-                            canUse &= __result <= __instance.UsableDistance;
-                        }
-                        return false;
-                }
             }
 
             var usableDistance = __instance.UsableDistance;
@@ -96,13 +69,34 @@ namespace TheOtherRoles.Patches {
     }
 
     [HarmonyPatch(typeof(Vent), nameof(Vent.SetButtons))]
-    public static class JesterEnterVent
+    class VentSetButtonsPatch
     {
         public static bool Prefix(Vent __instance)
         {
             if (Jester.jester == CachedPlayer.LocalPlayer.PlayerControl && Jester.canVent)
                 return false;
+            if (PlayerControl.LocalPlayer == Spy.spy && Spy.canEnterVents || PlayerControl.LocalPlayer == Madmate.madmate && Madmate.MadmateCanVent)
+                return false;
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(Vent), nameof(Vent.SetOutline))]
+    class VentSetOutlinePatch {
+        public static void Postfix(Vent __instance, [HarmonyArgument(0)] bool on, [HarmonyArgument(1)] bool mainTarget) {
+            bool SetCustomOutline = false;
+            Color CustomOutlineColor = Palette.ImpostorRed;
+            if(Madmate.madmate != null && PlayerControl.LocalPlayer == Madmate.madmate) {
+                SetCustomOutline = true;
+            }
+            if(Spy.spy != null && PlayerControl.LocalPlayer == Spy.spy) {
+                SetCustomOutline = true;
+            }
+            if(SetCustomOutline) {
+                ((Renderer) __instance.myRend).material.SetFloat("_Outline", on ? 1f : 0.0f);
+                ((Renderer) __instance.myRend).material.SetColor("_OutlineColor", CustomOutlineColor);
+                ((Renderer) __instance.myRend).material.SetColor("_AddColor", mainTarget ? CustomOutlineColor : Color.clear);
+            }
         }
     }
 
@@ -119,9 +113,15 @@ namespace TheOtherRoles.Patches {
 
             bool canUse;
             bool couldUse;
-            __instance.CanUse(CachedPlayer.LocalPlayer.Data, out canUse, out couldUse);
-            bool canMoveInVents = CachedPlayer.LocalPlayer.PlayerControl != Spy.spy && !Trapper.playersOnMap.Contains(CachedPlayer.LocalPlayer.PlayerControl);
+            __instance.CanUse(PlayerControl.LocalPlayer.Data, out canUse, out couldUse);
+            bool canMoveInVents = true;
             if (!canUse) return false; // No need to execute the native method as using is disallowed anyways
+            if (Spy.spy == PlayerControl.LocalPlayer) {
+                canMoveInVents = false;
+            }
+            if (Madmate.madmate == PlayerControl.LocalPlayer) {
+                canMoveInVents = false;
+            }
 
             bool isEnter = !CachedPlayer.LocalPlayer.PlayerControl.inVent;
             
@@ -393,6 +393,8 @@ namespace TheOtherRoles.Patches {
             canUse = couldUse = false;
             if (Swapper.swapper != null && Swapper.swapper == CachedPlayer.LocalPlayer.PlayerControl && !Swapper.canFixSabotages)
                 return !__instance.TaskTypes.Any(x => x == TaskTypes.FixLights || x == TaskTypes.FixComms);
+            if (Madmate.madmate != null && Madmate.madmate == PlayerControl.LocalPlayer && !Madmate.MadmateCanFixLigntAndComms)
+                return !__instance.TaskTypes.Any(x => x == TaskTypes.FixLights || x == TaskTypes.FixComms);
             if (__instance.AllowImpostor) return true;
             if (!Helpers.hasFakeTasks(pc.Object)) return true;
             __result = float.MaxValue;
@@ -406,6 +408,8 @@ namespace TheOtherRoles.Patches {
             // Block Swapper from fixing comms. Still looking for a better way to do this, but deleting the task doesn't seem like a viable option since then the camera, admin table, ... work while comms are out
             if (Swapper.swapper != null && Swapper.swapper == CachedPlayer.LocalPlayer.PlayerControl && !Swapper.canFixSabotages) {
                 __instance.Close();
+            if(Madmate.madmate != null && Madmate.madmate == PlayerControl.LocalPlayer && !Madmate.MadmateCanFixLigntAndComms)
+                __instance.Close();
             }
         }
     }
@@ -415,6 +419,8 @@ namespace TheOtherRoles.Patches {
         static void Postfix(SwitchMinigame __instance) {
             // Block Swapper from fixing lights. One could also just delete the PlayerTask, but I wanted to do it the same way as with coms for now.
             if (Swapper.swapper != null && Swapper.swapper == CachedPlayer.LocalPlayer.PlayerControl && !Swapper.canFixSabotages) {
+                __instance.Close();
+            if(Madmate.madmate != null && Madmate.madmate == PlayerControl.LocalPlayer && !Madmate.MadmateCanFixLigntAndComms)
                 __instance.Close();
             }
         }
@@ -869,9 +875,6 @@ namespace TheOtherRoles.Patches {
                     foreach (GameObject gameObjecttwo in nightOverlay) {
                         gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
                     }
-        //            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-      //                  player.setDefaultLook();
-      //              }
                     canNightOverlay = true;
                     removeNightOverlay = true;
                 }
@@ -879,28 +882,15 @@ namespace TheOtherRoles.Patches {
             }
 
         }
-    
 
-
-    [HarmonyPatch(typeof(MedScanMinigame), nameof(MedScanMinigame.FixedUpdate))]
-    class MedScanMinigameFixedUpdatePatch {
-        static void Prefix(MedScanMinigame __instance) {
-            if (MapOptions.allowParallelMedBayScans) {
-                __instance.medscan.CurrentUser = CachedPlayer.LocalPlayer.PlayerId;
-                __instance.medscan.UsersList.Clear();
+        [HarmonyPatch(typeof(MedScanMinigame), nameof(MedScanMinigame.FixedUpdate))]
+        class MedScanMinigameFixedUpdatePatch {
+            static void Prefix(MedScanMinigame __instance) {
+                if (MapOptions.allowParallelMedBayScans) {
+                    __instance.medscan.CurrentUser = CachedPlayer.LocalPlayer.PlayerId;
+                    __instance.medscan.UsersList.Clear();
+                }
             }
         }
-    }
-
-    [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowSabotageMap))]
-    class ShowSabotageMapPatch {
-        static bool Prefix(MapBehaviour __instance) {
-            if (HideNSeek.isHideNSeekGM) 
-                return HideNSeek.canSabotage;
-
-            return true;
-        }
-    }
-
     }
 }

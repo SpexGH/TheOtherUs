@@ -84,14 +84,12 @@ namespace TheOtherRoles.Objects {
 
             // Create the portal            
             portalGameObject.transform.position = position;
-            portalGameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             portalRenderer = portalGameObject.AddComponent<SpriteRenderer>();
             portalRenderer.sprite = portalSprite;
 
             Vector3 fgPosition = new Vector3(0, 0, -1f);
             portalFgAnimationGameObject = new GameObject("PortalAnimationFG");
             portalFgAnimationGameObject.transform.SetParent(portalGameObject.transform);
-            portalFgAnimationGameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             portalFgAnimationGameObject.transform.localPosition = fgPosition;
             animationFgRenderer = portalFgAnimationGameObject.AddComponent<SpriteRenderer>();
             animationFgRenderer.material = FastDestroyableSingleton<HatManager>.Instance.PlayerMaterial;

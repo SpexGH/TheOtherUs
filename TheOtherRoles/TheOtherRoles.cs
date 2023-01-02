@@ -6,9 +6,9 @@ using UnityEngine;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
-using TheOtherRoles.CustomGameModes;
 using static TheOtherRoles.TheOtherRoles;
 using AmongUs.Data;
+using TMPro;
 
 namespace TheOtherRoles
 {
@@ -48,7 +48,6 @@ namespace TheOtherRoles
             Cultist.clearAndReload();
             Hacker.clearAndReload();
             Tracker.clearAndReload();
-            Vampire.clearAndReload();
             Snitch.clearAndReload();
             Jackal.clearAndReload();
             Sidekick.clearAndReload();
@@ -76,6 +75,8 @@ namespace TheOtherRoles
             Miner.clearAndReload();
             Thief.clearAndReload();
             Trapper.clearAndReload();
+            DoorHacker.clearAndReload();
+            Madmate.clearAndReload();
 
             // Modifier
             Bait.clearAndReload();
@@ -98,10 +99,22 @@ namespace TheOtherRoles
             Vip.clearAndReload();
             Invert.clearAndReload();
             Chameleon.clearAndReload();
+        }
 
-            // Gamemodes
-            HandleGuesser.clearAndReload();
-            HideNSeek.clearAndReload();
+        public static class Madmate {
+            public static PlayerControl madmate;
+            public static Color color = Palette.ImpostorRed;
+
+            public static bool MadmateCanVent = true;
+            public static bool MadmateCanFixLigntAndComms = false;
+            public static bool hasImpostorVision = true;
+
+            public static void clearAndReload() {
+                madmate = null;
+                MadmateCanVent = true;
+                MadmateCanFixLigntAndComms = false;
+                hasImpostorVision = true;
+            }
         }
 
         public static class Jester {
@@ -1002,49 +1015,6 @@ namespace TheOtherRoles
         }
     }
 
-    public static class Vampire {
-        public static PlayerControl vampire;
-        public static Color color = Palette.ImpostorRed;
-
-        public static float delay = 10f;
-        public static float cooldown = 30f;
-        public static bool canKillNearGarlics = true;
-        public static bool localPlacedGarlic = false;
-     //   public static bool garlicsActive = true;
-//        public static bool garlicButton = true;
-
-        public static PlayerControl currentTarget;
-        public static PlayerControl bitten; 
-        public static bool targetNearGarlic = false;
-
-        private static Sprite buttonSprite;
-        public static Sprite getButtonSprite() {
-            if (buttonSprite) return buttonSprite;
-            buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.VampireButton.png", 115f);
-            return buttonSprite;
-        }
-
-   //     private static Sprite garlicButtonSprite;
-    //    public static Sprite getGarlicButtonSprite() {
-    //        if (garlicButtonSprite) return garlicButtonSprite;
-    //        garlicButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.GarlicButton.png", 115f);
-    //        return garlicButtonSprite;
-   //     }
-
-        public static void clearAndReload() {
-            vampire = null;
-            bitten = null;
-            targetNearGarlic = false;
-            localPlacedGarlic = false;
-            currentTarget = null;
-    //        garlicsActive = CustomOptionHolder.vampireSpawnRate.getSelection() > 0;
-            delay = CustomOptionHolder.vampireKillDelay.getFloat();
-            cooldown = CustomOptionHolder.vampireCooldown.getFloat();
-  //          canKillNearGarlics = CustomOptionHolder.vampireCanKillNearGarlics.getBool();
-   //         garlicButton = CustomOptionHolder.vampireGarlicButton.getBool();
-        }
-    }
-
     public static class Snitch {
         public static PlayerControl snitch;
         public static Color color = new Color32(184, 251, 79, byte.MaxValue);
@@ -1507,7 +1477,6 @@ namespace TheOtherRoles
         private static float lastPPU;
         public static Sprite getAnimatedVentSealedSprite() {
             float ppu = 185f;
-            if (SubmergedCompatibility.IsSubmerged) ppu = 120f;
             if (lastPPU != ppu) {
                 animatedVentSealedSprite = null;
                 lastPPU = ppu;
@@ -2208,9 +2177,6 @@ namespace TheOtherRoles
             if (position == Vector3.zero) return;  // Check if this has been set, otherwise first spawn on submerged will fail
             if (antiTeleport.FindAll(x => x.PlayerId == CachedPlayer.LocalPlayer.PlayerId).Count > 0) {
                 CachedPlayer.LocalPlayer.NetTransform.RpcSnapTo(position);
-                if (SubmergedCompatibility.IsSubmerged) {
-                    SubmergedCompatibility.ChangeFloor(position.y > -7);
-                }
             }
         }
     }
@@ -2497,6 +2463,68 @@ namespace TheOtherRoles
                 } catch { }
             }
                 
+        }
+    }
+
+    public static class DoorHacker
+    {
+        public static PlayerControl doorHacker;
+        public static Color color = Palette.ImpostorRed;
+
+        public static float cooldown = 30f;
+        public static float duration = 3f;
+        public static float doorHackerTimer = 0f;
+        public static int remainingUses = -1;
+
+        private static Il2CppArrayBase<PlainDoor> doors = null;
+        private static List<bool> enableDoors = null;
+
+        private static Sprite buttonSprite;
+        public static Sprite getButtonSprite() {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.DoorHackerButton.png", 115f);
+            return buttonSprite;
+        }
+
+        public static void DisableDoors(int playerId) {
+            if (doorHacker == null || doorHacker.PlayerId != playerId) return;
+            if (remainingUses == 0) return;
+
+            if (playerId == CachedPlayer.LocalPlayer.PlayerControl.PlayerId) {
+                doors = GameObject.FindObjectsOfType<PlainDoor>();
+                if (doors != null && doors.Count > 0) {
+                    doorHackerTimer = duration;
+                    enableDoors = new List<bool>();
+                    for (int i = 0; i < doors.Count; ++i) {
+                        enableDoors.Add(doors[i].myCollider.enabled);
+                        doors[i].myCollider.enabled = false;
+                    }
+                }
+            } else {
+                doorHacker.Collider.isTrigger = true;
+            }
+        }
+
+        public static void ResetDoors(bool consumeRemain = false) {
+            if (doorHacker == null) return;
+            if (consumeRemain && remainingUses != -1)
+                --remainingUses;
+            doorHackerTimer = 0f;
+            doorHacker.Collider.isTrigger = false;
+            if (doors == null) return;
+            for (int i = 0; i < doors.Count; ++i)
+                doors[i].myCollider.enabled = enableDoors[i];
+            enableDoors.Clear();
+            doors = null;
+        }
+
+        public static void clearAndReload() {
+            cooldown = CustomOptionHolder.doorHackerCooldown.getFloat();
+            duration = CustomOptionHolder.doorHackerDuration.getFloat();
+            int num = Mathf.RoundToInt(CustomOptionHolder.doorHackerNumberOfUses.getFloat());
+            remainingUses = num == 0 ? -1 : num;
+
+            ResetDoors();
         }
     }
 

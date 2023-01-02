@@ -9,7 +9,6 @@ using TheOtherRoles.Objects;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using UnityEngine;
-using TheOtherRoles.CustomGameModes;
 using static UnityEngine.GraphicsBuffer;
 
 namespace TheOtherRoles.Patches {
@@ -124,9 +123,6 @@ namespace TheOtherRoles.Patches {
                     }
                     else if (localPlayerPositions.Any(x => x.Item2 == true)) {
                         CachedPlayer.LocalPlayer.transform.position = next.Item1;
-                    }
-                    if (SubmergedCompatibility.IsSubmerged) {
-                        SubmergedCompatibility.ChangeFloor(next.Item1.y > -7);
                     }
 
                     localPlayerPositions.RemoveAt(0);
@@ -279,36 +275,6 @@ namespace TheOtherRoles.Patches {
                 }
             }
         }
-
-        static void vampireSetTarget() {
-            if (Vampire.vampire == null || Vampire.vampire != CachedPlayer.LocalPlayer.PlayerControl) return;
-
-            PlayerControl target = null;
-            if (Spy.spy != null || Sidekick.wasSpy || Jackal.wasSpy) {
-                if (Spy.impostorsCanKillAnyone) {
-                    target = setTarget(false, true);
-                }
-                else {
-                    target = setTarget(true, true, new List<PlayerControl>() { Spy.spy, Sidekick.wasTeamRed ? Sidekick.sidekick : null, Jackal.wasTeamRed ? Jackal.jackal : null });
-                }
-            }
-            else {
-                target = setTarget(true, true, new List<PlayerControl>() { Sidekick.wasImpostor ? Sidekick.sidekick : null, Jackal.wasImpostor ? Jackal.jackal : null });
-            }
-
-            bool targetNearGarlic = false;
-            if (target != null) {
-                foreach (Garlic garlic in Garlic.garlics) {
-                    if (Vector2.Distance(garlic.garlic.transform.position, target.transform.position) <= 1.91f) {
-                        targetNearGarlic = true;
-                    }
-                }
-            }
-            Vampire.targetNearGarlic = targetNearGarlic;
-            Vampire.currentTarget = target;
-            setPlayerOutline(Vampire.currentTarget, Vampire.color);
-        }
-
         static void jackalSetTarget() {
             if (Jackal.jackal == null || Jackal.jackal != CachedPlayer.LocalPlayer.PlayerControl) return;
             var untargetablePlayers = new List<PlayerControl>();
@@ -649,7 +615,6 @@ namespace TheOtherRoles.Patches {
             for (int i = 0; i < MapUtilities.CachedShipStatus.AllVents.Length; i++) {
                 Vent vent = MapUtilities.CachedShipStatus.AllVents[i];
                 if (vent.gameObject.name.StartsWith("JackInTheBoxVent_") || vent.gameObject.name.StartsWith("SealedVent_") || vent.gameObject.name.StartsWith("FutureSealedVent_")) continue;
-                if (SubmergedCompatibility.IsSubmerged && vent.Id == 9) continue; // cannot seal submergeds exit only vent!
                 float distance = Vector2.Distance(vent.transform.position, truePosition);
                 if (distance <= vent.UsableDistance && distance < closestDistance) {
                     closestDistance = distance;
@@ -1124,8 +1089,15 @@ namespace TheOtherRoles.Patches {
             setPlayerOutline(Thief.currentTarget, Thief.color);
         }
 
-
-
+        static void doorHackerUpdate() {
+            if (DoorHacker.doorHacker == null) return;
+            float oldDoorHackerTimer = DoorHacker.doorHackerTimer;
+            if (oldDoorHackerTimer <= 0f) return;
+            DoorHacker.doorHackerTimer = Mathf.Max(0f, DoorHacker.doorHackerTimer - Time.fixedDeltaTime);
+            if (DoorHacker.doorHackerTimer <= 0f) {
+                DoorHacker.ResetDoors(true);
+            }
+        }
 
         static void baitUpdate() {
             if (!Bait.active.Any()) return;
@@ -1136,8 +1108,7 @@ namespace TheOtherRoles.Patches {
                 if (entry.Value <= 0) {
                     Bait.active.Remove(entry.Key);
                     if (entry.Key.killerIfExisting != null && entry.Key.killerIfExisting.PlayerId == CachedPlayer.LocalPlayer.PlayerId) {
-                        Helpers.handleVampireBiteOnBodyReport(); // Manually call Vampire handling, since the CmdReportDeadBody Prefix won't be called
-                        Helpers.handleBomberExplodeOnBodyReport(); // Manually call Vampire handling, since the CmdReportDeadBody Prefix won't be called
+                        Helpers.handleBomberExplodeOnBodyReport();
                         RPCProcedure.uncheckedCmdReportDeadBody(entry.Key.killerIfExisting.PlayerId, entry.Key.player.PlayerId);
                         
 
@@ -1165,12 +1136,11 @@ namespace TheOtherRoles.Patches {
             }
         }
 
-        // Mini set adapted button cooldown for Vampire, Sheriff, Jackal, Sidekick, Warlock, Cleaner
+        // Mini set adapted button cooldown for , Sheriff, Jackal, Sidekick, Warlock, Cleaner
         public static void miniCooldownUpdate() {
             if (Mini.mini != null && CachedPlayer.LocalPlayer.PlayerControl == Mini.mini) {
                 var multiplier = Mini.isGrownUp() ? 0.66f : 2f;
                 HudManagerStartPatch.sheriffKillButton.MaxTimer = Sheriff.cooldown * multiplier;
-                HudManagerStartPatch.vampireKillButton.MaxTimer = Vampire.cooldown * multiplier;
                 HudManagerStartPatch.jackalKillButton.MaxTimer = Jackal.cooldown * multiplier;
                 HudManagerStartPatch.sidekickKillButton.MaxTimer = Sidekick.cooldown * multiplier;
                 HudManagerStartPatch.warlockCurseButton.MaxTimer = Warlock.cooldown * multiplier;
@@ -1189,69 +1159,6 @@ namespace TheOtherRoles.Patches {
                 if (Trapper.maxCharges > Trapper.charges) Trapper.charges++;
             }
         }
-
-        static void hunterUpdate() {
-            if (!HideNSeek.isHideNSeekGM) return;
-            int minutes = (int)HideNSeek.timer / 60;
-            int seconds = (int)HideNSeek.timer % 60;
-            string suffix = $" {minutes:00}:{seconds:00}";
-
-            if (HideNSeek.timerText == null) {
-                RoomTracker roomTracker = FastDestroyableSingleton<HudManager>.Instance?.roomTracker;
-                if (roomTracker != null) {
-                    GameObject gameObject = UnityEngine.Object.Instantiate(roomTracker.gameObject);
-
-                    gameObject.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform);
-                    UnityEngine.Object.DestroyImmediate(gameObject.GetComponent<RoomTracker>());
-                    HideNSeek.timerText = gameObject.GetComponent<TMPro.TMP_Text>();
-
-                    // Use local position to place it in the player's view instead of the world location
-                    gameObject.transform.localPosition = new Vector3(0, -1.8f, gameObject.transform.localPosition.z);
-                    if (AmongUs.Data.DataManager.Settings.Gameplay.StreamerMode) gameObject.transform.localPosition = new Vector3(0, 2f, gameObject.transform.localPosition.z);
-                }
-            } else {
-                if (HideNSeek.isWaitingTimer) {
-                    HideNSeek.timerText.text = "<color=#0000cc>" + suffix + "</color>";
-                    HideNSeek.timerText.color = Color.blue;
-                } else {
-                    HideNSeek.timerText.text = "<color=#FF0000FF>" + suffix + "</color>";
-                    HideNSeek.timerText.color = Color.red;
-                }
-            }
-            if (HideNSeek.isHunted() && !Hunted.taskPunish && !HideNSeek.isWaitingTimer) {
-                var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
-                int numberOfTasks = playerTotal - playerCompleted;
-                if (numberOfTasks == 0) {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareTimer, Hazel.SendOption.Reliable, -1);
-                    writer.Write(HideNSeek.taskPunish);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.shareTimer(HideNSeek.taskPunish);
-
-                    Hunted.taskPunish = true;
-                }
-            }
-
-            if (!HideNSeek.isHunter()) return;
-
-            byte playerId = CachedPlayer.LocalPlayer.PlayerId;
-            foreach (Arrow arrow in Hunter.localArrows) arrow.arrow.SetActive(false);
-            if (Hunter.arrowActive) {
-                int arrowIndex = 0;
-                foreach (PlayerControl p in CachedPlayer.AllPlayers) {
-                    if (!p.Data.IsDead && !p.Data.Role.IsImpostor) {
-                        if (arrowIndex >= Hunter.localArrows.Count) {
-                            Hunter.localArrows.Add(new Arrow(Color.blue));
-                        }
-                        if (arrowIndex < Hunter.localArrows.Count && Hunter.localArrows[arrowIndex] != null) {
-                            Hunter.localArrows[arrowIndex].arrow.SetActive(true);
-                            Hunter.localArrows[arrowIndex].Update(p.transform.position, Color.blue);
-                        }
-                        arrowIndex++;
-                    }
-                }
-            }
-        }
-
         public static void Postfix(PlayerControl __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
@@ -1299,8 +1206,6 @@ namespace TheOtherRoles.Patches {
                 // Phantom
                 phantomCheck();
                 losePhantomAbility();
-                // Vampire
-                vampireSetTarget();
                 Garlic.UpdateAll();
                 Trap.Update();
                 // Eraser
@@ -1340,8 +1245,8 @@ namespace TheOtherRoles.Patches {
                 // BountyHunter
                 bountyHunterUpdate();
                 // Arsonist
-		arsonistUpdate();
-		// Vulture
+                arsonistUpdate();
+                // Vulture
                 vultureUpdate();
                 
       //          //Cultist
@@ -1376,7 +1281,8 @@ namespace TheOtherRoles.Patches {
                 hackerUpdate();
                 // Trapper
                 trapperUpdate();
-
+                // DoorHacker
+                doorHackerUpdate();
                 // -- MODIFIER--
                 // Bait
                 baitUpdate();
@@ -1386,9 +1292,6 @@ namespace TheOtherRoles.Patches {
                 miniCooldownUpdate();
                 // Chameleon (invis stuff, timers)
                 Chameleon.update();
-
-                // -- GAME MODE --
-                hunterUpdate();
             } 
         }
     }
@@ -1409,8 +1312,6 @@ namespace TheOtherRoles.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
     class PlayerControlCmdReportDeadBodyPatch {
         public static bool Prefix(PlayerControl __instance) {
-            if (HideNSeek.isHideNSeekGM) return false;
-            Helpers.handleVampireBiteOnBodyReport();
             Helpers.handleBomberExplodeOnBodyReport();
             return true;
         }
@@ -1610,23 +1511,6 @@ namespace TheOtherRoles.Patches {
                     else if (RoleInfo.getRoleInfoForPlayer(target, false).FirstOrDefault().isNeutral) color = Color.blue;
                 }
                 Helpers.showFlash(color, 1.5f);
-            }
-
-            // HideNSeek
-            if (HideNSeek.isHideNSeekGM) {
-                int visibleCounter = 0;
-                Vector3 bottomLeft = new Vector3(-FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y, FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z);
-                bottomLeft += new Vector3(-0.35f, -0.25f, 0);
-                foreach (PlayerControl p in CachedPlayer.AllPlayers) {
-                    if (!MapOptions.playerIcons.ContainsKey(p.PlayerId) || p.Data.Role.IsImpostor) continue;
-                    if (p.Data.IsDead || p.Data.Disconnected) {
-                        MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
-                    }
-                    else {
-                        MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
-                        visibleCounter++;
-                    }
-                }
             }
         }
     }

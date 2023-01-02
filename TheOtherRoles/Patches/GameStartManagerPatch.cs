@@ -214,15 +214,7 @@ namespace TheOtherRoles.Patches {
                             continueStart = false;
                             break;
                         }
-                    }
-                    if (continueStart && MapOptions.gameMode == CustomGamemodes.HideNSeek) {
-                        byte mapId = (byte) CustomOptionHolder.hideNSeekMap.getSelection();
-                        if (mapId >= 3) mapId++;
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DynamicMapOption, Hazel.SendOption.Reliable, -1);
-                        writer.Write(mapId);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        RPCProcedure.dynamicMapOption(mapId);
-                    }        
+                    } 
 
                     if (Cultist.isCultistGame)  {
                        PlayerControl.GameOptions.NumImpostors = 2;
@@ -246,14 +238,12 @@ namespace TheOtherRoles.Patches {
                         // 2 = Polus
                         // 3 = Dleks - deactivated
                         // 4 = Airship
-                        // 5 = Submerged
                         byte chosenMapId = 0;
                         List<float> probabilities = new List<float>();
                         probabilities.Add(CustomOptionHolder.dynamicMapEnableSkeld.getSelection() / 10f);
                         probabilities.Add(CustomOptionHolder.dynamicMapEnableMira.getSelection() / 10f);
                         probabilities.Add(CustomOptionHolder.dynamicMapEnablePolus.getSelection() / 10f);
                         probabilities.Add(CustomOptionHolder.dynamicMapEnableAirShip.getSelection() / 10f);
-                        probabilities.Add(CustomOptionHolder.dynamicMapEnableSubmerged.getSelection() / 10f);
 
                         // if any map is at 100%, remove all maps that are not!
                         if (probabilities.Contains(1.0f)) {
@@ -276,8 +266,6 @@ namespace TheOtherRoles.Patches {
                                 break;
                             }
                         }
-
-                        if (chosenMapId >= 3) chosenMapId++;  // Skip dlekS
 
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DynamicMapOption, Hazel.SendOption.Reliable, -1);
                         writer.Write(chosenMapId);

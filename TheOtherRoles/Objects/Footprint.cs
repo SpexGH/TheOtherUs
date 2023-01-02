@@ -42,7 +42,6 @@ namespace TheOtherRoles.Objects
                 Renderer = GameObject.AddComponent<SpriteRenderer>();
                 Renderer.sprite = FootprintSprite;
                 Renderer.color = Color.clear;
-                GameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             }
         }
 

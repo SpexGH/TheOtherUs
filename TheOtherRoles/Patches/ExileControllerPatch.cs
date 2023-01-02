@@ -89,8 +89,6 @@ namespace TheOtherRoles.Patches {
                 animator?.Stop();
                 vent.EnterVentAnim = vent.ExitVentAnim = null;
                 vent.myRend.sprite = animator == null ? SecurityGuard.getStaticVentSealedSprite() : SecurityGuard.getAnimatedVentSealedSprite();
-                if (SubmergedCompatibility.IsSubmerged && vent.Id == 0) vent.myRend.sprite = SecurityGuard.getSubmergedCentralUpperSealedSprite();
-                if (SubmergedCompatibility.IsSubmerged && vent.Id == 14) vent.myRend.sprite = SecurityGuard.getSubmergedCentralLowerSealedSprite();
                 vent.myRend.color = Color.white;
                 vent.name = "SealedVent_" + vent.name;
             }
@@ -123,7 +121,6 @@ namespace TheOtherRoles.Patches {
         // Workaround to add a "postfix" to the destroying of the exile controller (i.e. cutscene) and SpwanInMinigame of submerged
         [HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy), new Type[] { typeof(GameObject) })]
         public static void Prefix(GameObject obj) {
-            if (!SubmergedCompatibility.IsSubmerged) return;
             if (obj.name.Contains("ExileCutscene")) {
                 WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
             } else if (obj.name.Contains("SpawnInMinigame")) {
@@ -163,7 +160,6 @@ namespace TheOtherRoles.Patches {
                     soul.transform.position = new Vector3(pos.x, pos.y, pos.y / 1000 - 1f);
                     soul.layer = 5;
                     var rend = soul.AddComponent<SpriteRenderer>();
-                    soul.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                     rend.sprite = Seer.getSoulSprite();
                     
                     if(Seer.limitSoulDuration) {
@@ -238,7 +234,6 @@ namespace TheOtherRoles.Patches {
                         s.transform.position = new Vector3(ps.x, ps.y, ps.y / 1000 - 1f);
                         s.layer = 5;
                         var rend = s.AddComponent<SpriteRenderer>();
-                        s.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                         rend.sprite = Medium.getSoulSprite();
                         Medium.souls.Add(rend);
                     }

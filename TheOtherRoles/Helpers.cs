@@ -15,7 +15,6 @@ using TheOtherRoles.Utilities;
 using System.Threading.Tasks;
 using System.Net;
 using System.Globalization;
-using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles {
 
@@ -156,8 +155,6 @@ namespace TheOtherRoles {
 					return SabatageTypes.Reactor;
 				} else if (task.TaskType == TaskTypes.FixComms) {
 					return SabatageTypes.Comms;
-				} else if (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask) {
-					return SabatageTypes.OxyMask;
 				}
 			}
 			return SabatageTypes.None;
@@ -178,8 +175,6 @@ namespace TheOtherRoles {
                             Ninja.ninja.killTimer = HudManagerStartPatch.ninjaButton.Timer = HudManagerStartPatch.ninjaButton.MaxTimer;
                         else if (player == Sheriff.sheriff)
                             Sheriff.sheriff.killTimer = HudManagerStartPatch.sheriffKillButton.Timer = HudManagerStartPatch.sheriffKillButton.MaxTimer;
-                        else if (player == Vampire.vampire)
-                            Vampire.vampire.killTimer = HudManagerStartPatch.vampireKillButton.Timer = HudManagerStartPatch.vampireKillButton.MaxTimer;
                         else if (player == Jackal.jackal)
                             Jackal.jackal.killTimer = HudManagerStartPatch.jackalKillButton.Timer = HudManagerStartPatch.jackalKillButton.MaxTimer;
                         else if (player == Sidekick.sidekick)
@@ -457,16 +452,6 @@ public static bool isPlayerLover(PlayerControl player) {
             return res;
         }
 
-        public static void handleVampireBiteOnBodyReport() {
-            // Murder the bitten player and reset bitten (regardless whether the kill was successful or not)
-            Helpers.checkMurderAttemptAndKill(Vampire.vampire, Vampire.bitten, true, false);
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.VampireSetBitten, Hazel.SendOption.Reliable, -1);
-            writer.Write(byte.MaxValue);
-            writer.Write(byte.MaxValue);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            RPCProcedure.vampireSetBitten(byte.MaxValue, byte.MaxValue);
-        }
-        
         public static void handleBomberExplodeOnBodyReport() {
             // Murder the bitten player and reset bitten (regardless whether the kill was successful or not)
             Helpers.checkMuderAttemptAndKill(Bomber.bomber, Bomber.hasBomb, true, false);
@@ -556,9 +541,18 @@ public static bool isPlayerLover(PlayerControl player) {
             return !isDead(player);
         }
 
-
         public static bool hasFakeTasks(this PlayerControl player) {
-            return (player == Prosecutor.prosecutor || player == Werewolf.werewolf || player == Jester.jester || player == Amnisiac.amnisiac || player == Swooper.swooper|| player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Any(x => x == player));
+            return (player == Prosecutor.prosecutor ||
+            player == Werewolf.werewolf ||
+            player == Jester.jester || 
+            player == Amnisiac.amnisiac || 
+            player == Swooper.swooper|| 
+            player == Jackal.jackal || 
+            player == Sidekick.sidekick || 
+            player == Arsonist.arsonist || 
+            player == Madmate.madmate ||
+            player == Vulture.vulture || 
+            Jackal.formerJackals.Any(x => x == player));
         }
 
         public static bool canBeErased(this PlayerControl player) {
@@ -697,6 +691,8 @@ public static bool isPlayerLover(PlayerControl player) {
             if (Engineer.engineer != null && Engineer.engineer == player)
                 roleCouldUse = true;
             if (Swooper.swooper != null && Swooper.swooper == player)
+                roleCouldUse = true;
+            else if (Madmate.MadmateCanVent && Madmate.madmate != null && Madmate.madmate == player)
                 roleCouldUse = true;
             else if (Werewolf.canUseVents && Werewolf.werewolf != null && Werewolf.werewolf == player) //testing
                 roleCouldUse = true;
@@ -854,16 +850,6 @@ public static bool isPlayerLover(PlayerControl player) {
                 return MurderAttemptResult.SuppressKill;
             }
 
-            // Block hunted with time shield kill
-            else if (Hunted.timeshieldActive.Contains(target.PlayerId)) {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.HuntedRewindTime, Hazel.SendOption.Reliable, -1);
-                writer.Write(target.PlayerId);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.huntedRewindTime(target.PlayerId);
-
-                return MurderAttemptResult.SuppressKill;
-            }
-
             return MurderAttemptResult.PerformKill;
         }
 
@@ -968,28 +954,6 @@ public static bool isPlayerLover(PlayerControl player) {
             HudManagerStartPatch.zoomOutButton.Sprite = zoomOutStatus ? Helpers.loadSpriteFromResources("TheOtherRoles.Resources.PlusButton.png", 75f) : Helpers.loadSpriteFromResources("TheOtherRoles.Resources.MinusButton.png", 150f);
             HudManagerStartPatch.zoomOutButton.PositionOffset = zoomOutStatus ? new Vector3(0f, 3f, 0) : new Vector3(0.4f, 2.8f, 0);
             ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height); // This will move button positions to the correct position.
-        }
-
-        public static void checkBeta() {
-            if (TheOtherRolesPlugin.betaDays > 0) {
-                var compileTime = new DateTime(Builtin.CompileTime, DateTimeKind.Utc);  // This may show as an error, but it is not, compilation will work!
-                DateTime now;
-                // Get time from the internet, so no-one can cheat it.
-                try {
-                    using (var response =
-                      WebRequest.Create("http://www.google.com").GetResponse())
-                        now = DateTime.ParseExact(response.Headers["date"], "ddd, dd MMM yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal);
-                } catch (WebException e) {
-                    TheOtherRolesPlugin.Logger.LogMessage($"{e}");
-                    now = DateTime.Now; //In case something goes wrong. 
-                }
-                if ((now - compileTime).TotalDays > TheOtherRolesPlugin.betaDays) {
-                    TheOtherRolesPlugin.Logger.LogMessage($"Beta expired!");
-                    BepInExUpdater.MessageBox(IntPtr.Zero, "BETA is expired. You cannot play this version anymore.", "The Other Us Beta", 1);
-                    Application.Quit();
-
-                } else TheOtherRolesPlugin.Logger.LogMessage($"Beta will remain runnable for {(DateTime.Now - compileTime).TotalDays - TheOtherRolesPlugin.betaDays} days!");
-            }
         }
 
         public static bool hasImpVision(GameData.PlayerInfo player) {

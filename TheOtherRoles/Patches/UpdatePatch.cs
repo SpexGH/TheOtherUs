@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
-using TheOtherRoles.CustomGameModes;
 
 namespace TheOtherRoles.Patches {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
@@ -131,6 +130,9 @@ namespace TheOtherRoles.Patches {
                     setPlayerNameColor(Jackal.fakeSidekick, Jackal.color);
                 }
             }
+            else if (Madmate.madmate != null && Madmate.madmate == PlayerControl.LocalPlayer) {
+                setPlayerNameColor(Madmate.madmate, Madmate.color);
+            }
             else if (Spy.spy != null && Spy.spy == localPlayer) {
                 setPlayerNameColor(Spy.spy, Spy.color);
             } else if (SecurityGuard.securityGuard != null && SecurityGuard.securityGuard == localPlayer) {
@@ -186,7 +188,7 @@ namespace TheOtherRoles.Patches {
             }
 
             // Crewmate roles with no changes: Mini
-            // Impostor roles with no changes: Morphling, Camouflager, Vampire, Godfather, Eraser, Janitor, Cleaner, Warlock, BountyHunter,  Witch and Mafioso
+            // Impostor roles with no changes: Morphling, Camouflager, Godfather, Eraser, Janitor, Cleaner, Warlock, BountyHunter,  Witch and Mafioso
         }
 
         static void setNameTags() {
@@ -309,7 +311,6 @@ namespace TheOtherRoles.Patches {
             Tracker.corpsesTrackingTimer -= dt;
             Ninja.invisibleTimer -= dt;
 			Swooper.swoopTimer -= dt;
-            HideNSeek.timer -= dt;
             foreach (byte key in Deputy.handcuffedKnows.Keys)
                 Deputy.handcuffedKnows[key] -= dt;
         }
@@ -343,9 +344,7 @@ namespace TheOtherRoles.Patches {
                 return;
             }
             bool enabled = true;
-            if (Vampire.vampire != null && Vampire.vampire == CachedPlayer.LocalPlayer.PlayerControl)
-                enabled = false;
-            else if (Mafioso.mafioso != null && Mafioso.mafioso == CachedPlayer.LocalPlayer.PlayerControl && Godfather.godfather != null && !Godfather.godfather.Data.IsDead)
+            if (Mafioso.mafioso != null && Mafioso.mafioso == CachedPlayer.LocalPlayer.PlayerControl && Godfather.godfather != null && !Godfather.godfather.Data.IsDead)
                 enabled = false;
             else if (Janitor.janitor != null && Janitor.janitor == CachedPlayer.LocalPlayer.PlayerControl)
                 enabled = false;

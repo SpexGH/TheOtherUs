@@ -46,7 +46,6 @@ public static class ShipStatus_Awake_Patch
     public static void Postfix(ShipStatus __instance)
     {
         MapUtilities.CachedShipStatus = __instance;
-        SubmergedCompatibility.SetupMap(__instance);
     }
 }
 [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.OnDestroy))]
@@ -57,6 +56,5 @@ public static class ShipStatus_OnDestroy_Patch
     {
         MapUtilities.CachedShipStatus = null;
         MapUtilities.MapDestroyed();
-        SubmergedCompatibility.SetupMap(null);
     }
 }
