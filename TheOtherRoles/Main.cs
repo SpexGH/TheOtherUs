@@ -19,6 +19,7 @@ using TheOtherRoles.Utilities;
 using Reactor.Networking.Attributes;
 using AmongUs.Data;
 using TheOtherRoles.Modules.CustomHats;
+using TheOtherRoles.Roles;
 
 namespace TheOtherRoles
 {
@@ -70,7 +71,7 @@ namespace TheOtherRoles
             
             var currentRegion = serverManager.CurrentRegion;
             Info($"Adding {regions.Length} regions");
-            foreach (IRegionInfo region in regions) {
+            foreach (var region in regions) {
                 if (region == null) 
                     Error("Could not add region");
                 else {
@@ -128,7 +129,11 @@ namespace TheOtherRoles
             }
 
             AddComponent<ModUpdater>();
-
+            
+            typeof(Main).Assembly.GetTypes().Where(n => n.IsSubclassOf(typeof(RoleBase))).Do(n =>
+            {
+                CustomRoleManager.Instance.Register((RoleBase)AccessTools.CreateInstance(n));
+            });
             EventUtility.Load();
             SubmergedCompatibility.Initialize();
             MainMenuPatch.addSceneChangeCallbacks();
