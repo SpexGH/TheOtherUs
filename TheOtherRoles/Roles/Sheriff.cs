@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static partial class TheOtherRoles
-{
+
     public static class Sheriff {
         public static PlayerControl sheriff;
         public static Color color = new Color32(248, 205, 70, byte.MaxValue);
@@ -53,4 +52,3 @@ public static partial class TheOtherRoles
             spyCanDieToSheriff = CustomOptionHolder.spyCanDieToSheriff.getBool();
         }
     }
-}

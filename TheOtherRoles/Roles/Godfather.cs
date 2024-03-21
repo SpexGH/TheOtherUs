@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static partial class TheOtherRoles
-{
+
     public static class Godfather {
         public static PlayerControl godfather;
         public static Color color = Palette.ImpostorRed;
@@ -12,4 +11,3 @@ public static partial class TheOtherRoles
             godfather = null;
         }
     }
-}

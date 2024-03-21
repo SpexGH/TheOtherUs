@@ -6,10 +6,9 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static partial class TheOtherRoles
+
+public static class Deputy
 {
-    public static class Deputy
-    {
         public static PlayerControl deputy;
         public static Color color = Sheriff.color;
 
@@ -80,4 +79,3 @@ public static partial class TheOtherRoles
             knowsSheriff = CustomOptionHolder.deputyKnowsSheriff.getBool();
         }
     }
-}

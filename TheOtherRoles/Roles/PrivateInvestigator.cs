@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static partial class TheOtherRoles
-{
+
     public static class PrivateInvestigator
     {
         public static PlayerControl privateInvestigator;
@@ -31,4 +30,3 @@ public static partial class TheOtherRoles
             seeFlashColor = CustomOptionHolder.privateInvestigatorSeeColor.getBool();
         }
     }
-}

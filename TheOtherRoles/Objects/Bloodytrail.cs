@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using TheOtherRoles.Utilities;
 using UnityEngine;
-using static TheOtherRoles.TheOtherRoles;
 
 namespace TheOtherRoles.Objects {
     class Bloodytrail {
@@ -23,7 +22,7 @@ namespace TheOtherRoles.Objects {
         public Bloodytrail(PlayerControl player, PlayerControl bloodyPlayer) {
             this.color = Palette.PlayerColors[(int)bloodyPlayer.Data.DefaultOutfit.ColorId];
             var sp = getBloodySprites();
-            var index = rnd.Next(0, sp.Count);
+            var index = TheOtherRoles.rnd.Next(0, sp.Count);
 
 
             blood = new GameObject("Blood" + index);

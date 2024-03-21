@@ -69,7 +69,7 @@ public static class Medium {
         // collect fitting death info types.
         // suicides:
         if (killer == target) {
-            if (target == TheOtherRoles.Sheriff.sheriff || target == TheOtherRoles.Sheriff.formerSheriff) infos.Add(SpecialMediumInfo.SheriffSuicide);
+            if (target == Sheriff.sheriff || target == Sheriff.formerSheriff) infos.Add(SpecialMediumInfo.SheriffSuicide);
             if (target == Lovers.lover1 || target == Lovers.lover2) infos.Add(SpecialMediumInfo.PassiveLoverSuicide);
             if (target == Thief.thief) infos.Add(SpecialMediumInfo.ThiefSuicide);
             if (target == Warlock.warlock) infos.Add(SpecialMediumInfo.WarlockSuicide);

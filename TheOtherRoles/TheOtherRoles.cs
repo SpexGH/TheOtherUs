@@ -5,9 +5,9 @@ using TheOtherRoles.CustomGameModes;
 namespace TheOtherRoles
 {
     [HarmonyPatch]
-    public static partial class TheOtherRoles
+    public static class TheOtherRoles
     {
-        public static System.Random rnd = new System.Random((int)DateTime.Now.Ticks);
+        public static Random rnd = new((int)DateTime.Now.Ticks);
 
         public static void clearAndReloadRoles() {
             /*Jester.clearAndReload();
@@ -98,7 +98,4 @@ namespace TheOtherRoles
 
         }
     }
-
-
-    // Modifier
 }

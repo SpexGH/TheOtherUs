@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static partial class TheOtherRoles
-{
+
     public static class Janitor {
         public static PlayerControl janitor;
         public static Color color = Palette.ImpostorRed;
@@ -22,4 +21,3 @@ public static partial class TheOtherRoles
             cooldown = CustomOptionHolder.janitorCooldown.getFloat();
         }
     }
-}

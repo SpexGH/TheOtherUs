@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static partial class TheOtherRoles
-{
+
     public static class Lighter {
         public static PlayerControl lighter;
         public static Color color = new Color32(238, 229, 190, byte.MaxValue);
@@ -19,4 +18,3 @@ public static partial class TheOtherRoles
             lighterModeLightsOffVision = CustomOptionHolder.lighterModeLightsOffVision.getFloat();
         }
     }
-}

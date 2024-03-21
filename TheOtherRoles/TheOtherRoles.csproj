@@ -22,6 +22,13 @@
         <PackageReference Include="Reactor" Version="2.2.0" />
     </ItemGroup>
    
+	<ItemGroup>
+	  <Folder Include="Roles\Crewmate\" />
+	  <Folder Include="Roles\Impostor\" />
+	  <Folder Include="Roles\Modifier\" />
+	  <Folder Include="Roles\Neutral\" />
+	</ItemGroup>
+   
     <Target Name="Date" BeforeTargets="BeforeBuild">  <!--Will make the compile time available s.t. we can let betas expire-->
     <WriteLinesToFile File="$(IntermediateOutputPath)gen.cs" Lines="static partial class Builtin { public static long CompileTime = $([System.DateTime]::UtcNow.Ticks) %3B }" Overwrite="true" />
     <ItemGroup>

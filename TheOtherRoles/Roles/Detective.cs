@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static partial class TheOtherRoles
-{
+
     public static class Detective {
         public static PlayerControl detective;
         public static Color color = new Color32(8, 180, 180, byte.MaxValue);
@@ -25,4 +24,3 @@ public static partial class TheOtherRoles
             timer = 6.2f;
         }
     }
-}

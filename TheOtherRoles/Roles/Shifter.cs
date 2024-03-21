@@ -16,28 +16,28 @@ public static class Shifter {
     }
 
     public static void shiftRole (PlayerControl player1, PlayerControl player2, bool repeat = true) {
-        if (TheOtherRoles.Mayor.mayor != null && TheOtherRoles.Mayor.mayor == player2) {
+        if (Mayor.mayor != null && Mayor.mayor == player2) {
             if (repeat) shiftRole(player2, player1, false);
-            TheOtherRoles.Mayor.mayor = player1;
+            Mayor.mayor = player1;
         } else if (Portalmaker.portalmaker != null && Portalmaker.portalmaker == player2) {
             if (repeat) shiftRole(player2, player1, false);
             Portalmaker.portalmaker = player1;
-        } else if (TheOtherRoles.Engineer.engineer != null && TheOtherRoles.Engineer.engineer == player2) {
+        } else if (Engineer.engineer != null && Engineer.engineer == player2) {
             if (repeat) shiftRole(player2, player1, false);
-            TheOtherRoles.Engineer.engineer = player1;
-        } else if (TheOtherRoles.Sheriff.sheriff != null && TheOtherRoles.Sheriff.sheriff == player2) {
+            Engineer.engineer = player1;
+        } else if (Sheriff.sheriff != null && Sheriff.sheriff == player2) {
             if (repeat) shiftRole(player2, player1, false);
-            if (TheOtherRoles.Sheriff.formerDeputy != null && TheOtherRoles.Sheriff.formerDeputy == TheOtherRoles.Sheriff.sheriff) TheOtherRoles.Sheriff.formerDeputy = player1;  // Shifter also shifts info on promoted deputy (to get handcuffs)
-            TheOtherRoles.Sheriff.sheriff = player1;
-        } else if (TheOtherRoles.Deputy.deputy != null && TheOtherRoles.Deputy.deputy == player2) {
+            if (Sheriff.formerDeputy != null && Sheriff.formerDeputy == Sheriff.sheriff) Sheriff.formerDeputy = player1;  // Shifter also shifts info on promoted deputy (to get handcuffs)
+            Sheriff.sheriff = player1;
+        } else if (Deputy.deputy != null && Deputy.deputy == player2) {
             if (repeat) shiftRole(player2, player1, false);
-            TheOtherRoles.Deputy.deputy = player1;
-        } else if (TheOtherRoles.Lighter.lighter != null && TheOtherRoles.Lighter.lighter == player2) {
+            Deputy.deputy = player1;
+        } else if (Lighter.lighter != null && Lighter.lighter == player2) {
             if (repeat) shiftRole(player2, player1, false);
-            TheOtherRoles.Lighter.lighter = player1;
-        } else if (TheOtherRoles.Detective.detective != null && TheOtherRoles.Detective.detective == player2) {
+            Lighter.lighter = player1;
+        } else if (Detective.detective != null && Detective.detective == player2) {
             if (repeat) shiftRole(player2, player1, false);
-            TheOtherRoles.Detective.detective = player1;
+            Detective.detective = player1;
         } else if (TimeMaster.timeMaster != null && TimeMaster.timeMaster == player2) {
             if (repeat) shiftRole(player2, player1, false);
             TimeMaster.timeMaster = player1;
