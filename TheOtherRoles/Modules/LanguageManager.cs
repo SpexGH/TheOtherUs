@@ -1,16 +1,41 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AmongUs.Data.Legacy;
 using HarmonyLib;
 
 namespace TheOtherRoles.Modules;
 
-internal class LanguageManager : ManagerBase<LanguageManager>
+public class LanguageManager : ManagerBase<LanguageManager>
 {
     internal SupportedLangs? CurrentLang;
     private bool Loaded;
 
+    private List<LanguageLoaderBase> _AllLoader = [];
+
+    private static readonly HashSet<LanguageLoaderBase> DefLoaders = new()
+    {
+
+    };
+
     private async void Load()
     {
+        foreach (var _loader in DefLoaders)
+        {
+            if (_AllLoader.Contains(_loader))
+                continue;
+            
+            await _loader.Load(this);
+            _AllLoader.Add(_loader);
+        }
+    }
+
+    internal void LoadLanguage(LanguageLoaderBase loader)
+    {
+    }
+
+    internal void ReLoadLanguage()
+    {
+        
     }
 
     internal void LoadLanguage()
@@ -19,7 +44,7 @@ internal class LanguageManager : ManagerBase<LanguageManager>
             return;
 
         CurrentLang ??= (SupportedLangs)LegacySaveManager.LastLanguage;
-
+        
         Task.Run(Load);
         Loaded = true;
     }

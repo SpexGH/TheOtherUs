@@ -2,34 +2,34 @@ using UnityEngine;
 
 namespace TheOtherRoles.Roles.Impostor;
 
-public static class Blackmailer
+public class Blackmailer : RoleBase
 {
-    public static PlayerControl blackmailer;
-    public static Color color = Palette.ImpostorRed;
-    public static Color blackmailedColor = Palette.White;
+    public PlayerControl blackmailer;
+    public Color color = Palette.ImpostorRed;
+    public Color blackmailedColor = Palette.White;
 
-    public static bool alreadyShook = false;
-    public static PlayerControl blackmailed;
-    public static PlayerControl currentTarget;
-    public static float cooldown = 30f;
-    private static Sprite blackmailButtonSprite;
-    private static Sprite overlaySprite;
+    public bool alreadyShook = false;
+    public PlayerControl blackmailed;
+    public PlayerControl currentTarget;
+    public float cooldown = 30f;
+    private Sprite blackmailButtonSprite;
+    private Sprite overlaySprite;
 
-    public static Sprite getBlackmailOverlaySprite()
+    public Sprite getBlackmailOverlaySprite()
     {
         if (overlaySprite) return overlaySprite;
         overlaySprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.BlackmailerOverlay.png", 100f);
         return overlaySprite;
     }
 
-    public static Sprite getBlackmailLetterSprite()
+    public Sprite getBlackmailLetterSprite()
     {
         if (overlaySprite) return overlaySprite;
         overlaySprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.BlackmailerLetter.png", 115f);
         return overlaySprite;
     }
 
-    public static Sprite getBlackmailButtonSprite()
+    public Sprite getBlackmailButtonSprite()
     {
         if (blackmailButtonSprite) return blackmailButtonSprite;
         blackmailButtonSprite =
@@ -37,7 +37,7 @@ public static class Blackmailer
         return blackmailButtonSprite;
     }
 
-    public static void clearAndReload()
+    public void clearAndReload()
     {
         blackmailer = null;
         currentTarget = null;

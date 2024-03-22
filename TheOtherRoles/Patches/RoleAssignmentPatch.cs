@@ -122,9 +122,9 @@ internal class RoleManagerSelectRolesPatch
         }
 
         // Get the maximum allowed count of each role type based on the minimum and maximum option
-        var crewCountSettings = rnd.Next(crewmateMin, crewmateMax + 1);
-        var neutralCountSettings = rnd.Next(neutralMin, neutralMax + 1);
-        var impCountSettings = rnd.Next(impostorMin, impostorMax + 1);
+        var crewCountSettings = ListHelper.Random(crewmateMin, crewmateMax + 1);
+        var neutralCountSettings = ListHelper.Random(neutralMin, neutralMax + 1);
+        var impCountSettings = ListHelper.Random(impostorMin, impostorMax + 1);
 
         // Potentially lower the actual maximum to the assignable players
         var maxCrewmateRoles = Mathf.Min(crewmates.Count, crewCountSettings);
@@ -163,7 +163,7 @@ internal class RoleManagerSelectRolesPatch
         neutralSettings.Add((byte)RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.getSelection());
         neutralSettings.Add((byte)RoleId.Thief, CustomOptionHolder.thiefSpawnRate.getSelection());
 
-        if (rnd.Next(1, 101) <= CustomOptionHolder.lawyerIsProsecutorChance.getSelection() * 10) // Lawyer or Prosecutor
+        if (ListHelper.Random(1, 101) <= CustomOptionHolder.lawyerIsProsecutorChance.getSelection() * 10) // Lawyer or Prosecutor
             neutralSettings.Add((byte)RoleId.Prosecutor, CustomOptionHolder.lawyerSpawnRate.getSelection());
         else
             neutralSettings.Add((byte)RoleId.Lawyer, CustomOptionHolder.lawyerSpawnRate.getSelection());
@@ -211,9 +211,9 @@ internal class RoleManagerSelectRolesPatch
         // //Assign Cultist
         if (Cultist.isCultistGame) setRoleToRandomPlayer((byte)RoleId.Cultist, data.impostors);
         if (data.impostors.Count < 2 && data.maxImpostorRoles < 2 &&
-            rnd.Next(1, 101) <= CustomOptionHolder.cultistSpawnRate.getSelection() * 10)
+            ListHelper.Random(1, 101) <= CustomOptionHolder.cultistSpawnRate.getSelection() * 10)
         {
-            //       var index = rnd.Next(0, data.impostors.Count);
+            //       var index = ListHelper.Random(0, data.impostors.Count);
             //     PlayerControl playerControl = data.impostors[index];
 
             //    Helpers.turnToCrewmate(playerControl);
@@ -228,7 +228,7 @@ internal class RoleManagerSelectRolesPatch
 
         // Assign Mafia
         if (data.impostors.Count >= 3 && data.maxImpostorRoles >= 3 &&
-            rnd.Next(1, 101) <= CustomOptionHolder.mafiaSpawnRate.getSelection() * 10)
+            ListHelper.Random(1, 101) <= CustomOptionHolder.mafiaSpawnRate.getSelection() * 10)
         {
             setRoleToRandomPlayer((byte)RoleId.Godfather, data.impostors);
             setRoleToRandomPlayer((byte)RoleId.Janitor, data.impostors);
@@ -242,7 +242,7 @@ internal class RoleManagerSelectRolesPatch
         /*
         if (!isGuesserGamemode) {
             // Assign Guesser (chance to be impostor based on setting)
-            isEvilGuesser = rnd.Next(1, 101) <= CustomOptionHolder.guesserIsImpGuesserRate.getSelection() * 10;
+            isEvilGuesser = ListHelper.Random(1, 101) <= CustomOptionHolder.guesserIsImpGuesserRate.getSelection() * 10;
             if ((CustomOptionHolder.guesserSpawnBothRate.getSelection() > 0 &&
                 CustomOptionHolder.guesserSpawnRate.getSelection() == 10) ||
                 CustomOptionHolder.guesserSpawnBothRate.getSelection() == 0) {
@@ -290,11 +290,11 @@ internal class RoleManagerSelectRolesPatch
             // Randomly select a pool of roles to assign a role from next (Crewmate role, Neutral role or Impostor role) 
             // then select one of the roles from the selected pool to a player 
             // and remove the role (and any potentially blocked role pairings) from the pool(s)
-            var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
+            var roleType = rolesToAssign.Keys.ElementAt(ListHelper.Random(0, rolesToAssign.Keys.Count()));
             var players = roleType == RoleType.Crewmate || roleType == RoleType.Neutral
                 ? data.crewmates
                 : data.impostors;
-            var index = rnd.Next(0, rolesToAssign[roleType].Count);
+            var index = ListHelper.Random(0, rolesToAssign[roleType].Count);
             var roleId = rolesToAssign[roleType][index];
             setRoleToRandomPlayer(rolesToAssign[roleType][index], players);
             rolesToAssign[roleType].RemoveAt(index);
@@ -356,15 +356,15 @@ internal class RoleManagerSelectRolesPatch
         // --- Simulate Crew & Imp ticket system ---
         while (crew > 0 && !isSheriff /* || (!isEvilGuesser && !isGuesser)*/)
         {
-            if (!isSheriff && rnd.Next(crewValues) < CustomOptionHolder.sheriffSpawnRate.getSelection())
+            if (!isSheriff && ListHelper.Random(crewValues) < CustomOptionHolder.sheriffSpawnRate.getSelection())
                 isSheriff = true;
-            //if (!isEvilGuesser && !isGuesser && rnd.Next(crewValues) < CustomOptionHolder.guesserSpawnRate.getSelection()) isGuesser = true;
+            //if (!isEvilGuesser && !isGuesser && ListHelper.Random(crewValues) < CustomOptionHolder.guesserSpawnRate.getSelection()) isGuesser = true;
             crew--;
             crewValues -= crewSteps;
         }
         /*
         while (imp > 0 && (isEvilGuesser && !isGuesser)) {
-            if (rnd.Next(impValues) < CustomOptionHolder.guesserSpawnRate.getSelection()) isGuesser = true;
+            if (ListHelper.Random(impValues) < CustomOptionHolder.guesserSpawnRate.getSelection()) isGuesser = true;
             imp--;
             impValues -= impSteps;
         }
@@ -467,11 +467,11 @@ internal class RoleManagerSelectRolesPatch
             // Randomly select a pool of role tickets to assign a role from next (Crewmate role, Neutral role or Impostor role) 
             // then select one of the roles from the selected pool to a player 
             // and remove all tickets of this role (and any potentially blocked role pairings) from the pool(s)
-            var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
+            var roleType = rolesToAssign.Keys.ElementAt(ListHelper.Random(0, rolesToAssign.Keys.Count()));
             var players = roleType == RoleType.Crewmate || roleType == RoleType.Neutral
                 ? data.crewmates
                 : data.impostors;
-            var index = rnd.Next(0, rolesToAssign[roleType].Count);
+            var index = ListHelper.Random(0, rolesToAssign[roleType].Count);
             var roleId = rolesToAssign[roleType][index];
             setRoleToRandomPlayer(roleId, players);
             rolesToAssign[roleType].RemoveAll(x => x == roleId);
@@ -534,7 +534,7 @@ internal class RoleManagerSelectRolesPatch
             }
             else
             {
-                var target = possibleTargets[rnd.Next(0, possibleTargets.Count)];
+                var target = possibleTargets[ListHelper.Random(0, possibleTargets.Count)];
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.LawyerSetTarget, SendOption.Reliable);
                 writer.Write(target.PlayerId);
@@ -549,7 +549,7 @@ internal class RoleManagerSelectRolesPatch
         var modifierMin = CustomOptionHolder.modifiersCountMin.getSelection();
         var modifierMax = CustomOptionHolder.modifiersCountMax.getSelection();
         if (modifierMin > modifierMax) modifierMin = modifierMax;
-        var modifierCountSettings = rnd.Next(modifierMin, modifierMax + 1);
+        var modifierCountSettings = ListHelper.Random(modifierMin, modifierMax + 1);
         var players = PlayerControl.AllPlayerControls.ToArray().ToList();
         if (isGuesserGamemode && !CustomOptionHolder.guesserGamemodeHaveModifier.getBool())
             players.RemoveAll(x => GuesserGM.isGuesser(x.PlayerId));
@@ -603,10 +603,10 @@ internal class RoleManagerSelectRolesPatch
             RoleId.EvilGuesser
         });
 
-        if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10)
+        if (ListHelper.Random(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10)
         {
             // Assign lover
-            var isEvilLover = rnd.Next(1, 101) <= CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10;
+            var isEvilLover = ListHelper.Random(1, 101) <= CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10;
             byte firstLoverId;
             //List<PlayerControl> impPlayer = new List<PlayerControl>(players);
             //List<PlayerControl> impPlayerL = new List<PlayerControl>(players);
@@ -654,7 +654,7 @@ internal class RoleManagerSelectRolesPatch
         var chanceModifierToAssign = new List<RoleId>();
         while (chanceModifierCount > 0 && chanceModifiers.Count > 0)
         {
-            var index = rnd.Next(0, chanceModifiers.Count);
+            var index = ListHelper.Random(0, chanceModifiers.Count);
             var modifierId = chanceModifiers[index];
             chanceModifierToAssign.Add(modifierId);
 
@@ -674,7 +674,7 @@ internal class RoleManagerSelectRolesPatch
         var chanceImpModifierToAssign = new List<RoleId>();
         while (chanceImpModifierCount > 0 && chanceImpModifiers.Count > 0)
         {
-            var index = rnd.Next(0, chanceImpModifiers.Count);
+            var index = ListHelper.Random(0, chanceImpModifiers.Count);
             var modifierId = chanceImpModifiers[index];
             chanceImpModifierToAssign.Add(modifierId);
 
@@ -714,7 +714,7 @@ internal class RoleManagerSelectRolesPatch
     {
         for (var i = 0; i < count && playerList.Count > 0; i++)
         {
-            var index = rnd.Next(0, playerList.Count);
+            var index = ListHelper.Random(0, playerList.Count);
             if (forceThief && !forceJackal)
             {
                 if (Thief.thief != null)
@@ -742,7 +742,7 @@ internal class RoleManagerSelectRolesPatch
 
     private static byte setRoleToRandomPlayer(byte roleId, List<PlayerControl> playerList, bool removePlayer = true)
     {
-        var index = rnd.Next(0, playerList.Count);
+        var index = ListHelper.Random(0, playerList.Count);
         var playerId = playerList[index].PlayerId;
         if (removePlayer) playerList.RemoveAt(index);
 
@@ -760,7 +760,7 @@ internal class RoleManagerSelectRolesPatch
     private static byte setModifierToRandomPlayer(byte modifierId, List<PlayerControl> playerList, byte flag = 0)
     {
         if (playerList.Count == 0) return byte.MaxValue;
-        var index = rnd.Next(0, playerList.Count);
+        var index = ListHelper.Random(0, playerList.Count);
         var playerId = playerList[index].PlayerId;
         playerList.RemoveAt(index);
 
@@ -777,11 +777,11 @@ internal class RoleManagerSelectRolesPatch
     private static void assignModifiersToPlayers(List<RoleId> modifiers, List<PlayerControl> playerList,
         int modifierCount)
     {
-        modifiers = modifiers.OrderBy(x => rnd.Next()).ToList(); // randomize list
+        modifiers = modifiers.OrderBy(x => ListHelper.Random()).ToList(); // randomize list
 
         while (modifierCount < modifiers.Count)
         {
-            var index = rnd.Next(0, modifiers.Count);
+            var index = ListHelper.Random(0, modifiers.Count);
             modifiers.RemoveAt(index);
         }
 

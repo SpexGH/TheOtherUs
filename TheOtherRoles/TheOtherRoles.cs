@@ -6,7 +6,7 @@ namespace TheOtherRoles;
 [HarmonyPatch]
 public static class TheOtherRoles
 {
-    public static Random rnd = new((int)DateTime.Now.Ticks);
+    /*public static Random rnd = new((int)DateTime.Now.Ticks);*/
 
     public static void clearAndReloadRoles()
     {

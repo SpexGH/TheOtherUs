@@ -967,7 +967,7 @@ public static class PlayerControlFixedUpdatePatch
                     (p != Mini.mini || Mini.isGrownUp()) && (BountyHunter.bountyHunter.getPartner() == null ||
                                                              p != BountyHunter.bountyHunter.getPartner()))
                     possibleTargets.Add(p);
-            BountyHunter.bounty = possibleTargets[rnd.Next(0, possibleTargets.Count)];
+            BountyHunter.bounty = possibleTargets.Random();
             if (BountyHunter.bounty == null) return;
 
             // Ghost Info
@@ -1962,7 +1962,7 @@ public static class MurderPlayerPatch
         // Bait
         if (Bait.bait.FindAll(x => x.PlayerId == target.PlayerId).Count > 0)
         {
-            float reportDelay = rnd.Next((int)Bait.reportDelayMin, (int)Bait.reportDelayMax + 1);
+            float reportDelay = ListHelper.Random((int)Bait.reportDelayMin, (int)Bait.reportDelayMax + 1);
             Bait.active.Add(deadPlayer, reportDelay);
 
             if (Bait.showKillFlash && __instance == CachedPlayer.LocalPlayer.PlayerControl)

@@ -372,7 +372,7 @@ public class GameStartManagerPatch
                     if (sum == 0) return continueStart; // All maps set to 0, why are you doing this???
                     for (var i = 0; i < probabilities.Count; i++) // Normalize to [0,1]
                         probabilities[i] /= sum;
-                    var selection = (float)TheOtherRoles.rnd.NextDouble();
+                    var selection = (float)ListHelper.rnd.NextDouble();
                     float cumsum = 0;
                     for (byte i = 0; i < probabilities.Count; i++)
                     {

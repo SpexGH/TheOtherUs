@@ -84,7 +84,7 @@ public static class Medium
 
         if (infos.Count > 0)
         {
-            var selectedInfo = infos[TheOtherRoles.rnd.Next(infos.Count)];
+            var selectedInfo = infos[ListHelper.Random(infos.Count)];
             switch (selectedInfo)
             {
                 case SpecialMediumInfo.SheriffSuicide:
@@ -118,7 +118,7 @@ public static class Medium
         }
         else
         {
-            var randomNumber = TheOtherRoles.rnd.Next(4);
+            var randomNumber = ListHelper.Random(4);
             var typeOfColor = Helpers.isLighterColor(Medium.target.killerIfExisting) ? "lighter" : "darker";
             var timeSinceDeath = (float)(meetingStartTime - Medium.target.timeOfDeath).TotalMilliseconds;
             var roleString = RoleInfo.GetRolesString(Medium.target.player, false);
@@ -145,12 +145,12 @@ public static class Medium
             }
         }
 
-        if (TheOtherRoles.rnd.NextDouble() < chanceAdditionalInfo)
+        if (ListHelper.rnd.NextDouble() < chanceAdditionalInfo)
         {
             var count = 0;
             var condition = "";
             var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
-            switch (TheOtherRoles.rnd.Next(3))
+            switch (ListHelper.Random(3))
             {
                 case 0:
                     count = alivePlayersList.Where(pc =>

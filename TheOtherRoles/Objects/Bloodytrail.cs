@@ -19,12 +19,14 @@ internal class Bloodytrail
     {
         color = Palette.PlayerColors[bloodyPlayer.Data.DefaultOutfit.ColorId];
         var sp = getBloodySprites();
-        var index = TheOtherRoles.rnd.Next(0, sp.Count);
+        var index = sp.Random();
 
 
         blood = new GameObject("Blood" + index);
-        var position = new Vector3(player.transform.position.x, player.transform.position.y,
-            (player.transform.position.y / 1000) + 0.001f);
+        var transform = player.transform;
+        var position1 = transform.position;
+        var position = new Vector3(position1.x, position1.y,
+            (position1.y / 1000) + 0.001f);
         blood.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
         blood.transform.position = position;
         blood.transform.localPosition = position;

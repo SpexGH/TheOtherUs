@@ -948,7 +948,7 @@ internal class MeetingHudPatch
                 {
                     if (!trap.revealed) continue;
                     var message = $"Trap {trap.instanceId}: \n";
-                    trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
+                    trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => ListHelper.rnd.Next()).ToList();
                     foreach (var p in trap.trappedPlayer)
                         if (Trapper.infoType == 0)
                         {

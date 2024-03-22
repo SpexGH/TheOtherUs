@@ -28,8 +28,7 @@ public static class EventUtility
 
     public static void Update()
     {
-        if (!isEnabled || AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started || rnd == null ||
-            IntroCutscene.Instance) return;
+        if (!isEnabled || AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started || IntroCutscene.Instance) return;
     }
 
     public static void meetingEndsUpdate()
