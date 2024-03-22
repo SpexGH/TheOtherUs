@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static class Trapper {
+public static class Trapper
+{
     public static PlayerControl trapper;
     public static Color color = new Color32(110, 57, 105, byte.MaxValue);
 
@@ -13,20 +14,22 @@ public static class Trapper {
     public static int rechargedTasks = 3;
     public static int charges = 1;
     public static int trapCountToReveal = 2;
-    public static List<PlayerControl> playersOnMap = new List<PlayerControl>();
-    public static bool anonymousMap = false;
-    public static int infoType = 0; // 0 = Role, 1 = Good/Evil, 2 = Name
-    public static float trapDuration = 5f; 
+    public static List<PlayerControl> playersOnMap = new();
+    public static bool anonymousMap;
+    public static int infoType; // 0 = Role, 1 = Good/Evil, 2 = Name
+    public static float trapDuration = 5f;
 
     private static Sprite trapButtonSprite;
 
-    public static Sprite getButtonSprite() {
+    public static Sprite getButtonSprite()
+    {
         if (trapButtonSprite) return trapButtonSprite;
         trapButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Trapper_Place_Button.png", 115f);
         return trapButtonSprite;
     }
 
-    public static void clearAndReload() {
+    public static void clearAndReload()
+    {
         trapper = null;
         cooldown = CustomOptionHolder.trapperCooldown.getFloat();
         maxCharges = Mathf.RoundToInt(CustomOptionHolder.trapperMaxCharges.getFloat());

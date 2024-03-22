@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static class Sidekick {
+public static class Sidekick
+{
     public static PlayerControl sidekick;
     public static Color color = new Color32(0, 180, 235, byte.MaxValue);
 
@@ -16,9 +17,10 @@ public static class Sidekick {
     public static bool canUseVents = true;
     public static bool canKill = true;
     public static bool promotesToJackal = true;
-    public static bool hasImpostorVision = false;
+    public static bool hasImpostorVision;
 
-    public static void clearAndReload() {
+    public static void clearAndReload()
+    {
         sidekick = null;
         currentTarget = null;
         cooldown = CustomOptionHolder.jackalKillCooldown.getFloat();

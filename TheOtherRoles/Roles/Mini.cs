@@ -3,20 +3,22 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static class Mini {
-    public static PlayerControl mini;
-    public static Color color = Color.yellow;
+public static class Mini
+{
     public const float defaultColliderRadius = 0.2233912f;
     public const float defaultColliderOffset = 0.3636057f;
+    public static PlayerControl mini;
+    public static Color color = Color.yellow;
 
     public static float growingUpDuration = 400f;
     public static bool isGrowingUpInMeeting = true;
     public static DateTime timeOfGrowthStart = DateTime.UtcNow;
     public static DateTime timeOfMeetingStart = DateTime.UtcNow;
     public static float ageOnMeetingStart = 0f;
-    public static bool triggerMiniLose = false;
+    public static bool triggerMiniLose;
 
-    public static void clearAndReload() {
+    public static void clearAndReload()
+    {
         mini = null;
         triggerMiniLose = false;
         growingUpDuration = CustomOptionHolder.modifierMiniGrowingUpDuration.getFloat();
@@ -24,13 +26,14 @@ public static class Mini {
         timeOfGrowthStart = DateTime.UtcNow;
     }
 
-    public static float growingProgress() {
-        float timeSinceStart = (float)(DateTime.UtcNow - timeOfGrowthStart).TotalMilliseconds;
+    public static float growingProgress()
+    {
+        var timeSinceStart = (float)(DateTime.UtcNow - timeOfGrowthStart).TotalMilliseconds;
         return Mathf.Clamp(timeSinceStart / (growingUpDuration * 1000), 0f, 1f);
     }
 
-    public static bool isGrownUp() {
+    public static bool isGrownUp()
+    {
         return growingProgress() == 1f;
     }
-
 }

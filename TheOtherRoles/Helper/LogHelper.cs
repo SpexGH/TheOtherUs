@@ -13,7 +13,10 @@ internal static class LogHelper
 {
     private static ManualLogSource logSource { get; set; }
 
-    internal static void SetLogSource(ManualLogSource Source) => logSource = Source;
+    internal static void SetLogSource(ManualLogSource Source)
+    {
+        logSource = Source;
+    }
 
     /// <summary>
     ///     一般信息
@@ -107,13 +110,17 @@ internal static class LogHelper
 internal static class LogListener
 {
     [HarmonyTargetMethods]
-    private static IEnumerable<MethodBase> taregetMethodBases() => typeof(AmongUsClient).Assembly.GetTypes()
-        .Where(n => n.IsSubclassOf(typeof(InnerNetObject)))
-        .Select(x => x.GetMethod(nameof(InnerNetObject.HandleRpc), AccessTools.allDeclared))
-        .Where(m => m != null);
-    
+    private static IEnumerable<MethodBase> taregetMethodBases()
+    {
+        return typeof(AmongUsClient).Assembly.GetTypes()
+            .Where(n => n.IsSubclassOf(typeof(InnerNetObject)))
+            .Select(x => x.GetMethod(nameof(InnerNetObject.HandleRpc), AccessTools.allDeclared))
+            .Where(m => m != null);
+    }
+
     [HarmonyPostfix]
-    internal static void OnRpc(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
+    internal static void OnRpc(InnerNetObject __instance, [HarmonyArgument(0)] byte callId,
+        [HarmonyArgument(1)] MessageReader reader)
     {
         Info($"{__instance.name} {callId} {reader.Length} {reader.Tag}");
     }

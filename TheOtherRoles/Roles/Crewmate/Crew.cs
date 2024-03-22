@@ -1,12 +1,14 @@
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-
-public static class Crew {
+public class Crew
+{
     public static PlayerControl crew;
     public static Color color = Palette.White;
-    public static void clearAndReload() {
+
+    public void clearAndReload()
+    {
         crew = null;
-    } 
+    }
 }

@@ -1,4 +1,3 @@
-using System.Linq;
 using Hazel;
 using TheOtherRoles.Players;
 
@@ -6,19 +5,19 @@ namespace TheOtherRoles.Helper;
 
 internal class FastRpcWriter(MessageWriter writer)
 {
-     private byte CallId;
+    private readonly RPCSendMode _rpcSendMode;
+    private byte CallId;
 
     private int msgCount;
 
     private SendOption Option;
 
-    private RPCSendMode _rpcSendMode;
-
     private int SendTargetId;
 
     private uint targetObjectId;
-    
-    private FastRpcWriter(SendOption option, RPCSendMode mode = RPCSendMode.SendToAll, int TargetId = -1, uint ObjectId = 255) : this(MessageWriter.Get(option))
+
+    private FastRpcWriter(SendOption option, RPCSendMode mode = RPCSendMode.SendToAll, int TargetId = -1,
+        uint ObjectId = 255) : this(MessageWriter.Get(option))
     {
         Option = option;
         _rpcSendMode = mode;
@@ -26,22 +25,24 @@ internal class FastRpcWriter(MessageWriter writer)
         SetTargetObjectId(ObjectId);
     }
 
-    private static FastRpcWriter StartNew(SendOption option = SendOption.Reliable, RPCSendMode mode = RPCSendMode.SendToAll, int TargetId = -1, uint targetObjectId = 255)
+    private static FastRpcWriter StartNew(SendOption option = SendOption.Reliable,
+        RPCSendMode mode = RPCSendMode.SendToAll, int TargetId = -1, uint targetObjectId = 255)
     {
         return new FastRpcWriter(option, mode, TargetId, targetObjectId);
     }
-    
-    internal static FastRpcWriter StartNewRpcWriter(CustomRPC rpc, SendOption option = SendOption.Reliable, RPCSendMode mode = RPCSendMode.SendToAll, int TargetId = -1, uint targetObjectId = 255)
+
+    internal static FastRpcWriter StartNewRpcWriter(CustomRPC rpc, SendOption option = SendOption.Reliable,
+        RPCSendMode mode = RPCSendMode.SendToAll, int TargetId = -1, uint targetObjectId = 255)
     {
         var writer = StartNew(option, mode, TargetId, targetObjectId);
         writer.SetRpcCallId(rpc);
-        
+
         if (mode == RPCSendMode.SendToAll)
             writer.StartDataAllMessage();
 
         if (mode == RPCSendMode.SendToPlayer)
             writer.StartDataToPlayerMessage();
-        
+
         writer.StartRPCMessage();
         return writer;
     }
@@ -81,7 +82,7 @@ internal class FastRpcWriter(MessageWriter writer)
         targetObjectId = id;
         return this;
     }
-    
+
     public FastRpcWriter SetRpcCallId(CustomRPC id)
     {
         CallId = (byte)id;
@@ -98,7 +99,7 @@ internal class FastRpcWriter(MessageWriter writer)
     {
         if (id == -1)
             return this;
-        
+
         SendTargetId = id;
         return this;
     }
@@ -143,24 +144,25 @@ internal class FastRpcWriter(MessageWriter writer)
     public FastRpcWriter Write(params object[] objects)
     {
         if (objects == null) return this;
-        
+
         foreach (var obj in objects)
         {
             if (obj is byte _byte)
                 writer.Write(_byte);
-            
+
             if (obj is string _string)
                 writer.Write(_string);
-            
+
             if (obj is float _float)
                 writer.Write(_float);
-            
+
             if (obj is int _int)
                 writer.Write(_int);
-            
+
             if (obj is bool _bool)
                 writer.Write(_bool);
         }
+
         return this;
     }
 
@@ -212,7 +214,7 @@ internal class FastRpcWriter(MessageWriter writer)
 
     public void EndAllMessage()
     {
-        while (msgCount > 0) 
+        while (msgCount > 0)
             EndMessage();
     }
 

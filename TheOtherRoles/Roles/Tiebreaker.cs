@@ -1,11 +1,13 @@
 namespace TheOtherRoles;
 
-public static class Tiebreaker {
+public static class Tiebreaker
+{
     public static PlayerControl tiebreaker;
 
-    public static bool isTiebreak = false;
+    public static bool isTiebreak;
 
-    public static void clearAndReload() {
+    public static void clearAndReload()
+    {
         tiebreaker = null;
         isTiebreak = false;
     }

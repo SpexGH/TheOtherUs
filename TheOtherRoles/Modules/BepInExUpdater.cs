@@ -2,14 +2,11 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using BepInEx;
-using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using UnityEngine;
@@ -20,7 +17,10 @@ namespace TheOtherRoles.Modules;
 public class BepInExUpdater : MonoBehaviour
 {
     public const string RequiredBepInExVersion = "6.0.0-be.688+49015217f3becf052d33fa4658ac19229f5daa3a";
-    public const string BepInExDownloadURL = "https://builds.bepinex.dev/projects/bepinex_be/688/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.688%2B4901521.zip";
+
+    public const string BepInExDownloadURL =
+        "https://builds.bepinex.dev/projects/bepinex_be/688/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.688%2B4901521.zip";
+
     public static bool UpdateRequired => Paths.BepInExVersion.ToString() != RequiredBepInExVersion;
 
     public void Awake()
@@ -28,14 +28,14 @@ public class BepInExUpdater : MonoBehaviour
         Message("BepInEx Update Required...");
         Message($"{Paths.BepInExVersion}, {RequiredBepInExVersion} ");
         this.StartCoroutine(CoUpdate());
-
     }
 
     [HideFromIl2Cpp]
     public IEnumerator CoUpdate()
     {
-        Task.Run(() => MessageBox(GetForegroundWindow(), "Required BepInEx update is downloading, please wait...", "The Other Roles", 0));
-        UnityWebRequest www = UnityWebRequest.Get(BepInExDownloadURL);
+        Task.Run(() => MessageBox(GetForegroundWindow(), "Required BepInEx update is downloading, please wait...",
+            "The Other Roles", 0));
+        var www = UnityWebRequest.Get(BepInExDownloadURL);
         yield return www.Send();
         if (www.isNetworkError || www.isHttpError)
         {
@@ -67,10 +67,13 @@ public class BepInExUpdater : MonoBehaviour
 
     [DllImport("user32.dll")]
     public static extern IntPtr GetForegroundWindow();
+
     [DllImport("user32.dll")]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, int options);
+    public static extern int MessageBox(IntPtr hWnd, string text, string caption, int options);
+
     [DllImport("user32.dll")]
-    public static extern int MessageBoxTimeout(IntPtr hwnd, String text, String title, uint type, Int16 wLanguageId, Int32 milliseconds);
+    public static extern int MessageBoxTimeout(IntPtr hwnd, string text, string title, uint type, short wLanguageId,
+        int milliseconds);
 }
 
 [HarmonyPatch(typeof(SplashManager), nameof(SplashManager.Update))]

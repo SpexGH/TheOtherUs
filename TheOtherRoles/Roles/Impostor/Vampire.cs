@@ -2,36 +2,42 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static class Vampire {
+public static class Vampire
+{
     public static PlayerControl vampire;
     public static Color color = Palette.ImpostorRed;
 
     public static float delay = 10f;
     public static float cooldown = 30f;
     public static bool canKillNearGarlics = true;
-    public static bool localPlacedGarlic = false;
+    public static bool localPlacedGarlic;
     public static bool garlicsActive = true;
-    public static bool garlicButton = false;
+    public static bool garlicButton;
 
     public static PlayerControl currentTarget;
-    public static PlayerControl bitten; 
-    public static bool targetNearGarlic = false;
+    public static PlayerControl bitten;
+    public static bool targetNearGarlic;
 
     private static Sprite buttonSprite;
-    public static Sprite getButtonSprite() {
+
+    private static Sprite garlicButtonSprite;
+
+    public static Sprite getButtonSprite()
+    {
         if (buttonSprite) return buttonSprite;
         buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.VampireButton.png", 115f);
         return buttonSprite;
     }
 
-    private static Sprite garlicButtonSprite;
-    public static Sprite getGarlicButtonSprite() {
+    public static Sprite getGarlicButtonSprite()
+    {
         if (garlicButtonSprite) return garlicButtonSprite;
         garlicButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.GarlicButton.png", 115f);
         return garlicButtonSprite;
     }
 
-    public static void clearAndReload() {
+    public static void clearAndReload()
+    {
         vampire = null;
         bitten = null;
         targetNearGarlic = false;

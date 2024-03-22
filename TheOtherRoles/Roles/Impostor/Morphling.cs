@@ -2,28 +2,31 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static class Morphling {
+public static class Morphling
+{
     public static PlayerControl morphling;
     public static Color color = Palette.ImpostorRed;
     private static Sprite sampleSprite;
     private static Sprite morphSprite;
-    
+
     public static float cooldown = 30f;
     public static float duration = 10f;
 
     public static PlayerControl currentTarget;
     public static PlayerControl sampledTarget;
     public static PlayerControl morphTarget;
-    public static float morphTimer = 0f;
+    public static float morphTimer;
 
-    public static void resetMorph() {
+    public static void resetMorph()
+    {
         morphTarget = null;
         morphTimer = 0f;
         if (morphling == null) return;
         morphling.setDefaultLook();
     }
 
-    public static void clearAndReload() {
+    public static void clearAndReload()
+    {
         resetMorph();
         morphling = null;
         currentTarget = null;
@@ -34,13 +37,15 @@ public static class Morphling {
         duration = CustomOptionHolder.morphlingDuration.getFloat();
     }
 
-    public static Sprite getSampleSprite() {
+    public static Sprite getSampleSprite()
+    {
         if (sampleSprite) return sampleSprite;
         sampleSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.SampleButton.png", 115f);
         return sampleSprite;
     }
 
-    public static Sprite getMorphSprite() {
+    public static Sprite getMorphSprite()
+    {
         if (morphSprite) return morphSprite;
         morphSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.MorphButton.png", 115f);
         return morphSprite;

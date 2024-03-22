@@ -3,17 +3,18 @@ using UnityEngine;
 
 namespace TheOtherRoles;
 
-public static class Hacker {
+public static class Hacker
+{
     public static PlayerControl hacker;
-    public static Minigame vitals = null;
-    public static Minigame doorLog = null;
+    public static Minigame vitals;
+    public static Minigame doorLog;
     public static Color color = new Color32(117, 250, 76, byte.MaxValue);
 
     public static float cooldown = 30f;
     public static float duration = 10f;
     public static float toolsNumber = 5f;
-    public static bool onlyColorType = false;
-    public static float hackerTimer = 0f;
+    public static bool onlyColorType;
+    public static float hackerTimer;
     public static int rechargeTasksNumber = 2;
     public static int rechargedTasks = 2;
     public static int chargesVitals = 1;
@@ -25,36 +26,53 @@ public static class Hacker {
     private static Sprite logSprite;
     private static Sprite adminSprite;
 
-    public static Sprite getButtonSprite() {
+    public static Sprite getButtonSprite()
+    {
         if (buttonSprite) return buttonSprite;
         buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.HackerButton.png", 115f);
         return buttonSprite;
     }
 
-    public static Sprite getVitalsSprite() {
+    public static Sprite getVitalsSprite()
+    {
         if (vitalsSprite) return vitalsSprite;
-        vitalsSprite = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.VitalsButton].Image;
+        vitalsSprite = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.VitalsButton]
+            .Image;
         return vitalsSprite;
     }
 
-    public static Sprite getLogSprite() {
+    public static Sprite getLogSprite()
+    {
         if (logSprite) return logSprite;
-        logSprite = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.DoorLogsButton].Image;
+        logSprite = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.DoorLogsButton]
+            .Image;
         return logSprite;
     }
 
-    public static Sprite getAdminSprite() {
-        byte mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
-        UseButtonSettings button = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.PolusAdminButton]; // Polus
-        if (Helpers.isSkeld() || mapId == 3) button = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.AdminMapButton]; // Skeld || Dleks
-        else if (Helpers.isMira()) button = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.MIRAAdminButton]; // Mira HQ
-        else if (Helpers.isAirship()) button = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.AirshipAdminButton]; // Airship
-        else if (Helpers.isFungle()) button = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.AdminMapButton];  // Hacker can Access the Admin panel on Fungle
+    public static Sprite getAdminSprite()
+    {
+        var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
+        var button =
+            FastDestroyableSingleton<HudManager>.Instance.UseButton
+                .fastUseSettings[ImageNames.PolusAdminButton]; // Polus
+        if (Helpers.isSkeld() || mapId == 3)
+            button = FastDestroyableSingleton<HudManager>.Instance.UseButton
+                .fastUseSettings[ImageNames.AdminMapButton]; // Skeld || Dleks
+        else if (Helpers.isMira())
+            button = FastDestroyableSingleton<HudManager>.Instance.UseButton
+                .fastUseSettings[ImageNames.MIRAAdminButton]; // Mira HQ
+        else if (Helpers.isAirship())
+            button = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[
+                ImageNames.AirshipAdminButton]; // Airship
+        else if (Helpers.isFungle())
+            button = FastDestroyableSingleton<HudManager>.Instance.UseButton
+                .fastUseSettings[ImageNames.AdminMapButton]; // Hacker can Access the Admin panel on Fungle
         adminSprite = button.Image;
         return adminSprite;
     }
 
-    public static void clearAndReload() {
+    public static void clearAndReload()
+    {
         hacker = null;
         vitals = null;
         doorLog = null;

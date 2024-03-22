@@ -7,11 +7,10 @@ namespace TheOtherRoles.Modules;
 internal class LanguageManager : ManagerBase<LanguageManager>
 {
     internal SupportedLangs? CurrentLang;
-    private bool Loaded = false;
-    
+    private bool Loaded;
+
     private async void Load()
     {
-        
     }
 
     internal void LoadLanguage()
@@ -20,7 +19,7 @@ internal class LanguageManager : ManagerBase<LanguageManager>
             return;
 
         CurrentLang ??= (SupportedLangs)LegacySaveManager.LastLanguage;
-        
+
         Task.Run(Load);
         Loaded = true;
     }
@@ -29,7 +28,7 @@ internal class LanguageManager : ManagerBase<LanguageManager>
     {
         if (!Loaded)
             LoadLanguage();
-        
+
         return $"null {Key}";
     }
 }
@@ -37,16 +36,23 @@ internal class LanguageManager : ManagerBase<LanguageManager>
 [Harmony]
 internal static class LanguageExtension
 {
-    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.Initialize)), HarmonyPostfix]
+    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.Initialize))]
+    [HarmonyPostfix]
     private static void OnTranslationController_Initialize(TranslationController __instance)
     {
         LanguageManager.Instance.CurrentLang = __instance.currentLanguage.languageID;
         LanguageManager.Instance.LoadLanguage();
     }
-    
-    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.SetLanguage)), HarmonyPrefix]
-    private static void OnTranslationController_SetLanguage([HarmonyArgument(0)]TranslatedImageSet lang) => 
-        LanguageManager.Instance.CurrentLang = lang.languageID;
 
-    internal static string Translate(this string key) => LanguageManager.Instance.GetString(key);
+    [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.SetLanguage))]
+    [HarmonyPrefix]
+    private static void OnTranslationController_SetLanguage([HarmonyArgument(0)] TranslatedImageSet lang)
+    {
+        LanguageManager.Instance.CurrentLang = lang.languageID;
+    }
+
+    internal static string Translate(this string key)
+    {
+        return LanguageManager.Instance.GetString(key);
+    }
 }

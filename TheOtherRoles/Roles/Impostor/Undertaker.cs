@@ -7,13 +7,14 @@ public static class Undertaker
     public static PlayerControl undertaker;
     public static Color color = Palette.ImpostorRed;
 
-    public static float dragingDelaiAfterKill = 0f;
+    public static float dragingDelaiAfterKill;
 
-    public static bool isDraging = false;
-    public static DeadBody deadBodyDraged = null;
-    public static bool canDragAndVent = false;
-        
+    public static bool isDraging;
+    public static DeadBody deadBodyDraged;
+    public static bool canDragAndVent;
+
     private static Sprite buttonSprite;
+
     public static Sprite getButtonSprite()
     {
         if (buttonSprite) return buttonSprite;

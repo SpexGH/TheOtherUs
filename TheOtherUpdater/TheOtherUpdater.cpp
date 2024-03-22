@@ -25,12 +25,12 @@ string GetArgument(int argc, char* argv[], string match)
     throw invalid_argument("Missing Argument: " + match);
 }
 
-int on_extract_entry(const char *_, void *__)
+int on_extract_entry(const char* _, void* __)
 {
     return 0;
 }
 
-bool IsProcessRunning(const wchar_t *processName)
+bool IsProcessRunning(const wchar_t* processName)
 {
     bool exists = false;
     PROCESSENTRY32 entry;
@@ -52,16 +52,17 @@ int main(int argc, char* argv[])
 {
     auto gamePath = GetArgument(argc, argv, "--game-path");
     auto zipPath = GetArgument(argc, argv, "--zip");
-    const wstring processName( L"Among Us.exe" );
-    
-    while(IsProcessRunning(processName.c_str()))
+    const wstring processName(L"Among Us.exe");
+
+    while (IsProcessRunning(processName.c_str()))
     {
         this_thread::sleep_for(200ms);
     }
-    
+
     int argzip = 0;
     zip_extract(zipPath.c_str(), gamePath.c_str(), on_extract_entry, &argzip);
 
     remove(zipPath.c_str());
-    MessageBoxW(NULL, L"An update has been queued, please restart your game!", L"The Other Roles - Updater", MB_ICONINFORMATION | MB_OK);
+    MessageBoxW(nullptr, L"An update has been queued, please restart your game!", L"The Other Roles - Updater",
+                MB_ICONINFORMATION | MB_OK);
 }

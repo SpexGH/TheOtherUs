@@ -23,7 +23,7 @@ public static class HandshakeHelper
             .Write((byte)TORMapOptions.gameMode)
             .RPCSend();
     }
-    
+
     public static void shareGameVersion()
     {
         versionHandshake(Main.Version.Major, Main.Version.Minor,
@@ -147,11 +147,10 @@ public class AgainInfo
 
     public void Send(HandshakeHelper.ShareMode mode)
     {
-            
         Info($"again send mode:{mode} id:{playerId}");
 
         if (AmongUsClient.Instance == null || CachedPlayer.LocalPlayer.PlayerControl == null) return;
-        
+
         var writer = FastRpcWriter.StartNewRpcWriter(CustomRPC.VersionHandshakeEx, mode: RPCSendMode.SendToPlayer)
             .WritePacked(AmongUsClient.Instance.ClientId)
             .Write((byte)HandshakeHelper.ShareMode.Again)
@@ -163,12 +162,12 @@ public class AgainInfo
 public class PlayerVersion(Version version)
 {
     public Version version { get; private set; } = version;
-    
+
     public int PlayerId { get; internal set; }
     public Guid? guid { get; internal set; }
 
-    public bool GuidMatches() 
+    public bool GuidMatches()
     {
-        return Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.Equals(this.guid);
+        return Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.Equals(guid);
     }
 }

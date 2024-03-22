@@ -29,10 +29,7 @@ public class HatsLoader : MonoBehaviour
         www.downloadHandler = new DownloadHandlerBuffer();
         var operation = www.SendWebRequest();
 
-        while (!operation.isDone)
-        {
-            yield return new WaitForEndOfFrame();
-        }
+        while (!operation.isDone) yield return new WaitForEndOfFrame();
 
         if (www.isNetworkError || www.isHttpError)
         {
@@ -54,10 +51,7 @@ public class HatsLoader : MonoBehaviour
 
         Message($"I'll download {toDownload.Count} hat files");
 
-        foreach (var fileName in toDownload)
-        {
-            yield return CoDownloadHatAsset(fileName);
-        }
+        foreach (var fileName in toDownload) yield return CoDownloadHatAsset(fileName);
 
         isRunning = false;
     }
@@ -72,10 +66,7 @@ public class HatsLoader : MonoBehaviour
         www.downloadHandler = new DownloadHandlerBuffer();
         var operation = www.SendWebRequest();
 
-        while (!operation.isDone)
-        {
-            yield return new WaitForEndOfFrame();
-        }
+        while (!operation.isDone) yield return new WaitForEndOfFrame();
 
         if (www.isNetworkError || www.isHttpError)
         {
