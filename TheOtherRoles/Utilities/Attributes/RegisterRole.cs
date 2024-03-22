@@ -4,11 +4,11 @@ using System.Reflection;
 using HarmonyLib;
 using TheOtherRoles.Roles;
 
-namespace TheOtherRoles.Utilities.Attribute;
+namespace TheOtherRoles.Utilities.Attributes;
 
 [MeansImplicitUse]
 [AttributeUsage(AttributeTargets.Class)]
-public class RegisterRole(bool isTemplate = false) : System.Attribute
+public class RegisterRole(bool isTemplate = false) : Attribute
 {
     public bool IsTemplate = isTemplate;
     

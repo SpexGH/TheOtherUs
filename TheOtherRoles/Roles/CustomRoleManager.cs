@@ -10,6 +10,8 @@ public class CustomRoleManager : ManagerBase<CustomRoleManager>
 
     public readonly List<RoleBase> _AllActiveRole = [];
 
+    public readonly Dictionary<RoleBase, List<PlayerControl>> PlayerAndRoles = new();
+
     public RoleBase LocalRoleBase;
 
     public void Register(RoleBase role)

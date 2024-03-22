@@ -2,7 +2,7 @@ extern alias JetBrains;
 global using TheOtherRoles.Modules;
 global using TheOtherRoles.Helper;
 global using TheOtherRoles.Utilities;
-global using TheOtherRoles.Utilities.Attribute;
+global using TheOtherRoles.Utilities.Attributes;
 global using Main = TheOtherRoles.TheOtherRolesPlugin;
 global using UsedImplicitly = JetBrains::JetBrains.Annotations.UsedImplicitlyAttribute;
 global using MeansImplicitUse = JetBrains::JetBrains.Annotations.MeansImplicitUseAttribute;

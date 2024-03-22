@@ -6,6 +6,7 @@ using Hazel;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Patches;
+using TheOtherRoles.Roles;
 using TheOtherRoles.Roles.Crewmate;
 using TheOtherRoles.Roles.Impostor;
 using TMPro;
@@ -19,7 +20,7 @@ namespace TheOtherRoles;
 internal static class HudManagerStartPatch
 {
     private static bool initialized;
-
+    
     public static CustomButton engineerRepairButton;
     private static CustomButton janitorCleanButton;
     public static CustomButton sheriffKillButton;
@@ -109,6 +110,20 @@ internal static class HudManagerStartPatch
     public static TMP_Text huntedShieldCountText;
     public static TMP_Text disperserChargesText;
 
+
+    private static bool Loaded;
+    [HarmonyPatch(typeof(RoleBehaviour), nameof(RoleBehaviour.Initialize)), HarmonyPostfix]
+    internal static void OnRoleBehaviour_Initialize()
+    {
+        if (Loaded)
+            return;
+        
+        CustomRoleManager.Instance.LocalRoleBase.ButtonCreate();
+
+        Loaded = true;
+    }
+    
+    
     public static void setCustomButtonCooldowns()
     {
         if (!initialized)
