@@ -1,6 +1,5 @@
 ﻿using System;
 using HarmonyLib;
-using TheOtherRoles.Players;
 
 namespace TheOtherRoles.Patches;
 

@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using HarmonyLib;
 using TheOtherRoles.CustomGameModes;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;

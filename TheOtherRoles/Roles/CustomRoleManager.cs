@@ -14,7 +14,13 @@ public class CustomRoleManager : ManagerBase<CustomRoleManager>
         _RoleBases.Add(role);
     }
 
-    public T Get<T>() where T : RoleBase => _RoleBases.FirstOrDefault(n => n is T) as T;
+    public T Get<T>() where T : RoleBase
+    {
+        return _RoleBases.FirstOrDefault(n => n is T) as T;
+    }
 
-    public T Get<T>(Type type) where T : RoleBase => _RoleBases.FirstOrDefault(n => n.RoleType == type) as T;
+    public T Get<T>(Type type) where T : RoleBase
+    {
+        return _RoleBases.FirstOrDefault(n => n.RoleType == type) as T;
+    }
 }

@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using HarmonyLib;
 using InnerNet;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles.Modules;

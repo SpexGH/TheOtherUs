@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using InnerNet;
 using TheOtherRoles.CustomGameModes;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 

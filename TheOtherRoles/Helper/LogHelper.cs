@@ -109,15 +109,9 @@ internal static class LogHelper
     public static void InitConsole()
     {
 #if DEBUG
-        if (!ConsoleManager.ConsoleEnabled)
-        {
-            ConsoleManager.CreateConsole();
-        }
+        if (!ConsoleManager.ConsoleEnabled) ConsoleManager.CreateConsole();
 
-        if (!Equals(System.Console.OutputEncoding, Encoding.UTF8))
-        {
-            System.Console.OutputEncoding = Encoding.UTF8;
-        }
+        if (!Equals(System.Console.OutputEncoding, Encoding.UTF8)) System.Console.OutputEncoding = Encoding.UTF8;
 #endif
 #if RELEASE
         if (ConsoleManager.ConsoleEnabled)

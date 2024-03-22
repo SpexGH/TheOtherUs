@@ -5,8 +5,6 @@ using HarmonyLib;
 using Hazel;
 using InnerNet;
 using Reactor.Utilities.Extensions;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;

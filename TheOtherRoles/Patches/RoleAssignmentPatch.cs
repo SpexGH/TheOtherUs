@@ -5,9 +5,7 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using TheOtherRoles.CustomGameModes;
-using TheOtherRoles.Players;
 using UnityEngine;
-using static TheOtherRoles.TheOtherRoles;
 
 namespace TheOtherRoles.Patches;
 
@@ -163,7 +161,8 @@ internal class RoleManagerSelectRolesPatch
         neutralSettings.Add((byte)RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.getSelection());
         neutralSettings.Add((byte)RoleId.Thief, CustomOptionHolder.thiefSpawnRate.getSelection());
 
-        if (ListHelper.Random(1, 101) <= CustomOptionHolder.lawyerIsProsecutorChance.getSelection() * 10) // Lawyer or Prosecutor
+        if (ListHelper.Random(1, 101) <=
+            CustomOptionHolder.lawyerIsProsecutorChance.getSelection() * 10) // Lawyer or Prosecutor
             neutralSettings.Add((byte)RoleId.Prosecutor, CustomOptionHolder.lawyerSpawnRate.getSelection());
         else
             neutralSettings.Add((byte)RoleId.Lawyer, CustomOptionHolder.lawyerSpawnRate.getSelection());
@@ -606,7 +605,8 @@ internal class RoleManagerSelectRolesPatch
         if (ListHelper.Random(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10)
         {
             // Assign lover
-            var isEvilLover = ListHelper.Random(1, 101) <= CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10;
+            var isEvilLover = ListHelper.Random(1, 101) <=
+                              CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10;
             byte firstLoverId;
             //List<PlayerControl> impPlayer = new List<PlayerControl>(players);
             //List<PlayerControl> impPlayerL = new List<PlayerControl>(players);

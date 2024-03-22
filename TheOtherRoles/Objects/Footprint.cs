@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Reactor.Utilities.Attributes;
+using TheOtherRoles.Roles.Crewmate;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace TheOtherRoles.Objects;
 
-public class FootprintHolder : MonoBehaviour
+[RegisterInIl2Cpp]
+public class FootprintHolder(IntPtr ptr) : MonoBehaviour(ptr)
 {
     private static FootprintHolder _instance;
 
@@ -18,15 +21,6 @@ public class FootprintHolder : MonoBehaviour
 
     private readonly ConcurrentBag<Footprint> _pool = new();
     private readonly List<Footprint> _toRemove = new();
-
-    static FootprintHolder()
-    {
-        ClassInjector.RegisterTypeInIl2Cpp<FootprintHolder>();
-    }
-
-    public FootprintHolder(IntPtr ptr) : base(ptr)
-    {
-    }
 
     public static FootprintHolder Instance
     {
@@ -105,12 +99,12 @@ public class FootprintHolder : MonoBehaviour
 
     private class Footprint
     {
-        public GameData.PlayerInfo Data;
         public readonly GameObject GameObject;
-        public float Lifetime;
-        public PlayerControl Owner;
         public readonly SpriteRenderer Renderer;
         public readonly Transform Transform;
+        public GameData.PlayerInfo Data;
+        public float Lifetime;
+        public PlayerControl Owner;
 
         public Footprint()
         {

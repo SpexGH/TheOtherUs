@@ -5,8 +5,8 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
+using Reactor.Utilities.Attributes;
 using TheOtherRoles.Patches;
-using TheOtherRoles.Players;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Version = SemanticVersioning.Version;
@@ -80,9 +80,9 @@ public static class SubmergedCompatibility
 
             var pluginType = Assembly.GetTypes().FirstOrDefault(t => t.IsSubclassOf(typeof(BasePlugin)));
             Plugin = (BasePlugin)Activator.CreateInstance(pluginType!);
-            Plugin.Load();
+            Plugin?.Load();
 
-            Version = pluginType.GetCustomAttribute<BepInPlugin>().Version.BaseVersion();
+            Version = pluginType.GetCustomAttribute<BepInPlugin>()?.Version.BaseVersion();
             ;
 
             IL2CPPChainloader.Instance.Plugins[SUBMERGED_GUID] = new PluginInfo();
@@ -173,7 +173,7 @@ public static class SubmergedCompatibility
     public static bool getInTransition()
     {
         if (!Loaded) return false;
-        return (bool)InTransitionField.GetValue(null);
+        return (bool)InTransitionField.GetValue(null)!;
     }
 
     public static void RepairOxygen()
@@ -197,14 +197,5 @@ public static class SubmergedCompatibility
     }
 }
 
-public class MissingSubmergedBehaviour : MonoBehaviour
-{
-    static MissingSubmergedBehaviour()
-    {
-        ClassInjector.RegisterTypeInIl2Cpp<MissingSubmergedBehaviour>();
-    }
-
-    public MissingSubmergedBehaviour(IntPtr ptr) : base(ptr)
-    {
-    }
-}
+[RegisterInIl2Cpp]
+public class MissingSubmergedBehaviour(IntPtr ptr) : MonoBehaviour(ptr);

@@ -1,6 +1,5 @@
 using HarmonyLib;
 using InnerNet;
-using TheOtherRoles.Players;
 using UnityEngine;
 
 namespace TheOtherRoles.Patches;

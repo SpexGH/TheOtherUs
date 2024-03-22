@@ -1,7 +1,6 @@
 ﻿using System;
 using HarmonyLib;
 using InnerNet;
-using static TheOtherRoles.TheOtherRoles;
 
 namespace TheOtherRoles.Utilities;
 
@@ -28,7 +27,8 @@ public static class EventUtility
 
     public static void Update()
     {
-        if (!isEnabled || AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started || IntroCutscene.Instance) return;
+        if (!isEnabled || AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started ||
+            IntroCutscene.Instance) return;
     }
 
     public static void meetingEndsUpdate()

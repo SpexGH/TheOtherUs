@@ -1,39 +1,39 @@
-using TheOtherRoles.Utilities;
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-public static class Hacker
+[RegisterRole]
+public class Hacker : RoleBase
 {
-    public static PlayerControl hacker;
-    public static Minigame vitals;
-    public static Minigame doorLog;
-    public static Color color = new Color32(117, 250, 76, byte.MaxValue);
+    private Sprite adminSprite;
 
-    public static float cooldown = 30f;
-    public static float duration = 10f;
-    public static float toolsNumber = 5f;
-    public static bool onlyColorType;
-    public static float hackerTimer;
-    public static int rechargeTasksNumber = 2;
-    public static int rechargedTasks = 2;
-    public static int chargesVitals = 1;
-    public static int chargesAdminTable = 1;
-    public static bool cantMove = true;
+    private Sprite buttonSprite;
+    public bool cantMove = true;
+    public int chargesAdminTable = 1;
+    public int chargesVitals = 1;
+    public Color color = new Color32(117, 250, 76, byte.MaxValue);
 
-    private static Sprite buttonSprite;
-    private static Sprite vitalsSprite;
-    private static Sprite logSprite;
-    private static Sprite adminSprite;
+    public float cooldown = 30f;
+    public Minigame doorLog;
+    public float duration = 10f;
+    public PlayerControl hacker;
+    public float hackerTimer;
+    private Sprite logSprite;
+    public bool onlyColorType;
+    public int rechargedTasks = 2;
+    public int rechargeTasksNumber = 2;
+    public float toolsNumber = 5f;
+    public Minigame vitals;
+    private Sprite vitalsSprite;
 
-    public static Sprite getButtonSprite()
+    public Sprite getButtonSprite()
     {
         if (buttonSprite) return buttonSprite;
         buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.HackerButton.png", 115f);
         return buttonSprite;
     }
 
-    public static Sprite getVitalsSprite()
+    public Sprite getVitalsSprite()
     {
         if (vitalsSprite) return vitalsSprite;
         vitalsSprite = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.VitalsButton]
@@ -41,7 +41,7 @@ public static class Hacker
         return vitalsSprite;
     }
 
-    public static Sprite getLogSprite()
+    public Sprite getLogSprite()
     {
         if (logSprite) return logSprite;
         logSprite = FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.DoorLogsButton]
@@ -49,7 +49,7 @@ public static class Hacker
         return logSprite;
     }
 
-    public static Sprite getAdminSprite()
+    public Sprite getAdminSprite()
     {
         var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
         var button =
@@ -71,7 +71,7 @@ public static class Hacker
         return adminSprite;
     }
 
-    public static void clearAndReload()
+    public void clearAndReload()
     {
         hacker = null;
         vitals = null;

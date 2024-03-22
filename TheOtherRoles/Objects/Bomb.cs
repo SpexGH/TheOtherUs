@@ -1,7 +1,5 @@
 using System;
 using Hazel;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles.Objects;

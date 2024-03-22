@@ -1,37 +1,37 @@
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-public static class Engineer
+[RegisterRole]
+public class Engineer : RoleBase
 {
-    public static PlayerControl engineer;
-    public static Color color = new Color32(0, 40, 245, byte.MaxValue);
-    private static Sprite buttonSprite;
+    private Sprite buttonSprite;
+    public Color color = new Color32(0, 40, 245, byte.MaxValue);
+    public PlayerControl engineer;
+    public bool highlightForImpostors = true;
+    public bool highlightForTeamJackal = true;
+    public int remainingFixes = 1;
 
-    public static bool resetFixAfterMeeting;
+    public bool remoteFix = true;
 
-    //public static bool expertRepairs = false;
-    public static bool remoteFix = true;
-    public static int remainingFixes = 1;
-    public static bool highlightForImpostors = true;
-    public static bool highlightForTeamJackal = true;
+    public bool resetFixAfterMeeting;
 
-    public static bool usedFix;
+    public bool usedFix;
 
-    public static Sprite getButtonSprite()
+    public Sprite getButtonSprite()
     {
         if (buttonSprite) return buttonSprite;
         buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.RepairButton.png", 115f);
         return buttonSprite;
     }
 
-    public static void resetFixes()
+    public void resetFixes()
     {
         remainingFixes = Mathf.RoundToInt(CustomOptionHolder.engineerNumberOfFixes.getFloat());
         usedFix = false;
     }
 
-    public static void clearAndReload()
+    public void clearAndReload()
     {
         engineer = null;
         resetFixes();

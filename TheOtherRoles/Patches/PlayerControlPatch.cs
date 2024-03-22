@@ -10,12 +10,10 @@ using InnerNet;
 using Reactor.Utilities.Extensions;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
-using TheOtherRoles.Players;
+using TheOtherRoles.Roles.Crewmate;
 using TheOtherRoles.Roles.Impostor;
-using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
-using static TheOtherRoles.TheOtherRoles;
 using static TheOtherRoles.GameHistory;
 using Object = UnityEngine.Object;
 
@@ -1197,7 +1195,7 @@ public static class PlayerControlFixedUpdatePatch
         var truePosition = CachedPlayer.LocalPlayer.PlayerControl.GetTruePosition();
         var closestDistance = float.MaxValue;
         var usableDistance = MapUtilities.CachedShipStatus.AllVents.FirstOrDefault().UsableDistance;
-        foreach ((var dp, var ps) in Medium.deadBodies)
+        foreach (var (dp, ps) in Medium.deadBodies)
         {
             var distance = Vector2.Distance(ps, truePosition);
             if (distance <= usableDistance && distance < closestDistance)

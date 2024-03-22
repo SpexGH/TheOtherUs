@@ -16,8 +16,7 @@ using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Modules;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Patches;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
+using TheOtherRoles.Roles.Crewmate;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -322,13 +321,20 @@ public static class Helpers
             var texture = loadTextureFromResources(path);
             sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f),
                 pixelsPerUnit);
-            if (cache) sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
-            if (!cache) return sprite;
+            switch (cache)
+            {
+                case true:
+                    sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
+                    break;
+                case false:
+                    return sprite;
+            }
+
             return CachedSprites[path + pixelsPerUnit] = sprite;
         }
         catch
         {
-            System.Console.WriteLine("Error loading sprite from path: " + path);
+            Error("loading sprite from path: " + path);
         }
 
         return null;
@@ -350,7 +356,7 @@ public static class Helpers
         }
         catch
         {
-            System.Console.WriteLine("Error loading texture from resources: " + path);
+            Error("loading texture from resources: " + path);
         }
 
         return null;

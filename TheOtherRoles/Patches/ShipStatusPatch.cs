@@ -1,7 +1,7 @@
 using AmongUs.GameOptions;
 using HarmonyLib;
 using TheOtherRoles.CustomGameModes;
-using TheOtherRoles.Utilities;
+using TheOtherRoles.Roles.Crewmate;
 using UnityEngine;
 
 namespace TheOtherRoles.Patches;

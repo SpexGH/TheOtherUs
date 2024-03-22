@@ -4,9 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using InnerNet;
-using TheOtherRoles.Players;
+using TheOtherRoles.Roles.Crewmate;
 using TheOtherRoles.Roles.Impostor;
-using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles;

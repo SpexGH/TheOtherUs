@@ -1,36 +1,35 @@
 using System.Collections.Generic;
 using Hazel;
-using TheOtherRoles.Players;
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-public static class Deputy
+[RegisterRole]
+public class Deputy : RoleBase
 {
-    public static PlayerControl deputy;
-    public static Color color = Sheriff.color;
+    private Sprite buttonSprite;
+    public Color color = Sheriff.color;
 
-    public static PlayerControl currentTarget;
-    public static List<byte> handcuffedPlayers = new();
-    public static int promotesToSheriff; // No: 0, Immediately: 1, After Meeting: 2
-    public static bool keepsHandcuffsOnPromotion;
-    public static float handcuffDuration;
-    public static float remainingHandcuffs;
-    public static float handcuffCooldown;
-    public static bool knowsSheriff;
-    public static Dictionary<byte, float> handcuffedKnows = new();
+    public PlayerControl currentTarget;
+    public PlayerControl deputy;
+    public float handcuffCooldown;
+    public float handcuffDuration;
+    public Dictionary<byte, float> handcuffedKnows = new();
+    public List<byte> handcuffedPlayers = new();
+    private Sprite handcuffedSprite;
+    public bool keepsHandcuffsOnPromotion;
+    public bool knowsSheriff;
+    public int promotesToSheriff; // No: 0, Immediately: 1, After Meeting: 2
+    public float remainingHandcuffs;
 
-    private static Sprite buttonSprite;
-    private static Sprite handcuffedSprite;
-
-    public static Sprite getButtonSprite()
+    public Sprite getButtonSprite()
     {
         if (buttonSprite) return buttonSprite;
         buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.DeputyHandcuffButton.png", 115f);
         return buttonSprite;
     }
 
-    public static Sprite getHandcuffedButtonSprite()
+    public Sprite getHandcuffedButtonSprite()
     {
         if (handcuffedSprite) return handcuffedSprite;
         handcuffedSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.DeputyHandcuffed.png", 115f);
@@ -38,7 +37,7 @@ public static class Deputy
     }
 
     // Can be used to enable / disable the handcuff effect on the target's buttons
-    public static void setHandcuffedKnows(bool active = true, byte playerId = byte.MaxValue)
+    public void setHandcuffedKnows(bool active = true, byte playerId = byte.MaxValue)
     {
         if (playerId == byte.MaxValue)
             playerId = CachedPlayer.LocalPlayer.PlayerId;
@@ -65,7 +64,7 @@ public static class Deputy
         }
     }
 
-    public static void clearAndReload()
+    public void clearAndReload()
     {
         deputy = null;
         currentTarget = null;

@@ -3,7 +3,6 @@ using System.Linq;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using TheOtherRoles.CustomGameModes;
-using TheOtherRoles.Players;
 using UnityEngine;
 
 namespace TheOtherRoles.Patches;

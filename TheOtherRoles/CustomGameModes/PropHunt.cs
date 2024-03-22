@@ -8,8 +8,6 @@ using HarmonyLib;
 using Hazel;
 using Reactor.Utilities.Extensions;
 using TheOtherRoles.Patches;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;

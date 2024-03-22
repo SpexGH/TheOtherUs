@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Hazel;
 using TheOtherRoles.Patches;
-using TheOtherRoles.Players;
 
 namespace TheOtherRoles.Helper;
 

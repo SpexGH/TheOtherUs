@@ -1,8 +1,9 @@
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-public static class Lighter
+[RegisterRole]
+public class Lighter : RoleBase
 {
     public static PlayerControl lighter;
     public static Color color = new Color32(238, 229, 190, byte.MaxValue);

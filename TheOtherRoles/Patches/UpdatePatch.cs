@@ -5,8 +5,7 @@ using HarmonyLib;
 using InnerNet;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
+using TheOtherRoles.Roles.Crewmate;
 using UnityEngine;
 
 namespace TheOtherRoles.Patches;

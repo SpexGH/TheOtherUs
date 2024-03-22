@@ -4,8 +4,6 @@ using System.Linq;
 using HarmonyLib;
 using Reactor.Utilities.Extensions;
 using TheOtherRoles.Objects;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

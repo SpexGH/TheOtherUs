@@ -7,15 +7,11 @@ namespace TheOtherRoles.Modules;
 
 public class LanguageManager : ManagerBase<LanguageManager>
 {
+    private static readonly HashSet<LanguageLoaderBase> DefLoaders = new();
+
+    private readonly List<LanguageLoaderBase> _AllLoader = [];
     internal SupportedLangs? CurrentLang;
     private bool Loaded;
-
-    private List<LanguageLoaderBase> _AllLoader = [];
-
-    private static readonly HashSet<LanguageLoaderBase> DefLoaders = new()
-    {
-
-    };
 
     private async void Load()
     {
@@ -23,7 +19,7 @@ public class LanguageManager : ManagerBase<LanguageManager>
         {
             if (_AllLoader.Contains(_loader))
                 continue;
-            
+
             await _loader.Load(this);
             _AllLoader.Add(_loader);
         }
@@ -35,7 +31,6 @@ public class LanguageManager : ManagerBase<LanguageManager>
 
     internal void ReLoadLanguage()
     {
-        
     }
 
     internal void LoadLanguage()
@@ -44,7 +39,7 @@ public class LanguageManager : ManagerBase<LanguageManager>
             return;
 
         CurrentLang ??= (SupportedLangs)LegacySaveManager.LastLanguage;
-        
+
         Task.Run(Load);
         Loaded = true;
     }

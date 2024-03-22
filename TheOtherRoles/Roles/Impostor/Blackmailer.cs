@@ -4,15 +4,14 @@ namespace TheOtherRoles.Roles.Impostor;
 
 public class Blackmailer : RoleBase
 {
+    public bool alreadyShook = false;
+    private Sprite blackmailButtonSprite;
+    public PlayerControl blackmailed;
+    public Color blackmailedColor = Palette.White;
     public PlayerControl blackmailer;
     public Color color = Palette.ImpostorRed;
-    public Color blackmailedColor = Palette.White;
-
-    public bool alreadyShook = false;
-    public PlayerControl blackmailed;
-    public PlayerControl currentTarget;
     public float cooldown = 30f;
-    private Sprite blackmailButtonSprite;
+    public PlayerControl currentTarget;
     private Sprite overlaySprite;
 
     public Sprite getBlackmailOverlaySprite()

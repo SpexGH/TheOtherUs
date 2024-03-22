@@ -1,49 +1,50 @@
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-public static class Jumper
+[RegisterRole]
+public class Jumper : RoleBase
 {
-    public static PlayerControl jumper;
-    public static Color color = new Color32(204, 155, 20, byte.MaxValue); // mint
-
-    public static float jumperJumpTime = 30f;
-    public static float jumperChargesOnPlace = 1f;
-
-    public static bool resetPlaceAfterMeeting;
+    public Color color = new Color32(204, 155, 20, byte.MaxValue); // mint
+    private Sprite jumpButtonSprite;
+    public PlayerControl jumper;
 
     //    public static float jumperChargesGainOnMeeting = 2f;
     //public static float jumperMaxCharges = 3f;
-    public static float jumperCharges = 1f;
+    public float jumperCharges = 1f;
+    public float jumperChargesOnPlace = 1f;
 
-    public static Vector3 jumpLocation;
+    public float jumperJumpTime = 30f;
 
-    private static Sprite jumpMarkButtonSprite;
-    private static Sprite jumpButtonSprite;
-    public static bool usedPlace;
+    public Vector3 jumpLocation;
 
-    public static Sprite getJumpMarkButtonSprite()
+    private Sprite jumpMarkButtonSprite;
+
+    public bool resetPlaceAfterMeeting;
+    public bool usedPlace;
+
+    public Sprite getJumpMarkButtonSprite()
     {
         if (jumpMarkButtonSprite) return jumpMarkButtonSprite;
         jumpMarkButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.JumperButton.png", 115f);
         return jumpMarkButtonSprite;
     }
 
-    public static Sprite getJumpButtonSprite()
+    public Sprite getJumpButtonSprite()
     {
         if (jumpButtonSprite) return jumpButtonSprite;
         jumpButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.JumperJumpButton.png", 115f);
         return jumpButtonSprite;
     }
 
-    public static void resetPlaces()
+    public void resetPlaces()
     {
         jumperCharges = Mathf.RoundToInt(CustomOptionHolder.jumperChargesOnPlace.getFloat());
         jumpLocation = Vector3.zero;
         usedPlace = false;
     }
 
-    public static void clearAndReload()
+    public void clearAndReload()
     {
         resetPlaces();
         jumpLocation = Vector3.zero;

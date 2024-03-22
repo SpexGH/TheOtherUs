@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using Hazel;
-using TheOtherRoles.Players;
+using TheOtherRoles.Roles.Crewmate;
 using TMPro;
 using UnityEngine;
 using static TheOtherRoles.GameHistory;

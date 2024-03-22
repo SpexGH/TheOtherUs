@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using TheOtherRoles.Utilities;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -11,9 +10,9 @@ internal class NinjaTrace
     public static List<NinjaTrace> traces = new();
 
     private static Sprite TraceSprite;
-    private float timeRemaining;
 
     private readonly GameObject trace;
+    private float timeRemaining;
 
     public NinjaTrace(Vector2 p, float duration = 1f)
     {

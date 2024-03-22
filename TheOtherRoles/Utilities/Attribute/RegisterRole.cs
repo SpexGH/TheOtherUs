@@ -4,19 +4,17 @@ using System.Reflection;
 using HarmonyLib;
 using TheOtherRoles.Roles;
 
-namespace TheOtherRoles.Utilities;
+namespace TheOtherRoles.Utilities.Attribute;
 
 [UsedImplicitly]
-public class RegisterRole : Attribute
+[AttributeUsage(AttributeTargets.Class)]
+public class RegisterRole : System.Attribute
 {
     public static void Register(Assembly assembly, CustomRoleManager _customRoleManager)
     {
         var types = assembly.GetTypes()
             .Where(n => n.IsSubclassOf(typeof(RoleBase)) && n.IsDefined(typeof(RegisterRole)));
 
-        foreach (var _type in types)
-        {
-            _customRoleManager.Register((RoleBase)AccessTools.CreateInstance(_type));
-        }
+        foreach (var _type in types) _customRoleManager.Register((RoleBase)AccessTools.CreateInstance(_type));
     }
 }

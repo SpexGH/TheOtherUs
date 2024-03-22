@@ -4,11 +4,9 @@ using HarmonyLib;
 using Hazel;
 using Il2CppSystem.Collections.Generic;
 using TheOtherRoles.CustomGameModes;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
+using TheOtherRoles.Roles.Crewmate;
 using TMPro;
 using UnityEngine;
-using static TheOtherRoles.TheOtherRoles;
 using Object = UnityEngine.Object;
 using Random = System.Random;
 

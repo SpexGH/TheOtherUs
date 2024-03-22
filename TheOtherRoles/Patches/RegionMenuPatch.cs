@@ -25,7 +25,6 @@ SOFTWARE.
 
 using System;
 using HarmonyLib;
-using TheOtherRoles.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

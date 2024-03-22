@@ -11,9 +11,8 @@ using PowerTools;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Patches;
-using TheOtherRoles.Players;
+using TheOtherRoles.Roles.Crewmate;
 using TheOtherRoles.Roles.Impostor;
-using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using static TheOtherRoles.TheOtherRoles;
@@ -1744,7 +1743,7 @@ public static class RPCProcedure
         Helpers.showFlash(Cleaner.color);
         if (AntiTeleport.antiTeleport.FindAll(x => x.PlayerId == CachedPlayer.LocalPlayer.PlayerControl.PlayerId)
                 .Count != 0 || CachedPlayer.LocalPlayer.Data.IsDead) return;
-        
+
         foreach (PlayerControl player in CachedPlayer.AllPlayers)
         {
             if (MapBehaviour.Instance)
@@ -1759,8 +1758,10 @@ public static class RPCProcedure
 
             ;
             if (Disperser.dispersesToVent)
+            {
                 CachedPlayer.LocalPlayer.PlayerControl.transform.position =
                     MapData.FindVentSpawnPositions().Random();
+            }
             else
             {
                 var transform = CachedPlayer.LocalPlayer.PlayerControl.transform;

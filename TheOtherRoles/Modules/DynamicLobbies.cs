@@ -4,8 +4,6 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 
 namespace TheOtherRoles.Modules;
 

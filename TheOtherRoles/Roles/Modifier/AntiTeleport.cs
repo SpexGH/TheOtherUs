@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TheOtherRoles.Players;
 using UnityEngine;
 
 namespace TheOtherRoles;

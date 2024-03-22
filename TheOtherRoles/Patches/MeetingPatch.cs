@@ -5,12 +5,10 @@ using HarmonyLib;
 using Hazel;
 using Reactor.Utilities;
 using TheOtherRoles.Objects;
-using TheOtherRoles.Players;
+using TheOtherRoles.Roles.Crewmate;
 using TheOtherRoles.Roles.Impostor;
-using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
-using static TheOtherRoles.TheOtherRoles;
 using static TheOtherRoles.TORMapOptions;
 using Object = UnityEngine.Object;
 

@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hazel;
-using TheOtherRoles.Players;
-using TheOtherRoles.Utilities;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -18,8 +16,8 @@ internal class Trap
 
     private static Sprite trapSprite;
     private readonly Arrow arrow = new(Color.blue);
-    public int instanceId;
     private readonly int neededCount = Trapper.trapCountToReveal;
+    public int instanceId;
     public bool revealed;
     public GameObject trap;
     public List<PlayerControl> trappedPlayer = new();

@@ -1,33 +1,34 @@
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-public static class BodyGuard
+[RegisterRole]
+public class BodyGuard : RoleBase
 {
-    public static PlayerControl bodyguard;
-    public static PlayerControl guarded;
-    public static Color color = new Color32(145, 102, 64, byte.MaxValue);
-    public static bool reset = true;
-    public static bool usedGuard;
-    public static bool guardFlash;
-    private static Sprite guardButtonSprite;
-    public static PlayerControl currentTarget;
+    public PlayerControl bodyguard;
+    public Color color = new Color32(145, 102, 64, byte.MaxValue);
+    public PlayerControl currentTarget;
+    private Sprite guardButtonSprite;
+    public PlayerControl guarded;
+    public bool guardFlash;
+    public bool reset = true;
+    public bool usedGuard;
 
-    public static void resetGuarded()
+    public void resetGuarded()
     {
         currentTarget = guarded = null;
         usedGuard = false;
     }
 
 
-    public static Sprite getGuardButtonSprite()
+    public Sprite getGuardButtonSprite()
     {
         if (guardButtonSprite) return guardButtonSprite;
         guardButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Shield.png", 115f);
         return guardButtonSprite;
     }
 
-    public static void clearAndReload()
+    public void clearAndReload()
     {
         bodyguard = null;
         guardFlash = CustomOptionHolder.bodyGuardFlash.getBool();

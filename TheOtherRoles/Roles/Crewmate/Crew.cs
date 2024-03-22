@@ -2,10 +2,11 @@ using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;
 
-public class Crew
+[RegisterRole]
+public class Crew : RoleBase
 {
-    public PlayerControl crew;
     public Color color = Palette.White;
+    public PlayerControl crew;
 
     public void clearAndReload()
     {

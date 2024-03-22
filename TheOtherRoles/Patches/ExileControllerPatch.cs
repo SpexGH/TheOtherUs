@@ -5,11 +5,9 @@ using HarmonyLib;
 using Hazel;
 using PowerTools;
 using TheOtherRoles.Objects;
-using TheOtherRoles.Players;
+using TheOtherRoles.Roles.Crewmate;
 using TheOtherRoles.Roles.Impostor;
-using TheOtherRoles.Utilities;
 using UnityEngine;
-using static TheOtherRoles.TheOtherRoles;
 using Object = UnityEngine.Object;
 
 namespace TheOtherRoles.Patches;
