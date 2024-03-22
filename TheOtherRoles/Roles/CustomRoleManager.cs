@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TheOtherRoles.Modules;
 
 namespace TheOtherRoles.Roles;
 
 public class CustomRoleManager : ManagerBase<CustomRoleManager>
 {
     public readonly List<RoleBase> _RoleBases = [];
+
+    public readonly List<RoleBase> _AllActiveRole = [];
+
+    public RoleBase LocalRoleBase;
 
     public void Register(RoleBase role)
     {

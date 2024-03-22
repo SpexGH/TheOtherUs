@@ -1,44 +1,38 @@
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-public static class Medic
+[RegisterRole]
+public class Medic : RoleBase
 {
-    public static PlayerControl medic;
-    public static PlayerControl shielded;
-    public static PlayerControl futureShielded;
+    public PlayerControl medic;
+    public PlayerControl shielded;
+    public PlayerControl futureShielded;
 
-    public static Color color = new Color32(126, 251, 194, byte.MaxValue);
-    public static bool usedShield;
+    public Color color = new Color32(126, 251, 194, byte.MaxValue);
+    public bool usedShield;
 
-    public static int showShielded;
-    public static bool showAttemptToShielded;
-    public static bool showAttemptToMedic;
-    public static bool unbreakableShield = true;
-    public static bool setShieldAfterMeeting;
-    public static bool showShieldAfterMeeting;
-    public static bool meetingAfterShielding;
-    public static bool reset;
+    public int showShielded;
+    public bool showAttemptToShielded;
+    public bool showAttemptToMedic;
+    public bool unbreakableShield = true;
+    public bool setShieldAfterMeeting;
+    public bool showShieldAfterMeeting;
+    public bool meetingAfterShielding;
+    public bool reset;
 
-    public static Color shieldedColor = new Color32(0, 221, 255, byte.MaxValue);
-    public static PlayerControl currentTarget;
+    public Color shieldedColor = new Color32(0, 221, 255, byte.MaxValue);
+    public PlayerControl currentTarget;
 
-    private static Sprite buttonSprite;
+    private ResourceSprite buttonSprite = new("ShieldButton.png");
 
-    public static void resetShielded()
+    public void resetShielded()
     {
         currentTarget = shielded = null;
         usedShield = false;
     }
 
-    public static Sprite getButtonSprite()
-    {
-        if (buttonSprite) return buttonSprite;
-        buttonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.ShieldButton.png", 115f);
-        return buttonSprite;
-    }
-
-    public static void clearAndReload()
+    public override void ClearAndReload()
     {
         medic = null;
         shielded = null;

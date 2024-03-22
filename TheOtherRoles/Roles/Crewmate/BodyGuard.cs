@@ -8,7 +8,7 @@ public class BodyGuard : RoleBase
     public PlayerControl bodyguard;
     public Color color = new Color32(145, 102, 64, byte.MaxValue);
     public PlayerControl currentTarget;
-    private Sprite guardButtonSprite;
+    private ResourceSprite guardButtonSprite = new ("Shield.png");
     public PlayerControl guarded;
     public bool guardFlash;
     public bool reset = true;
@@ -20,15 +20,7 @@ public class BodyGuard : RoleBase
         usedGuard = false;
     }
 
-
-    public Sprite getGuardButtonSprite()
-    {
-        if (guardButtonSprite) return guardButtonSprite;
-        guardButtonSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Shield.png", 115f);
-        return guardButtonSprite;
-    }
-
-    public void clearAndReload()
+    public override void ClearAndReload()
     {
         bodyguard = null;
         guardFlash = CustomOptionHolder.bodyGuardFlash.getBool();

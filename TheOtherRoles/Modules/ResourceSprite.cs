@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TheOtherRoles.Modules;
 
 #nullable enable
-public class ResourceSprite(string pathName, float pixel, bool cache = true)
+public class ResourceSprite(string pathName, float pixel = 115f, bool cache = true)
 {
     private Sprite? _sprite;
     

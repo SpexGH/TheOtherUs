@@ -3,43 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
-public static class Medium
+[RegisterRole]
+public class Medium : RoleBase
 {
-    public static PlayerControl medium;
-    public static DeadPlayer target;
-    public static DeadPlayer soulTarget;
-    public static Color color = new Color32(98, 120, 115, byte.MaxValue);
-    public static List<Tuple<DeadPlayer, Vector3>> deadBodies = new();
-    public static List<Tuple<DeadPlayer, Vector3>> futureDeadBodies = new();
-    public static List<SpriteRenderer> souls = new();
-    public static DateTime meetingStartTime = DateTime.UtcNow;
+    public PlayerControl medium;
+    public DeadPlayer target;
+    public DeadPlayer soulTarget;
+    public Color color = new Color32(98, 120, 115, byte.MaxValue);
+    public List<Tuple<DeadPlayer, Vector3>> deadBodies = new();
+    public List<Tuple<DeadPlayer, Vector3>> futureDeadBodies = new();
+    public List<SpriteRenderer> souls = new();
+    public DateTime meetingStartTime = DateTime.UtcNow;
 
-    public static float cooldown = 30f;
-    public static float duration = 3f;
-    public static bool oneTimeUse;
-    public static float chanceAdditionalInfo;
+    public float cooldown = 30f;
+    public float duration = 3f;
+    public bool oneTimeUse;
+    public float chanceAdditionalInfo;
 
-    private static Sprite soulSprite;
+    private ResourceSprite soulSprite = new ("Soul.png", 500f);
 
-    private static Sprite question;
+    private ResourceSprite question = new ("MediumButton.png");
 
-    public static Sprite getSoulSprite()
-    {
-        if (soulSprite) return soulSprite;
-        soulSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Soul.png", 500f);
-        return soulSprite;
-    }
-
-    public static Sprite getQuestionSprite()
-    {
-        if (question) return question;
-        question = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.MediumButton.png", 115f);
-        return question;
-    }
-
-    public static void clearAndReload()
+    public override void ClearAndReload()
     {
         medium = null;
         target = null;
@@ -54,7 +41,7 @@ public static class Medium
         chanceAdditionalInfo = CustomOptionHolder.mediumChanceAdditionalInfo.getSelection() / 10f;
     }
 
-    public static string getInfo(PlayerControl target, PlayerControl killer)
+    public string getInfo(PlayerControl target, PlayerControl killer)
     {
         var msg = "";
 
@@ -80,7 +67,7 @@ public static class Medium
             (killer == Jackal.jackal || Jackal.formerJackals.Any(x => x.PlayerId == killer.PlayerId)))
             infos.Add(SpecialMediumInfo.JackalKillsSidekick);
         if (target == Lawyer.lawyer && killer == Lawyer.target) infos.Add(SpecialMediumInfo.LawyerKilledByClient);
-        if (Medium.target.wasCleaned) infos.Add(SpecialMediumInfo.BodyCleaned);
+        if (this.target.wasCleaned) infos.Add(SpecialMediumInfo.BodyCleaned);
 
         if (infos.Count > 0)
         {
@@ -119,9 +106,9 @@ public static class Medium
         else
         {
             var randomNumber = ListHelper.Random(4);
-            var typeOfColor = Helpers.isLighterColor(Medium.target.killerIfExisting) ? "lighter" : "darker";
-            var timeSinceDeath = (float)(meetingStartTime - Medium.target.timeOfDeath).TotalMilliseconds;
-            var roleString = RoleInfo.GetRolesString(Medium.target.player, false);
+            var typeOfColor = Helpers.isLighterColor(this.target.killerIfExisting) ? "lighter" : "darker";
+            var timeSinceDeath = (float)(meetingStartTime - this.target.timeOfDeath).TotalMilliseconds;
+            var roleString = global::TheOtherRoles.RoleInfo.GetRolesString(this.target.player, false);
             if (randomNumber == 0)
             {
                 if (!roleString.Contains("Impostor") && !roleString.Contains("Crewmate"))
@@ -141,7 +128,7 @@ public static class Medium
             else
             {
                 msg = "It seems like my killer is the " +
-                      RoleInfo.GetRolesString(Medium.target.killerIfExisting, false, false, true) + ".";
+                      global::TheOtherRoles.RoleInfo.GetRolesString(this.target.killerIfExisting, false, false, true) + ".";
             }
         }
 
@@ -153,10 +140,9 @@ public static class Medium
             switch (ListHelper.Random(3))
             {
                 case 0:
-                    count = alivePlayersList.Where(pc =>
-                        pc.Data.Role.IsImpostor ||
-                        new List<RoleInfo> { RoleInfo.jackal, RoleInfo.sidekick, RoleInfo.sheriff, RoleInfo.thief }
-                            .Contains(RoleInfo.getRoleInfoForPlayer(pc, false).FirstOrDefault())).Count();
+                    count = alivePlayersList.Count(pc => pc.Data.Role.IsImpostor ||
+                                                         new List<global::TheOtherRoles.RoleInfo> { global::TheOtherRoles.RoleInfo.jackal, global::TheOtherRoles.RoleInfo.sidekick, global::TheOtherRoles.RoleInfo.sheriff, global::TheOtherRoles.RoleInfo.thief }
+                                                             .Contains(global::TheOtherRoles.RoleInfo.getRoleInfoForPlayer(pc, false).FirstOrDefault()));
                     condition = "killer" + (count == 1 ? "" : "s");
                     break;
                 case 1:
@@ -164,10 +150,9 @@ public static class Medium
                     condition = "player" + (count == 1 ? "" : "s") + " who can use vents";
                     break;
                 case 2:
-                    count = alivePlayersList.Where(pc =>
-                            Helpers.isNeutral(pc) && pc != Jackal.jackal && pc != Sidekick.sidekick &&
-                            pc != Thief.thief)
-                        .Count();
+                    count = alivePlayersList
+                        .Count(pc => Helpers.isNeutral(pc) && pc != Jackal.jackal && pc != Sidekick.sidekick &&
+                                     pc != Thief.thief);
                     condition = "player" + (count == 1 ? "" : "s") + " who " + (count == 1 ? "is" : "are") +
                                 " neutral but cannot kill";
                     break;
@@ -179,7 +164,7 @@ public static class Medium
             msg += $"\nWhen you asked, {count} " + condition + (count == 1 ? " was" : " were") + " still alive";
         }
 
-        return Medium.target.player.Data.PlayerName + "'s Soul:\n" + msg;
+        return this.target.player.Data.PlayerName + "'s Soul:\n" + msg;
     }
 
     private enum SpecialMediumInfo

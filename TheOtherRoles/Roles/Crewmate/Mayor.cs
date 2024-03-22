@@ -24,7 +24,7 @@ public class Mayor : RoleBase
         return emergencySprite;
     }
 
-    public static void clearAndReload()
+    public void clearAndReload()
     {
         mayor = null;
         emergency = null;

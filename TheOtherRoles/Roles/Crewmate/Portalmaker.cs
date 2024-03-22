@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Roles.Crewmate;
 
 public static class Portalmaker
 {
