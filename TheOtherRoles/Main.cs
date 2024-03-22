@@ -101,6 +101,7 @@ public class TheOtherRolesPlugin : BasePlugin
     public override void Load()
     {
         SetLogSource(Log);
+        InitConsole();
         Instance = this;
 
         _ = Helpers.checkBeta(); // Exit if running an expired beta
@@ -139,11 +140,8 @@ public class TheOtherRolesPlugin : BasePlugin
         }
 
         AddComponent<ModUpdater>();
-
-        typeof(Main).Assembly.GetTypes().Where(n => n.IsSubclassOf(typeof(RoleBase))).Do(n =>
-        {
-            CustomRoleManager.Instance.Register((RoleBase)AccessTools.CreateInstance(n));
-        });
+        
+        RegisterRole.Register(typeof(Main).Assembly, CustomRoleManager.Instance);
         EventUtility.Load();
         SubmergedCompatibility.Initialize();
         MainMenuPatch.addSceneChangeCallbacks();

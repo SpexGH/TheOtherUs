@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using Hazel;
@@ -102,6 +104,27 @@ internal static class LogHelper
     public static void LogObject(object @object)
     {
         FastLog(LogLevel.Error, @object);
+    }
+
+    public static void InitConsole()
+    {
+#if DEBUG
+        if (!ConsoleManager.ConsoleEnabled)
+        {
+            ConsoleManager.CreateConsole();
+        }
+
+        if (!Equals(System.Console.OutputEncoding, Encoding.UTF8))
+        {
+            System.Console.OutputEncoding = Encoding.UTF8;
+        }
+#endif
+#if RELEASE
+        if (ConsoleManager.ConsoleEnabled)
+        {
+            ConsoleManager.DetachConsole();
+        }
+#endif
     }
 }
 
