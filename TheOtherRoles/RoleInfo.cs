@@ -108,6 +108,7 @@ namespace TheOtherRoles
         public static RoleInfo bait = new RoleInfo("Bait", Color.yellow, "Bait your enemies", "Bait your enemies", RoleId.Bait, false, true);
         public static RoleInfo sunglasses = new RoleInfo("Sunglasses", Color.yellow, "You got the sunglasses", "Your vision is reduced", RoleId.Sunglasses, false, true);
         public static RoleInfo torch = new RoleInfo("Torch", Color.yellow, "You got the torch", "You can see in the dark", RoleId.Torch, false, true);
+        public static RoleInfo flash = new("Flash", Color.yellow, "Superspeed!", "Superspeed!", RoleId.Flash, false, true);
         public static RoleInfo multitasker = new RoleInfo("Multitasker", Color.yellow, "Your task windows are transparent", "Your task windows are transparent", RoleId.Multitasker, false, true);
         public static RoleInfo lover = new RoleInfo("Lover", Lovers.color, $"You are in love", $"You are in love", RoleId.Lover, false, true);
         public static RoleInfo mini = new RoleInfo("Mini", Color.yellow, "No one will harm you until you grow up", "No one will harm you", RoleId.Mini, false, true);
@@ -199,6 +200,7 @@ namespace TheOtherRoles
             tiebreaker,
             sunglasses,
             torch,
+            flash,
             multitasker,
             mini,
             vip,
@@ -234,6 +236,7 @@ namespace TheOtherRoles
                 if (AntiTeleport.antiTeleport.Any(x => x.PlayerId == p.PlayerId)) infos.Add(antiTeleport);
                 if (Sunglasses.sunglasses.Any(x => x.PlayerId == p.PlayerId)) infos.Add(sunglasses);
                 if (Torch.torch.Any(x => x.PlayerId == p.PlayerId)) infos.Add(torch);
+                if (Flash.flash.Any(x => x.PlayerId == p.PlayerId)) infos.Add(flash);
                 if (Multitasker.multitasker.Any(x => x.PlayerId == p.PlayerId)) infos.Add(multitasker);
                 if (p == Mini.mini) infos.Add(mini);
                 if (p == Blind.blind) infos.Add(blind);

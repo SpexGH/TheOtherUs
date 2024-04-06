@@ -46,6 +46,7 @@ namespace TheOtherRoles {
 
         public static CustomOption undertakerSpawnRate;
         public static CustomOption undertakerDragingDelaiAfterKill;
+        public static CustomOption undertakerDragingAfterVelocity;
         public static CustomOption undertakerCanDragAndVent;
 
         public static CustomOption camouflagerSpawnRate;
@@ -374,6 +375,10 @@ namespace TheOtherRoles {
         public static CustomOption modifierTorchQuantity;
         public static CustomOption modifierTorchVision;
 
+        public static CustomOption modifierFlash;
+        public static CustomOption modifierFlashQuantity;
+        public static CustomOption modifierFlashSpeed;
+
         public static CustomOption modifierMultitasker;
         public static CustomOption modifierMultitaskerQuantity;
 
@@ -417,6 +422,8 @@ namespace TheOtherRoles {
 
         public static CustomOption modifierShifter;
 
+        public static CustomOption resteButtonCooldown;
+        public static CustomOption preventTaskEnd;
         public static CustomOption maxNumberOfMeetings;
         public static CustomOption blockSkippingInEmergencyMeetings;
         public static CustomOption noVoteIsSelfVote;
@@ -431,6 +438,7 @@ namespace TheOtherRoles {
         public static CustomOption impostorSeeRoles;
         public static CustomOption transparentTasks;
         public static CustomOption randomGameStartPosition;
+        public static CustomOption randomGameStartToVents;
         public static CustomOption allowModGuess;
         public static CustomOption finishTasksBeforeHauntingOrZoomingOut;
         public static CustomOption camsNightVision;
@@ -595,7 +603,8 @@ namespace TheOtherRoles {
             //bomber2HotPotatoMode = CustomOption.Create(2526236, Types.Impostor, "Hot Potato Mode", false, bomber2SpawnRate);
 
             undertakerSpawnRate = CustomOption.Create(1201, Types.Impostor, cs(Undertaker.color, "Undertaker"), rates, null, true);
-            undertakerDragingDelaiAfterKill = CustomOption.Create(1202, Types.Impostor, "Draging Delay After Kill", 0f, 0f, 15, 1f, undertakerSpawnRate);                     
+            undertakerDragingDelaiAfterKill = CustomOption.Create(1202, Types.Impostor, "Draging Delay After Kill", 0f, 0f, 15, 1f, undertakerSpawnRate);
+            undertakerDragingAfterVelocity = CustomOption.Create(1204, Types.Impostor, "undertaker Drag Speed", 0.75f, 0.5f, 2f, 0.125f, undertakerSpawnRate);
             undertakerCanDragAndVent = CustomOption.Create(1203, Types.Impostor, "Can Vent While Dragging", true, undertakerSpawnRate);
 
             camouflagerSpawnRate = CustomOption.Create(30, Types.Impostor, cs(Camouflager.color, "Camouflager"), rates, null, true);
@@ -933,6 +942,10 @@ namespace TheOtherRoles {
             modifierTorchQuantity = CustomOption.Create(1054, Types.Modifier, cs(Color.yellow, "Torch Quantity"), ratesModifier, modifierTorch);
             modifierTorchVision = CustomOption.Create(1055, Types.Modifier, cs(Color.yellow, "Vision With Torch"), 1.5f, 1f, 3f, 0.125f, modifierTorch);
 
+            modifierFlash = CustomOption.Create(1210, Types.Modifier, cs(Color.yellow, "Flash"), rates, null, true);
+            modifierFlashQuantity = CustomOption.Create(1211, Types.Modifier, cs(Color.yellow, "Flash Quantity"), ratesModifier, modifierFlash);
+            modifierFlashSpeed = CustomOption.Create(1212, Types.Modifier, "Flash Speed", 1.25f, 1f, 3f, 0.125f, modifierFlash);
+
             modifierMultitasker = CustomOption.Create(10523233, Types.Modifier, cs(Color.yellow, "Multitasker"), rates, null, true);
             modifierMultitaskerQuantity = CustomOption.Create(10232354, Types.Modifier, cs(Color.yellow, "Multitasker Quantity"), ratesModifier, modifierMultitasker);
 
@@ -1046,6 +1059,7 @@ namespace TheOtherRoles {
 
 
             // Other options
+            resteButtonCooldown = CustomOption.Create(15220, Types.General, "Game Start CoolDown", 10f, 2.5f, 30f, 2.5f, null, true);
             maxNumberOfMeetings = CustomOption.Create(3, Types.General, "Number Of Meetings (excluding Mayor meeting)", 10, 0, 15, 1, null, true);
             blockSkippingInEmergencyMeetings = CustomOption.Create(4, Types.General, "Block Skipping In Emergency Meetings", false);
             noVoteIsSelfVote = CustomOption.Create(5, Types.General, "No Vote Is Self Vote", false, blockSkippingInEmergencyMeetings);
@@ -1082,9 +1096,10 @@ namespace TheOtherRoles {
             showButtonTarget = CustomOption.Create(9994, Types.General, "Show Button Target", true);
             blockGameEnd = CustomOption.Create(9995, Types.General, "Block Game End If Power Crew Is Alive", false);
             randomGameStartPosition = CustomOption.Create(9041, Types.General, "Random Spawn Location", false);
+            randomGameStartToVents = CustomOption.Create(9042, Types.General, "Random Spawn To Vents", false, randomGameStartPosition);
             allowModGuess = CustomOption.Create(9043, Types.General, "Allow Guessing Some Modifiers", false);
+            preventTaskEnd = CustomOption.Create(43, Types.General, "Prevent Task End Game", false, null, true);
 
-            
 
             blockedRolePairings.Add((byte)RoleId.Vampire, new [] { (byte)RoleId.Warlock});
             blockedRolePairings.Add((byte)RoleId.Warlock, new [] { (byte)RoleId.Vampire});

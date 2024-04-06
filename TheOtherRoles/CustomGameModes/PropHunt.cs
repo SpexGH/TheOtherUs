@@ -128,11 +128,11 @@ namespace TheOtherRoles.CustomGameModes {
             if (debug) {
                 allNames = Helpers.readTextFromFile(System.IO.Directory.GetCurrentDirectory() + "\\Props.txt");
             }
-            TheOtherRolesPlugin.Logger.LogMessage($"after debug");
+            Message($"after debug");
             whitelistedObjects = allNames.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
-            TheOtherRolesPlugin.Logger.LogMessage($"after split");
+            Message($"after split");
             
-            TheOtherRolesPlugin.Logger.LogMessage($"Last element: {whitelistedObjects.Last()}");
+            Message($"Last element: {whitelistedObjects.Last()}");
         }
 
 
@@ -362,7 +362,7 @@ namespace TheOtherRoles.CustomGameModes {
                 }
                 foreach (Collider2D collider in Physics2D.OverlapCircleAll(origin.transform.position, radius)) {
                     if (verbose) {
-                        TheOtherRolesPlugin.Logger.LogMessage($"Nearby Object: {collider.gameObject.name}");
+                        Message($"Nearby Object: {collider.gameObject.name}");
                     }
                     bool whiteListed = false;
                     foreach (var whiteListedWord in whitelistedObjects) {

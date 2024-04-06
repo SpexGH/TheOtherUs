@@ -116,7 +116,7 @@ namespace TheOtherRoles.Patches
             }
             else
             {
-                Helpers.Log("Couldn't move elements as not all of them have been fetched.");
+                Info("Couldn't move elements as not all of them have been fetched.");
             }
 
             if (CustomOptionHolder.movePolusVents.getBool()) AdjustVents(); // Programed
@@ -238,7 +238,7 @@ namespace TheOtherRoles.Patches
             }
             else
             {
-                Helpers.Log("Couldn't adjust Vents as not all objects have been fetched.");
+                Info("Couldn't adjust Vents as not all objects have been fetched.");
             }
         }
 

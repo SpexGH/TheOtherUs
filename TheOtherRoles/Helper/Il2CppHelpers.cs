@@ -1,8 +1,7 @@
 using System;
 using System.Linq.Expressions;
-using UnityEngine;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Helper;
 
 public static class Il2CppHelpers
 {

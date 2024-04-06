@@ -150,43 +150,6 @@ namespace TheOtherRoles {
             return roleCouldUse;
         }
 
-        
-
-
-        public static void Log(LogLevel errorLevel, object @object)
-        {
-            BepInEx.Logging.ManualLogSource Logger = TheOtherRolesPlugin.Logger;
-            string Message = @object as string;
-            switch (errorLevel)
-            {
-                case LogLevel.Message:
-                    Logger.LogMessage(Message);
-                    break;
-                case LogLevel.Error:
-                    Logger.LogError(Message);
-                    break;
-                case LogLevel.Warning:
-                    Logger.LogWarning(Message);
-                    break;
-                case LogLevel.Fatal:
-                    Logger.LogFatal(Message);
-                    break;
-                case LogLevel.Info:
-                    Logger.LogInfo(Message);
-                    break;
-                case LogLevel.Debug:
-#if DEBUG
-                    Logger.LogDebug(Message);
-#endif
-                    break;
-            }
-        }
-
-        public static void Log(object @object)
-        {
-            Log(LogLevel.Error, @object);
-        }
-
         public static SabatageTypes getActiveSabo() {
 			foreach (PlayerTask task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator()) {
 				if (task.TaskType == TaskTypes.FixLights) {
@@ -386,7 +349,7 @@ namespace TheOtherRoles {
                     return texture;
                 }
             } catch {
-                TheOtherRolesPlugin.Logger.LogError("Error loading texture from disk: " + path);
+                Error("Error loading texture from disk: " + path);
             }
             return null;
         }
@@ -558,7 +521,16 @@ namespace TheOtherRoles {
         }
 
         public static bool hasFakeTasks(this PlayerControl player) {
-            return (player == Werewolf.werewolf || player == Jester.jester || player == Amnisiac.amnisiac || player == Jackal.jackal || player == Sidekick.sidekick || player == Arsonist.arsonist || player == Vulture.vulture || Jackal.formerJackals.Any(x => x == player));
+            return (player == Werewolf.werewolf 
+                    //|| player == Juggernaut.juggernaut
+                    || player == Jester.jester 
+                    || player == Jackal.jackal 
+                    || player == Sidekick.sidekick 
+                    || player == Arsonist.arsonist
+                    || player == Pursuer.pursuer
+                    || player == Lawyer.lawyer
+                    || player == Vulture.vulture 
+                    || Jackal.formerJackals.Any(x => x == player));
         }
 
         public static bool canBeErased(this PlayerControl player) {
@@ -998,28 +970,16 @@ namespace TheOtherRoles {
             return murder;            
         }
 
-        public static bool checkAndDoVetKill(PlayerControl target) {
+        public static bool checkAndDoVetKill(PlayerControl target) 
+        {
 	        bool shouldVetKill = (Veteren.veteren == target && Veteren.alertActive);
 	        if (shouldVetKill) {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.VeterenKill, Hazel.SendOption.Reliable, -1);
-            writer.Write(CachedPlayer.LocalPlayer.PlayerControl.PlayerId);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            RPCProcedure.veterenKill(CachedPlayer.LocalPlayer.PlayerControl.PlayerId);
-	  }
-	  return shouldVetKill;
-	}
-    
-        public static void shareGameVersion() {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.VersionHandshake, Hazel.SendOption.Reliable, -1);
-            writer.Write((byte)TheOtherRolesPlugin.Version.Major);
-            writer.Write((byte)TheOtherRolesPlugin.Version.Minor);
-            writer.Write((byte)TheOtherRolesPlugin.Version.Build);
-            writer.Write(AmongUsClient.Instance.AmHost ? Patches.GameStartManagerPatch.timer : -1f);
-            writer.WritePacked(AmongUsClient.Instance.ClientId);
-            writer.Write((byte)(TheOtherRolesPlugin.Version.Revision < 0 ? 0xFF : TheOtherRolesPlugin.Version.Revision));
-            writer.Write(Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.ToByteArray());
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            RPCProcedure.versionHandshake(TheOtherRolesPlugin.Version.Major, TheOtherRolesPlugin.Version.Minor, TheOtherRolesPlugin.Version.Build, TheOtherRolesPlugin.Version.Revision, Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId, AmongUsClient.Instance.ClientId);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.VeterenKill, Hazel.SendOption.Reliable, -1);
+                writer.Write(CachedPlayer.LocalPlayer.PlayerControl.PlayerId);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.veterenKill(CachedPlayer.LocalPlayer.PlayerControl.PlayerId);
+            }
+            return shouldVetKill; 
         }
 
         public static List<PlayerControl> getKillerTeamMembers(PlayerControl player) {
@@ -1211,10 +1171,10 @@ public static bool isTeamCultist(PlayerControl player)
 
         public static async Task checkBeta() {
             if (TheOtherRolesPlugin.betaDays > 0) {
-                TheOtherRolesPlugin.Logger.LogMessage($"Beta check");
+                Message($"Beta check");
                 var ticks = GetBuiltInTicks();
                 var compileTime = new DateTime(ticks, DateTimeKind.Utc);  // This may show as an error, but it is not, compilation will work!
-                TheOtherRolesPlugin.Logger.LogMessage($"Compiled at {compileTime.ToString(CultureInfo.InvariantCulture)}");
+                Message($"Compiled at {compileTime.ToString(CultureInfo.InvariantCulture)}");
                 DateTime? now;
                 // Get time from the internet, so no-one can cheat it (so easily).
                 try {
@@ -1223,18 +1183,18 @@ public static bool isTeamCultist(PlayerControl player)
                     if (response.IsSuccessStatusCode)
                         now = response.Headers.Date?.UtcDateTime;
                     else {
-                        TheOtherRolesPlugin.Logger.LogMessage($"Could not get time from server: {response.StatusCode}");
+                        Message($"Could not get time from server: {response.StatusCode}");
                         now = DateTime.UtcNow; //In case something goes wrong. 
                     }
                 } catch (System.Net.Http.HttpRequestException) {
                     now = DateTime.UtcNow;
                 }
                 if ((now - compileTime)?.TotalDays > TheOtherRolesPlugin.betaDays) {
-                    TheOtherRolesPlugin.Logger.LogMessage($"Beta expired!");
+                    Message($"Beta expired!");
                     BepInExUpdater.MessageBoxTimeout(BepInExUpdater.GetForegroundWindow(), "BETA is expired. You cannot play this version anymore.", "The Other Us Beta", 0,0, 10000);
                     Application.Quit();
 
-                } else TheOtherRolesPlugin.Logger.LogMessage($"Beta will remain runnable for {TheOtherRolesPlugin.betaDays - (now - compileTime)?.TotalDays} days!");
+                } else Message($"Beta will remain runnable for {TheOtherRolesPlugin.betaDays - (now - compileTime)?.TotalDays} days!");
             }
         }
 

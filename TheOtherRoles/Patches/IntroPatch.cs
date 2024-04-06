@@ -33,7 +33,8 @@ namespace TheOtherRoles.Patches {
                     p.SetPlayerMaterialColors(player.cosmetics.currentBodySprite.BodySprite);
                     player.SetSkin(data.DefaultOutfit.SkinId, data.DefaultOutfit.ColorId);
                     player.cosmetics.SetHat(data.DefaultOutfit.HatId, data.DefaultOutfit.ColorId);
-                   // PlayerControl.SetPetImage(data.DefaultOutfit.PetId, data.DefaultOutfit.ColorId, player.PetSlot);
+                    CachedPlayer.LocalPlayer.PlayerControl.SetKillTimer(ResetButtonCooldown.killCooldown);
+                    // PlayerControl.SetPetImage(data.DefaultOutfit.PetId, data.DefaultOutfit.ColorId, player.PetSlot);
                     player.cosmetics.nameText.text = data.PlayerName;
                     player.SetFlipX(true);
                     TORMapOptions.playerIcons[p.PlayerId] = player;
@@ -87,7 +88,8 @@ namespace TheOtherRoles.Patches {
             // Force Reload of SoundEffectHolder
             SoundEffectsManager.Load();
 
-            if (CustomOptionHolder.randomGameStartPosition.getBool()) { //Random spawn on game start
+            if (CustomOptionHolder.randomGameStartPosition.getBool())
+            { //Random spawn on game start
 
                 List<Vector3> skeldSpawn = new List<Vector3>() {
                 new Vector3(-2.2f, 2.2f, 0.0f), //cafeteria. botton. top left.
@@ -274,26 +276,33 @@ namespace TheOtherRoles.Patches {
 
                 List<Vector3> airshipSpawn = new List<Vector3>() { }; //no spawns since it already has random spawns
 
-                switch (GameOptionsManager.Instance.currentNormalGameOptions.MapId)
+                if (CustomOptionHolder.randomGameStartToVents.getBool())
                 {
-                    case 0: 
-                        CachedPlayer.LocalPlayer.PlayerControl.transform.position = skeldSpawn[rnd.Next(skeldSpawn.Count)];
-                        break;
-                    case 1:
-                        CachedPlayer.LocalPlayer.PlayerControl.transform.position = miraSpawn[rnd.Next(miraSpawn.Count)];
-                        break;
-                    case 2:
-                        CachedPlayer.LocalPlayer.PlayerControl.transform.position = polusSpawn[rnd.Next(polusSpawn.Count)];
-                        break;
-                    case 3:
-                        CachedPlayer.LocalPlayer.PlayerControl.transform.position = dleksSpawn[rnd.Next(dleksSpawn.Count)];
-                        break;
-                    case 4:
-                        CachedPlayer.LocalPlayer.PlayerControl.transform.position = airshipSpawn[rnd.Next(airshipSpawn.Count)];
-                        break;
-                    case 5:
-                        CachedPlayer.LocalPlayer.PlayerControl.transform.position = fungleSpawn[rnd.Next(fungleSpawn.Count)];
-                        break;
+                    CachedPlayer.LocalPlayer.PlayerControl.transform.position = FindVentPoss.findVentPoss()[rnd.Next(FindVentPoss.findVentPoss().Count)];
+                }
+                else
+                {
+                    switch (GameOptionsManager.Instance.currentNormalGameOptions.MapId)
+                    {
+                        case 0:
+                            CachedPlayer.LocalPlayer.PlayerControl.transform.position = skeldSpawn[rnd.Next(skeldSpawn.Count)];
+                            break;
+                        case 1:
+                            CachedPlayer.LocalPlayer.PlayerControl.transform.position = miraSpawn[rnd.Next(miraSpawn.Count)];
+                            break;
+                        case 2:
+                            CachedPlayer.LocalPlayer.PlayerControl.transform.position = polusSpawn[rnd.Next(polusSpawn.Count)];
+                            break;
+                        case 3:
+                            CachedPlayer.LocalPlayer.PlayerControl.transform.position = dleksSpawn[rnd.Next(dleksSpawn.Count)];
+                            break;
+                        case 4:
+                            CachedPlayer.LocalPlayer.PlayerControl.transform.position = airshipSpawn[rnd.Next(airshipSpawn.Count)];
+                            break;
+                        case 5:
+                            CachedPlayer.LocalPlayer.PlayerControl.transform.position = fungleSpawn[rnd.Next(fungleSpawn.Count)];
+                            break;
+                    }
                 }
             }
 

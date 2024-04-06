@@ -87,6 +87,7 @@ namespace TheOtherRoles
             Tiebreaker.clearAndReload();
             Sunglasses.clearAndReload();
             Torch.clearAndReload();
+            Flash.clearAndReload();
             Blind.clearAndReload();
             Watcher.clearAndReload();
             Radar.clearAndReload();
@@ -105,6 +106,39 @@ namespace TheOtherRoles
             HideNSeek.clearAndReload();
             PropHunt.clearAndReload();
 
+        }
+
+        public static class FindVentPoss
+        {
+            public static List<Vector3> findVentPoss()
+            {
+                var poss = new List<Vector3>();
+                foreach (var vent in DestroyableSingleton<ShipStatus>.Instance.AllVents)
+                {
+                    var Transform = vent.transform;
+                    var position = Transform.position;
+                    poss.Add(new Vector3(position.x, position.y + 0.24f, position.z - 50));
+                }
+                return poss;
+            }
+        }
+        
+        public static class PreventTaskEnd
+        {
+            public static bool Enable = false;
+            public static void clearAndReload()
+            {
+                Enable = CustomOptionHolder.preventTaskEnd.getBool();
+            }
+        }
+        
+        public static class ResetButtonCooldown
+        {
+            public static float killCooldown;
+            public static void clearAndReload()
+            {
+                killCooldown = CustomOptionHolder.resteButtonCooldown.getFloat();
+            }
         }
 
         public static class Jester {
@@ -2586,7 +2620,17 @@ namespace TheOtherRoles
             vision = CustomOptionHolder.modifierTorchVision.getFloat();
         }
     }
+    public static class Flash
+    {
+        public static List<PlayerControl> flash = new();
+        public static float speed = 1f;
 
+        public static void clearAndReload()
+        {
+            flash = new List<PlayerControl>();
+            speed = CustomOptionHolder.modifierFlashSpeed.getFloat();
+        }
+    }
     public static class Multitasker {
         public static List<PlayerControl> multitasker = new List<PlayerControl>();
 

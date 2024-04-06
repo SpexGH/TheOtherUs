@@ -16,31 +16,27 @@ using UnityEngine;
 using TheOtherRoles.Modules;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
-using Il2CppSystem.Security.Cryptography;
-using Il2CppSystem.Text;
 using Reactor.Networking.Attributes;
 using AmongUs.Data;
 using TheOtherRoles.Modules.CustomHats;
-using static TheOtherRoles.Modules.ModUpdater;
 
 namespace TheOtherRoles
 {
-    [BepInPlugin(Id, "TheOtherUs", VersionString)]
+    [BepInPlugin(Id, ModName, VersionString)]
     [BepInDependency(SubmergedCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Among Us.exe")]
     [ReactorModFlags(Reactor.Networking.ModFlags.RequireOnAllClients)]
-    
     public class TheOtherRolesPlugin : BasePlugin
     {
         public const string Id = "me.spex.theotherus";
         public const string VersionString = "1.3.6";
+        public const string ModName = "TheOtherUs";
         public static uint betaDays = 0;  // amount of days for the build to be usable (0 for infinite!)
 
         public static Version Version = Version.Parse(VersionString);
-        internal static BepInEx.Logging.ManualLogSource Logger;
          
-        public Harmony Harmony { get; } = new Harmony(Id);
-        public static TheOtherRolesPlugin Instance;
+        public Harmony Harmony { get; } = new(Id);
+        public static Main Instance;
 
         public static int optionsPage = 2;
 
@@ -67,16 +63,16 @@ namespace TheOtherRoles
         // This is part of the Mini.RegionInstaller, Licensed under GPLv3
         // file="RegionInstallPlugin.cs" company="miniduikboot">
         public static void UpdateRegions() {
-            ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
-            var regions = new IRegionInfo[] {
+            var serverManager = FastDestroyableSingleton<ServerManager>.Instance;
+            var regions = new[] {
                 new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, Ip.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", Ip.Value, Port.Value, false) })).CastFast<IRegionInfo>()
             };
             
-            IRegionInfo currentRegion = serverManager.CurrentRegion;
-            Logger.LogInfo($"Adding {regions.Length} regions");
+            var currentRegion = serverManager.CurrentRegion;
+            Info($"Adding {regions.Length} regions");
             foreach (IRegionInfo region in regions) {
                 if (region == null) 
-                    Logger.LogError("Could not add region");
+                    Error("Could not add region");
                 else {
                     if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase)) 
                         currentRegion = region;               
@@ -85,14 +81,13 @@ namespace TheOtherRoles
             }
 
             // AU remembers the previous region that was set, so we need to restore it
-            if (currentRegion != null) {
-                Logger.LogDebug("Resetting previous region");
-                serverManager.SetRegion(currentRegion);
-            }
+            if (currentRegion == null) return;
+            Debug("Resetting previous region");
+            serverManager.SetRegion(currentRegion);
         }
 
         public override void Load() {
-            Logger = Log;
+            SetLogSource(Log);
             Instance = this;
   
             _ = Helpers.checkBeta(); // Exit if running an expired beta
@@ -139,7 +134,7 @@ namespace TheOtherRoles
             MainMenuPatch.addSceneChangeCallbacks();
             _ = RoleInfo.loadReadme();
             AddToKillDistanceSetting.addKillDistance();
-            TheOtherRolesPlugin.Logger.LogInfo("Loading TOR completed!");
+            Info("Loading TOR completed!");
         }
     }
 
@@ -152,6 +147,7 @@ namespace TheOtherRoles
             __result = false;
         }
     }
+    
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Awake))]
     public static class ChatControllerAwakePatch {
         private static void Prefix() {
@@ -170,18 +166,7 @@ namespace TheOtherRoles
         private static List<PlayerControl> bots = new List<PlayerControl>();
 
         public static void Postfix(KeyboardJoystick __instance)
-        {/*
-            // Check if debug mode is active.
-            StringBuilder builder = new StringBuilder();
-            SHA256 sha = SHA256Managed.Create();
-            Byte[] hashed = sha.ComputeHash(Encoding.UTF8.GetBytes(TheOtherRolesPlugin.DebugMode.Value));
-            foreach (var b in hashed) {
-                builder.Append(b.ToString("x2"));
-            }
-            string enteredHash = builder.ToString();
-            if (enteredHash != passwordHash) return;
-*/
-
+        {
             // Spawn dummys
             if (AmongUsClient.Instance.AmHost && Input.GetKeyDown(KeyCode.F) && Input.GetKey(KeyCode.RightShift)) {
                 var playerControl = UnityEngine.Object.Instantiate(AmongUsClient.Instance.PlayerPrefab);
@@ -207,13 +192,13 @@ namespace TheOtherRoles
             }
 
             if (Input.GetKeyDown(KeyCode.Return) && Input.GetKey(KeyCode.M) && Input.GetKey(KeyCode.LeftShift) && MeetingHud.Instance)
+            {
+                MeetingHud.Instance.RpcClose();
+                foreach (var pc in PlayerControl.AllPlayerControls)
                 {
-                    MeetingHud.Instance.RpcClose();
-                    foreach (var pc in PlayerControl.AllPlayerControls)
-                    {
-                        if (pc == null || pc.Data.IsDead || pc.Data.Disconnected) continue;
-                    }
+                    if (pc == null || pc.Data.IsDead || pc.Data.Disconnected) continue;
                 }
+            }
         }
 
         public static string RandomString(int length)

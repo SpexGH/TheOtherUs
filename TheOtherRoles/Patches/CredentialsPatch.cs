@@ -25,7 +25,7 @@ $@"Modified by <color=#FCCE03FF>Spex</color>, based on TheOtherRoles by <color=#
 Design by <color=#FCCE03FF>Bavari</color>";
 
         public static string contributorsCredentials =
-$@"<size=60%> <color=#FCCE03FF>Special thanks to Smeggy, Scoom, Xer, Mr_Fluuff, Fangkuai</color></size>";
+$@"<size=60%> <color=#FCCE03FF>Special thanks to Smeggy, Scoom, Xer, Mr_Fluuff, and <color=#00ffff>Fangkuai<color=#FCCE03FF></color></size>";
 
         [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
         internal static class PingTrackerPatch

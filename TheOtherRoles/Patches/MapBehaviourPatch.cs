@@ -122,7 +122,7 @@ namespace TheOtherRoles.Patches {
 				MapIcon.name = $"vent {vent.Id} icon";
 				MapIcon.transform.localPosition = location;
 
-				if (task?.IsComplete == false && task.FindConsoles()[0].ConsoleId == vent.Id) {
+				if (task?.IsComplete == false && task.FindConsoles().Get(0).ConsoleId == vent.Id) {
 					MapIcon.transform.localScale *= 0.6f;
 				}
                 if (vent.name.StartsWith("JackInThe")) {

@@ -1754,6 +1754,16 @@ namespace TheOtherRoles.Patches {
                 GameData.Instance && 
                 __instance.myPlayer.CanMove)  
                 __instance.body.velocity *= -1;
+            if (__instance.AmOwner &&
+                AmongUsClient.Instance &&
+                AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started &&
+                !CachedPlayer.LocalPlayer.Data.IsDead &&
+                GameData.Instance &&
+                __instance.myPlayer.CanMove &&
+                Flash.flash.Any(x => x.PlayerId == CachedPlayer.LocalPlayer.PlayerId))
+            {
+                __instance.body.velocity *= Flash.speed;
+            }
         }
     }
 

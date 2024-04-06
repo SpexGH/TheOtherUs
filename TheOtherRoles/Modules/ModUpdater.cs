@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -14,7 +15,6 @@ using UnityEngine.SceneManagement;
 using AmongUs.Data;
 using Assets.InnerNet;
 using Twitch;
-using static StarGen;
 
 namespace TheOtherRoles.Modules {
     public class ModUpdater : MonoBehaviour {
@@ -187,16 +187,16 @@ namespace TheOtherRoles.Modules {
         [HideFromIl2Cpp]
         public IEnumerator CoShowAnnouncement(string announcement, bool show = true, string shortTitle = "TOU Update", string title = "", string date = "") {
             var mgr = FindObjectOfType<MainMenuManager>(true);
-            var popUpTemplate = UnityEngine.Object.FindObjectOfType<AnnouncementPopUp>(true);
+            var popUpTemplate = FindObjectOfType<AnnouncementPopUp>(true);
             if (popUpTemplate == null) {
-                TheOtherRolesPlugin.Logger.LogError("couldnt show credits, popUp is null");
+                Error("couldnt show credits, popUp is null");
                 yield return null;
             }
-            var popUp = UnityEngine.Object.Instantiate(popUpTemplate);
+            var popUp = Instantiate(popUpTemplate);
 
             popUp.gameObject.SetActive(true);
 
-            Assets.InnerNet.Announcement creditsAnnouncement = new() {
+            Announcement creditsAnnouncement = new() {
                 Id = "touAnnouncement",
                 Language = 0,
                 Number = 6969,
@@ -204,7 +204,7 @@ namespace TheOtherRoles.Modules {
                 ShortTitle = shortTitle,
                 SubTitle = "",
                 PinState = false,
-                Date = date == "" ? DateTime.Now.Date.ToString() : date,
+                Date = date == "" ? DateTime.Now.Date.ToString(CultureInfo.CurrentCulture) : date,
                 Text = announcement,
             };
             mgr.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
@@ -215,7 +215,7 @@ namespace TheOtherRoles.Modules {
                     DataManager.Player.Announcements.SetAnnouncements(new Announcement[] { creditsAnnouncement });
                     popUp.CreateAnnouncementList();
                     popUp.UpdateAnnouncementText(creditsAnnouncement.Number);
-                    popUp.visibleAnnouncements[0].PassiveButton.OnClick.RemoveAllListeners();
+                    popUp.visibleAnnouncements.Get(0).PassiveButton.OnClick.RemoveAllListeners();
                     DataManager.Player.Announcements.allAnnouncements = backup;
                 }
             })));

@@ -29,7 +29,7 @@ namespace TheOtherRoles.Modules {
                             }
                         }
                     } else if (text.ToLower().StartsWith("/ban ")) {
-                        string playerName = text.Substring(6);
+                        var playerName = text[6..];
                         PlayerControl target = CachedPlayer.AllPlayers.FirstOrDefault(x => x.Data.PlayerName.Equals(playerName));
                         if (target != null && AmongUsClient.Instance != null && AmongUsClient.Instance.CanBan()) {
                             var client = AmongUsClient.Instance.GetClient(target.OwnerId);
@@ -39,24 +39,27 @@ namespace TheOtherRoles.Modules {
                             }
                         }
                     } else if (text.ToLower().StartsWith("/gm")) {
-                        string gm = text.Substring(4).ToLower();
-                        CustomGamemodes gameMode = CustomGamemodes.Classic;
-                        if (gm.StartsWith("prop") || gm.StartsWith("ph")) {
+                        var gm = text[4..].ToLower();
+                        var gameMode = CustomGamemodes.Classic;
+                        if (gm.StartsWith("prop") || gm.StartsWith("ph"))
                             gameMode = CustomGamemodes.PropHunt;
-                        } else if (gm.StartsWith("guess") || gm.StartsWith("gm")) {
+                        
+                        if (gm.StartsWith("guess") || gm.StartsWith("gm"))
                             gameMode = CustomGamemodes.Guesser;
-                        } else if (gm.StartsWith("hide") || gm.StartsWith("hn")) {
+                        
+                        if (gm.StartsWith("hide") || gm.StartsWith("hn"))
                             gameMode = CustomGamemodes.HideNSeek;
-                        }
                         // else its classic!
 
-                        if (AmongUsClient.Instance.AmHost) {
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGamemode, Hazel.SendOption.Reliable, -1);
-                            writer.Write((byte)TORMapOptions.gameMode);
-                            AmongUsClient.Instance.FinishRpcImmediately(writer);
-                            RPCProcedure.shareGamemode((byte)gameMode);
-                            RPCProcedure.shareGamemode((byte)TORMapOptions.gameMode);
-                        } else {
+                        if (AmongUsClient.Instance.AmHost)
+                        {
+                            var writer = FastRpcWriter.StartNewRpcWriter(CustomRPC.ShareGamemode)
+                                .Write(gameMode);
+                            writer.RPCSend();
+                            RPCProcedure.shareGameMode((byte)gameMode);
+                        } 
+                        else 
+                        {
                             __instance.AddChat(CachedPlayer.LocalPlayer.PlayerControl, "Nice try, but you have to be the host to use this feature");
                         }
                         handled = true;
@@ -90,17 +93,17 @@ namespace TheOtherRoles.Modules {
                 }
 
                 if (text.ToLower().StartsWith("/team") && CachedPlayer.LocalPlayer.PlayerControl.isLover() && CachedPlayer.LocalPlayer.PlayerControl.isTeamCultist())
-			{
-				if (Cultist.cultist == CachedPlayer.LocalPlayer.PlayerControl)
-				{
-					Cultist.chatTarget = Helpers.flipBitwise(Cultist.chatTarget);
-				}
-				if (Follower.follower == CachedPlayer.LocalPlayer.PlayerControl)
-				{
-					Follower.chatTarget = Helpers.flipBitwise(Follower.chatTarget);
-				}
-				handled = true;
-            }
+                {
+                    if (Cultist.cultist == CachedPlayer.LocalPlayer.PlayerControl)
+                    {
+                        Cultist.chatTarget = Helpers.flipBitwise(Cultist.chatTarget);
+                    }
+                    if (Follower.follower == CachedPlayer.LocalPlayer.PlayerControl)
+                    {
+                        Follower.chatTarget = Helpers.flipBitwise(Follower.chatTarget);
+                    }
+                    handled = true;
+                }
 
                 if (text.ToLower().StartsWith("/role")) {
                     RoleInfo localRole = RoleInfo.getRoleInfoForPlayer(CachedPlayer.LocalPlayer.PlayerControl, false).FirstOrDefault();

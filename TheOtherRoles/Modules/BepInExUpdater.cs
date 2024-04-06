@@ -25,8 +25,8 @@ public class BepInExUpdater : MonoBehaviour
 
     public void Awake()
     {
-        TheOtherRolesPlugin.Logger.LogMessage("BepInEx Update Required...");
-        TheOtherRolesPlugin.Logger.LogMessage($"{Paths.BepInExVersion}, {RequiredBepInExVersion} ");
+        Message("BepInEx Update Required...");
+        Message($"{Paths.BepInExVersion}, {RequiredBepInExVersion} ");
         this.StartCoroutine(CoUpdate());
 
     }
@@ -39,7 +39,7 @@ public class BepInExUpdater : MonoBehaviour
         yield return www.Send();
         if (www.isNetworkError || www.isHttpError)
         {
-            TheOtherRolesPlugin.Logger.LogError(www.error);
+            Error(www.error);
             yield break;
         }
 

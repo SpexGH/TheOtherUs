@@ -20,6 +20,12 @@
 		<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.688" />
 		<PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" />
         <PackageReference Include="Reactor" Version="2.2.0" />
+		<PackageReference Include="Costura.Fody" Version="5.8.0-alpha0098">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Csv" Version="2.0.93" />
+		<PackageReference Include="NPOI" Version="2.7.0" />
     </ItemGroup>
    
     <Target Name="Date" BeforeTargets="BeforeBuild">  <!--Will make the compile time available s.t. we can let betas expire-->

@@ -1,0 +1,8 @@
+<Weavers>
+    <Costura>
+        <IncludeAssemblies>
+            Csv,
+            NPOI
+        </IncludeAssemblies>
+    </Costura>
+</Weavers>

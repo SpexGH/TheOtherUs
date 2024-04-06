@@ -3,7 +3,7 @@ using System.Collections;
 using System.Linq.Expressions;
 using Il2CppSystem.Collections.Generic;
 
-namespace TheOtherRoles.Utilities;
+namespace TheOtherRoles.Helper;
 
 public static class EnumerationHelpers
 { 
