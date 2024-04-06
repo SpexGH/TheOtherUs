@@ -18,7 +18,10 @@ public class LanguageManager : ManagerBase<LanguageManager>
         new CsvLoader(),
         new ExcelLoader()
     ];
-    private static readonly HashSet<string> DefLanguageFile = [];
+    private static readonly HashSet<string> DefLanguageFile = 
+    [
+        "Strings.csv"
+    ];
 
     private readonly List<LanguageLoaderBase> _AllLoader = [];
     private readonly Dictionary<SupportedLangs, Dictionary<string, string>> StringMap = [];
