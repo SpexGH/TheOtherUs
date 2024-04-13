@@ -63,14 +63,14 @@ namespace TheOtherRoles.Patches {
 					if (MeetingHud.Instance == null) {
 						foreach (PlayerControl player in CachedPlayer.AllPlayers) {
 							if (Snitch.targets == Snitch.Targets.EvilPlayers && !Helpers.isEvil(player)) continue;
-							if (Snitch.targets == Snitch.Targets.Killers && !Helpers.isKiller(player)) continue;
+							else if (Snitch.targets == Snitch.Targets.Killers && !Helpers.isKiller(player)) continue;
 							if (player.Data.IsDead) continue;
 							Vector3 v = player.transform.position;
 							v /= MapUtilities.CachedShipStatus.MapScale;
 							v.x *= Mathf.Sign(MapUtilities.CachedShipStatus.transform.localScale.x);
 							v.z = -2.1f;
-							if (herePoints.TryGetValue(player, out var point)) {
-								point.transform.localPosition = v;
+							if (herePoints.ContainsKey(player)) {
+								herePoints[player].transform.localPosition = v;
 								continue;
 							}
 							var herePoint = UnityEngine.Object.Instantiate(__instance.HerePoint, __instance.HerePoint.transform.parent, true);

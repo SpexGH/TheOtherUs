@@ -29,17 +29,13 @@ internal class FastRpcWriter(MessageWriter writer)
 
     private static FastRpcWriter StartNew(SendOption option = SendOption.Reliable, RPCSendMode mode = RPCSendMode.SendToAll, int TargetId = -1, uint targetObjectId = 255)
     {
-        var writer = new FastRpcWriter(option, mode, TargetId, targetObjectId);
-        writer.CreateWriter();
-        return writer;
+        return new FastRpcWriter(option, mode, TargetId, targetObjectId);
     }
     
     internal static FastRpcWriter StartNewRpcWriter(CustomRPC rpc, SendOption option = SendOption.Reliable, RPCSendMode mode = RPCSendMode.SendToAll, int TargetId = -1, uint targetObjectId = 255)
     {
         var writer = StartNew(option, mode, TargetId, targetObjectId);
         writer.SetRpcCallId(rpc);
-
-        writer.CreateWriter();
         
         if (mode == RPCSendMode.SendToAll)
             writer.StartDataAllMessage();
@@ -51,16 +47,10 @@ internal class FastRpcWriter(MessageWriter writer)
         return writer;
     }
 
-    public FastRpcWriter CreateWriter()
+    public FastRpcWriter StartSendAllRPCWriter()
     {
         Clear();
         writer = MessageWriter.Get(Option);
-        return this;
-    }
-
-    public FastRpcWriter StartSendAllRPCWriter()
-    {
-        CreateWriter();
         StartDataAllMessage();
         StartRPCMessage();
         return this;
@@ -68,7 +58,8 @@ internal class FastRpcWriter(MessageWriter writer)
 
     public FastRpcWriter StartSendToPlayerRPCWriter()
     {
-        CreateWriter();
+        Clear();
+        writer = MessageWriter.Get(Option);
         StartDataToPlayerMessage();
         StartRPCMessage();
         return this;

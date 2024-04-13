@@ -2,7 +2,10 @@ using HarmonyLib;
 using Hazel;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
+using static TheOtherRoles.TheOtherRoles;
+using System.Reflection;
 using TheOtherRoles.Players;
 
 namespace TheOtherRoles.Patches {

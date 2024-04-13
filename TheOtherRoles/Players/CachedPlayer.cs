@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
+using InnerNet;
 using UnityEngine;
 
 namespace TheOtherRoles.Players;
-
 
 public class CachedPlayer
 {
     public static readonly Dictionary<IntPtr, CachedPlayer> PlayerPtrs = new();
     public static readonly List<CachedPlayer> AllPlayers = new();
-    public static CachedPlayer? LocalPlayer;
+    public static CachedPlayer LocalPlayer;
 
     public Transform transform;
     public PlayerControl PlayerControl;

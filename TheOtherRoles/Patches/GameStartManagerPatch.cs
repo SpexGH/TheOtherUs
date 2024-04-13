@@ -13,7 +13,6 @@ using Object = UnityEngine.Object;
 
 namespace TheOtherRoles.Patches;
 
-[HarmonyPatch]
 public class GameStartManagerPatch  
 {
     public static float timer = 600f;
@@ -94,11 +93,12 @@ public class GameStartManagerPatch
 
                 // Make starting info available to clients:
                 if (startingTimer <= 0 && __instance.startState == GameStartManager.StartingStates.Countdown) {
-                    FastRpcWriter.StartNewRpcWriter(CustomRPC.SetGameStarting).RPCSend();
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetGameStarting, Hazel.SendOption.Reliable, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setGameStarting();
 
                     // Activate Stop-Button
-                    copiedStartButton = Object.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.gameObject.transform.parent);
+                    copiedStartButton = GameObject.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.gameObject.transform.parent);
                     copiedStartButton.transform.localPosition = __instance.StartButton.transform.localPosition;
                     copiedStartButton.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.StopClean.png", 180f);
                     copiedStartButton.SetActive(true);
@@ -107,7 +107,7 @@ public class GameStartManagerPatch
                     startButtonText.fontSize *= 0.8f;
                     startButtonText.fontSizeMax = startButtonText.fontSize;
                     startButtonText.gameObject.transform.localPosition = Vector3.zero;
-                    var startButtonPassiveButton = copiedStartButton.GetComponent<PassiveButton>();
+                    PassiveButton startButtonPassiveButton = copiedStartButton.GetComponent<PassiveButton>();
 
                     void StopStartFunc() {
                         __instance.ResetStartState();

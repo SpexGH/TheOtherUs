@@ -1,4 +1,7 @@
-﻿using TheOtherRoles.CustomGameModes;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using TheOtherRoles.CustomGameModes;
 using UnityEngine;
 
 namespace TheOtherRoles.Utilities {

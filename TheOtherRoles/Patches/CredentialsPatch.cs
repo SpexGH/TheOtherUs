@@ -31,6 +31,18 @@ $@"<size=60%> <color=#FCCE03FF>Special thanks to Smeggy, Scoom, Xer, Mr_Fluuff, 
         internal static class PingTrackerPatch
         {
             public static GameObject modStamp;
+            /*static void Prefix(PingTracker __instance) {
+                if (modStamp == null) {
+                    modStamp = new GameObject("ModStamp");
+                    var rend = modStamp.AddComponent<SpriteRenderer>();
+                    rend.sprite = TheOtherRolesPlugin.GetModStamp();
+                    rend.color = new Color(1, 1, 1, 0.5f);
+                    modStamp.transform.parent = __instance.transform.parent;
+                    modStamp.transform.localScale *= SubmergedCompatibility.Loaded ? 0 : 0.6f;
+                }
+                float offset = (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) ? 0.75f : 0f;
+                modStamp.transform.position = FastDestroyableSingleton<HudManager>.Instance.MapButton.transform.position + Vector3.down * offset;
+            }*/
 
             static void Postfix(PingTracker __instance){
                 __instance.text.alignment = TMPro.TextAlignmentOptions.TopRight;
@@ -164,7 +176,7 @@ $@"<size=60%> <color=#FCCE03FF>Special thanks to Smeggy, Scoom, Xer, Mr_Fluuff, 
                 HttpClient client = new HttpClient();
                 HttpResponseMessage response = await client.GetAsync("https://raw.githubusercontent.com/TheOtherRolesAU/MOTD/main/motd.txt");
                 response.EnsureSuccessStatusCode();
-                var motds = await response.Content.ReadAsStringAsync();
+                string motds = await response.Content.ReadAsStringAsync();
                 foreach(string line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries)) {
                         MOTD.motds.Add(line);
                 }
