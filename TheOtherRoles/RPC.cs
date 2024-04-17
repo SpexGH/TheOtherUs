@@ -111,7 +111,7 @@ namespace TheOtherRoles
     {
         // Main Controls
 
-        ResetVaribles = 60,
+        ResetVaribles = 65,
         ShareOptions,
         ForceEnd,
         WorkaroundSetRoles,
@@ -146,7 +146,6 @@ namespace TheOtherRoles
         TimeMasterShield,
         TimeMasterRewindTime,
         TurnToImpostor,
-        TurnToImpostorFollower,
         BodyGuardGuardPlayer,
         PrivateInvestigatorWatchPlayer,
         PrivateInvestigatorWatchFlash,
@@ -156,7 +155,6 @@ namespace TheOtherRoles
         SwapperSwap,
         MorphlingMorph,
         CamouflagerCamouflage,
-        //CamoComms,
         TrackerUsedTracker,
         VampireSetBitten,
         PlaceGarlic,
@@ -164,7 +162,6 @@ namespace TheOtherRoles
         DeputyUsedHandcuffs,
         DeputyPromotes,
         JackalCreatesSidekick,
-        CreateCrewmate,
         SidekickPromotes,
         ErasePlayerRoles,
         SetFutureErased,
@@ -188,7 +185,6 @@ namespace TheOtherRoles
         LawyerSetTarget,
         LawyerPromotesToPursuer,
         BlackmailPlayer,
-        UseAdminTime,
         UseCameraTime,
         UseVitalsTime,
         UnblackmailPlayer,
@@ -198,11 +194,9 @@ namespace TheOtherRoles
         SetMeetingChatOverlay,
         SetPosition,
         SetPositionESC,
-        Invert,
         SetTiebreak,
         SetInvisibleGen,
         SetSwoop,
-        // SetSwooper,
         SetInvisible,
         ThiefStealsRole,
         SetTrap,
@@ -210,7 +204,6 @@ namespace TheOtherRoles
         MayorSetVoteTwice,
         PlaceBomb,
         DefuseBomb,
-        //ShareRoom,
 
         // Gamemode
         SetGuesserGm,
@@ -2673,20 +2666,7 @@ namespace TheOtherRoles
                     byte flag = reader.ReadByte();
                     RPCProcedure.setModifier(modifierId, pId, flag);
                     break;
-                case CustomRPC.VersionHandshake:
-                    var versionOwnerId = reader.ReadPackedInt32();
-                    var major = reader.ReadInt32();
-                    var minor = reader.ReadInt32();
-                    var patch = reader.ReadInt32();
-                    var timer = reader.ReadSingle();
-                    if (!AmongUsClient.Instance.AmHost && timer >= 0f) GameStartManagerPatch.timer = timer;
-                    var revision = reader.ReadByte();
-                    HandshakeHelper.versionHandshake(major, minor, patch, revision, versionOwnerId);
-                    break;
-
-                case CustomRPC.VersionHandshakeEx:
-                    HandshakeHelper.VersionHandshakeEx(reader);
-                    break;
+                
                 case CustomRPC.UseUncheckedVent:
                     int ventId = reader.ReadPackedInt32();
                     byte ventingPlayer = reader.ReadByte();
@@ -2727,10 +2707,7 @@ namespace TheOtherRoles
                 case CustomRPC.EngineerUsedRepair:
                     RPCProcedure.engineerUsedRepair();
                     break;
-                /*
-            case CustomRPC.UseAdminTime:
-                RPCProcedure.useAdminTime(reader.ReadSingle());
-                break;*/
+
                 case CustomRPC.UseCameraTime:
                     RPCProcedure.useCameraTime(reader.ReadSingle());
                     break;
@@ -2796,10 +2773,7 @@ namespace TheOtherRoles
                 case CustomRPC.CamouflagerCamouflage:
                     byte setTimer = reader.ReadByte();
                     RPCProcedure.camouflagerCamouflage(setTimer);
-                    break;/*
-                case CustomRPC.CamoComms:
-                    RPCProcedure.camoComms();
-                    break;*/
+                    break;
                 case CustomRPC.VampireSetBitten:
                     byte bittenId = reader.ReadByte();
                     byte reset = reader.ReadByte();
@@ -2932,11 +2906,7 @@ namespace TheOtherRoles
                     byte invisiblePlayer2 = reader.ReadByte();
                     byte invisibleFlag2 = reader.ReadByte();
                     RPCProcedure.setSwoop(invisiblePlayer2, invisibleFlag2);
-                    break;  /*
-                case CustomRPC.SetSwooper:
-                    byte jackalPlayer2 = reader.ReadByte();
-                    RPCProcedure.setSwooper(jackalPlayer2);
-                    break;  */
+                    break;  
                 case CustomRPC.SetInvisibleGen:
                     byte invisiblePlayer3 = reader.ReadByte();
                     byte invisibleFlag3 = reader.ReadByte();
@@ -2975,10 +2945,6 @@ namespace TheOtherRoles
                     break;
                 case CustomRPC.DefuseBomb:
                     RPCProcedure.defuseBomb();
-                    break;
-                case CustomRPC.ShareGamemode:
-                    byte gm = reader.ReadByte();
-                    RPCProcedure.shareGamemode(gm);
                     break;
                 case CustomRPC.StopStart:
                     RPCProcedure.stopStart(reader.ReadByte());
@@ -3022,13 +2988,7 @@ namespace TheOtherRoles
                 case CustomRPC.ShareGhostInfo:
                     RPCProcedure.receiveGhostInfo(reader.ReadByte(), reader);
                     break;
-                    /*
-                case CustomRPC.ShareRoom:
-                    byte roomPlayer = reader.ReadByte();
-                    byte roomId = reader.ReadByte();
-                    RPCProcedure.shareRoom(roomPlayer, roomId);
-                    break;
-                    */
+
             }
         }
     }

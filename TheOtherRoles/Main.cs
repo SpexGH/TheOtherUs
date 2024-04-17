@@ -6,7 +6,9 @@ using Hazel;
 using Reactor.Networking.Attributes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using TheOtherRoles.Modules;
 using TheOtherRoles.Modules.CustomHats;
@@ -107,10 +109,8 @@ namespace TheOtherRoles
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
             Harmony.PatchAll();
             
-            TaskQueue.Instance.StartTask(DownLoad, "DownLoadDependent");
-            CustomColors.Load();
-            CustomHatManager.LoadHats();
-            if (ToggleCursor.Value) {
+            if (ToggleCursor.Value) 
+            {
                 Helpers.enableCursor(true);
             }
             if (BepInExUpdater.UpdateRequired)
@@ -126,19 +126,21 @@ namespace TheOtherRoles
             MainMenuPatch.addSceneChangeCallbacks();
             _ = RoleInfo.loadReadme();
             AddToKillDistanceSetting.addKillDistance();
+            RPCListener.Register(typeof(Main).Assembly);
+            RPCMethod.Register(typeof(Main).Assembly);
             
             Info("Loading TOR completed!");
         }
-
-        private static void DownLoad()
-        {
-            DependentDownload.Instance.HasFileNames.AddRange(DependentDownload.DllDir.GetFiles().Where(n => n.Extension == ".dll").Select(n => n.Name));
-            DependentDownload.Instance.DownLoadDependentMap("https://raw.githubusercontent.com/SpexGH/TheOtherUs/LanguageAdd/LangLoadDependent/DependentMap.txt", "Excel");
-            DependentDownload.Instance.DownLoadDependentMap("https://raw.githubusercontent.com/SpexGH/TheOtherUs/LanguageAdd/LangLoadDependent/DependentMap.txt", "Csv");
-        }
-
+        
         internal static void OnTranslationController_Initialized_Load()
-        {
+        { 
+            DependentDownload.Instance.CheckLoad();
+            DependentDownload.Instance.DownLoadDependentMap("https://raw.githubusercontent.com/SpexGH/TheOtherUs/the-other-us/LoadDependent/");
+            TaskQueue.Instance.StartTask(() => DependentDownload.Instance.DownLoadDependentFormMap("Csv"), "LoadDependentFormMap Csv");
+            TaskQueue.Instance.StartTask(() => DependentDownload.Instance.DownLoadDependentFormMap("Excel"), "LoadDependentFormMap Excel");
+            
+            TaskQueue.Instance.StartTask(CustomColors.Load, "LoadColor");
+            TaskQueue.Instance.StartTask(CustomHatManager.LoadHats, "LoadHat");
             TaskQueue.Instance.StartTask(LanguageManager.Instance.Load, "LoadLanguage");
             TaskQueue.Instance.StartTask(CustomOptionHolder.Load, "LoadOption");
         }

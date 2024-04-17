@@ -68,7 +68,7 @@ namespace TheOtherRoles.Modules
             Releases = JsonSerializer.Deserialize<List<GithubRelease>>(www.downloadHandler.text);
             www.downloadHandler.Dispose();
             www.Dispose();
-            Releases.Sort(SortReleases);
+            if (Releases.Any()) Releases.Sort(SortReleases);
             _busy = false;
         }
 
@@ -145,8 +145,7 @@ namespace TheOtherRoles.Modules
         [HideFromIl2Cpp]
         private static int SortReleases(GithubRelease a, GithubRelease b) {
             if (a.IsNewer(b.Version)) return -1;
-            if (b.IsNewer(a.Version)) return 1;
-            return 0;
+            return b.IsNewer(a.Version) ? 1 : 0;
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
@@ -249,7 +248,15 @@ namespace TheOtherRoles.Modules
         [JsonPropertyName("assets")]
         public List<GithubAsset> Assets { get; set; }
 
-        public Version Version => Version.Parse(Tag.Replace("v", string.Empty));
+        public Version Version
+        {
+            get
+            {
+                var text = Tag;
+                if (text.Contains('v')) text = text.Replace("v", string.Empty);
+                return Version.TryParse(text, out var ver) ? ver : new Version(1,0 , 0);
+            }
+        }
 
         public bool IsNewer(Version version) {
             return Version > version;

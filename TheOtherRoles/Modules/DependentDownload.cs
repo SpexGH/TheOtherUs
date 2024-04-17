@@ -15,7 +15,7 @@ public class DependentDownload : ManagerBase<DependentDownload>
     public static readonly DirectoryInfo DllDir = new(DllPath);
     private readonly HttpClient _client = new();
     private readonly Dictionary<string, List<string>> Map = new();
-    internal readonly List<string> HasFileNames = [];
+    private string CurrentUrl;
 
 
     public DependentDownload()
@@ -24,13 +24,23 @@ public class DependentDownload : ManagerBase<DependentDownload>
             Directory.CreateDirectory(DllPath);
     }
 
-    public async void CheckDependent(string fileName, string url, bool formDownload = true)
+    public void CheckLoad()
+    {
+        foreach (var file in DllDir.GetFiles().Where(n => n.Extension == ".dll").Select(n => n.Name))
+        {
+            CheckDependent(file);
+            Info($"load {file}");
+        }
+    }
+
+    public async void CheckDependent(string fileName, string url = "", bool formDownload = true)
     {
         if (AppDomain.CurrentDomain.GetAssemblies().Any(n => n.GetName().Name == fileName.Replace(Path.GetExtension(fileName), string.Empty)))
             return;
         
         var filePath = Path.Combine(DllPath, fileName);
-        if (HasFileNames.Contains(fileName))
+
+        if (url == string.Empty || File.Exists(filePath))
             goto load;
         
         var stream = formDownload ? await DownloadDependent(url) : await ReadDependent(fileName);
@@ -38,22 +48,28 @@ public class DependentDownload : ManagerBase<DependentDownload>
         await stream.CopyToAsync(file);
         stream.Close();
         file.Close();
-        HasFileNames.Add(fileName);
-        
+
         load:
         Assembly.LoadFile(filePath);
         Info($"Loaded File:{fileName} Url:{url}");
     }
     
-    public void DownLoadDependentMap(string mapUrl, string option)
+    public void DownLoadDependentMap(string mapUrl, bool useFast = true)
     {
-        var mapStream = _client.GetStreamAsync(mapUrl.GithubUrl()).Result;
+        CurrentUrl = useFast ? mapUrl.GithubUrl() : mapUrl;
+        Info($"CurrentUrl:{CurrentUrl}");
+        var MapUrl = Path.Combine(CurrentUrl, "DependentMap.txt");
+        var mapStream = _client.GetStreamAsync(MapUrl).Result;
         mapStream.StartRead(Read, out _);
-        var Url = Map["Url"][0];
+    }
+
+
+    public void DownLoadDependentFormMap(string option)
+    {
         var DLLs = Map[option];
         foreach (var dll in DLLs)
         {
-            CheckDependent(dll, Path.Combine(Url, dll));
+            CheckDependent(dll, Path.Combine(CurrentUrl, dll));
         }
     }
 
@@ -62,25 +78,19 @@ public class DependentDownload : ManagerBase<DependentDownload>
         if (s.IsNullOrWhiteSpace())
             return;
 
-        var map = Map;
         var data =  s.Split(":");
         var option = data[0];
-        if (option == "Url")
-        {
-            map[option] = [s.Replace("Url:", string.Empty)];
-            return;
-        }
         
         var list = data[1].Contains(',') ? data[1].Split(",").ToList() : [data[1]];
 
-        map[option] = list;
+        Map[option] = list;
     }
 
-    public async Task<Stream> DownloadDependent(string url)
+    public Task<Stream> DownloadDependent(string url)
     {
         Info($"Download Url{url}");
-        var stream = await _client.GetStreamAsync(url.GithubUrl());
-        return await Task.FromResult(stream);
+        var stream = _client.GetStreamAsync(url).Result;
+        return Task.FromResult(stream);
     }
 
     public async Task<Stream> ReadDependent(string fileName)

@@ -1,3 +1,2 @@
-Url:https://raw.githubusercontent.com/Huier-Huang/TheOtherUs/LanguageAdd/LangLoadDependent/
 Excel:EPPlus.dll,EPPlus.Interfaces.dll,Microsoft.Extensions.Configuration.dll,Microsoft.Extensions.Configuration.Abstractions.dll,Microsoft.Extensions.Configuration.FileExtensions.dll,Microsoft.Extensions.Configuration.Json.dll,Microsoft.Extensions.FileProviders.Abstractions.dll,Microsoft.Extensions.FileProviders.Physical.dll,Microsoft.IO.RecyclableMemoryStream.dll
 Csv:Csv.dll
