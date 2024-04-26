@@ -20,7 +20,6 @@ public class TaskQueue : ManagerBase<TaskQueue>
         var task = new Task(() =>
         {
             CurrentId = Id;
-            TaskStarting = true;
             Info($"Start TaskQueue Id:{Id}");
             try
             {
@@ -31,8 +30,7 @@ public class TaskQueue : ManagerBase<TaskQueue>
                 Exception(e);
                 Error($"加载失败 TaskQueue Id:{Id}");
             }
-
-            TaskStarting = false;
+            
         });
         Tasks.Enqueue(task);
         
@@ -45,10 +43,21 @@ public class TaskQueue : ManagerBase<TaskQueue>
     public void StartNew()
     {
         if (!Tasks.Any() || TaskStarting) return;
-        deq:
-        CurrentTask = Tasks.Dequeue();
-        CurrentTask.Start();
-        CurrentTask.Wait();
-        if (Tasks.Any()) goto deq;
+        TaskStarting = true;
+        Task.Run(() =>
+            {
+                Start();
+                TaskStarting = false;
+            }
+        );
+        return;
+
+        void Start()
+        {
+            if (!Tasks.Any()) return;
+            CurrentTask = Tasks.Dequeue();
+            CurrentTask.Start();
+            CurrentTask.GetAwaiter().OnCompleted(Start);
+        }
     }
 }

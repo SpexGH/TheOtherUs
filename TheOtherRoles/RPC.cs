@@ -220,6 +220,7 @@ namespace TheOtherRoles
         ShareGhostInfo,
     }
 
+    [Harmony]
     public static class RPCProcedure
     {
 
@@ -1712,47 +1713,7 @@ namespace TheOtherRoles
         {
             Shifter.futureShift = Helpers.playerById(playerId);
         }
-
-        public static void disperse()
-        {
-            AntiTeleport.setPosition();
-            Helpers.showFlash(Cleaner.color, 1f);
-            if (AntiTeleport.antiTeleport.FindAll(x => x.PlayerId == CachedPlayer.LocalPlayer.PlayerControl.PlayerId).Count == 0 && !CachedPlayer.LocalPlayer.Data.IsDead)
-            {
-                foreach (PlayerControl player in CachedPlayer.AllPlayers)
-                {
-                    if (MapBehaviour.Instance)
-                        MapBehaviour.Instance.Close();
-                    if (Minigame.Instance)
-                        Minigame.Instance.ForceClose();
-                    if (PlayerControl.LocalPlayer.inVent)
-                    {
-                        PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(Vent.currentVent.Id);
-                        PlayerControl.LocalPlayer.MyPhysics.ExitAllVents();
-                    };
-                    if (Disperser.dispersesToVent)
-                    {
-                        CachedPlayer.LocalPlayer.PlayerControl.transform.position = MapData.FindVentSpawnPositions().Random();
-                    }
-                    else
-                    {
-                        CachedPlayer.LocalPlayer.PlayerControl.transform.position =
-                                GameOptionsManager.Instance.currentNormalGameOptions.MapId switch
-                                {
-                                    0 => MapData.SkeldSpawnPosition.Random(),
-                                    1 => MapData.MiraSpawnPosition.Random(),
-                                    2 => MapData.PolusSpawnPosition.Random(),
-                                    3 => MapData.DleksSpawnPosition.Random(),
-                                    4 => MapData.AirshipSpawnPosition.Random(),
-                                    5 => MapData.FungleSpawnPosition.Random(),
-                                    _ => CachedPlayer.LocalPlayer.PlayerControl.transform.position
-                                };
-                    }
-                }
-                Disperser.remainingDisperses--;
-            }
-        }
-
+        
         public static void setFutureShielded(byte playerId)
         {
             Medic.futureShielded = Helpers.playerById(playerId);
@@ -2816,9 +2777,6 @@ namespace TheOtherRoles
                     break;
                 case CustomRPC.SetFutureShifted:
                     RPCProcedure.setFutureShifted(reader.ReadByte());
-                    break;
-                case CustomRPC.Disperse:
-                    RPCProcedure.disperse();
                     break;
                 case CustomRPC.SetFutureShielded:
                     RPCProcedure.setFutureShielded(reader.ReadByte());
