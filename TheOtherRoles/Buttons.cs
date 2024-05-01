@@ -693,14 +693,12 @@ namespace TheOtherRoles
             // Disperser disperse
             disperserDisperseButton = new CustomButton(
                 () => {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.Disperse, Hazel.SendOption.Reliable, -1);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.disperse();
+                    Disperser.disperse();
                     SoundEffectsManager.play("disperserDisperse");
 
                     disperserDisperseButton.Timer = disperserDisperseButton.MaxTimer;
                 },
-                () => { return Disperser.disperser != null && Disperser.disperser == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead; },
+                () => Disperser.disperser != null && Disperser.disperser == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead,
                 () => {
                     if (disperserChargesText != null) disperserChargesText.text = $"{Disperser.remainingDisperses}";
                     return Disperser.remainingDisperses > 0 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
@@ -748,7 +746,7 @@ namespace TheOtherRoles
                 () => { return Morphling.morphling != null && Morphling.morphling == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead; },
                 () => { 
                     if (Morphling.sampledTarget == null) 
-                    showTargetNameOnButton(Morphling.currentTarget, morphlingButton, "SAMPLE");
+                        showTargetNameOnButton(Morphling.currentTarget, morphlingButton, "SAMPLE");
                     return (Morphling.currentTarget || Morphling.sampledTarget) && !Helpers.isActiveCamoComms() && CachedPlayer.LocalPlayer.PlayerControl.CanMove && !Helpers.MushroomSabotageActive(); },
                 () => { 
                     morphlingButton.Timer = morphlingButton.MaxTimer;

@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Reactor.Utilities.Extensions;
 
 namespace TheOtherRoles.Utilities;
 
+[Harmony]
 #nullable enable
 public class MapData
 {
@@ -201,20 +204,83 @@ public class MapData
 
 
     private static List<Vector3>? VentSpawnPositions;
+    private static byte mapId;
 
     public static List<Vector3> FindVentSpawnPositions()
     {
-        if (VentSpawnPositions != null) return VentSpawnPositions;
+        if (VentSpawnPositions != null && mapId == GameOptionsManager.Instance.currentNormalGameOptions.MapId) return VentSpawnPositions;
 
-        var poss = new List<Vector3>();
-        foreach (var vent in DestroyableSingleton<ShipStatus>.Instance.AllVents)
-        {
-            var Transform = vent.transform;
-            var position = Transform.position;
-            poss.Add(new Vector3(position.x, position.y + 0.2f, position.z - 50));
-        }
-
+        var poss = (from vent in DestroyableSingleton<ShipStatus>.Instance.AllVents select vent.transform into Transform select Transform.position into position select new Vector3(position.x, position.y + 0.2f, position.z - 50)).ToList();
+        mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
         VentSpawnPositions = poss;
         return poss;
+    }
+
+    public static void RandomSpawnAllPlayers() =>
+        RandomSpawnPlayers(CachedPlayer.AllPlayers.Select(n => n.PlayerControl));
+    public static void RandomSpawnPlayers(IEnumerable<PlayerControl> spawnPlayers)
+    {
+        if (CustomOptionHolder.randomGameStartToVents.getBool())
+        {
+            RandomSpawnToVent(spawnPlayers);
+        }
+        else
+        {
+            RandomSpawnToMap(spawnPlayers);
+        }
+    }
+
+    public static void RandomSpawnToMap(IEnumerable<PlayerControl> spawnPlayer)
+    {
+        var newPositions = GameOptionsManager.Instance.currentNormalGameOptions.MapId switch
+            {
+                0 => SkeldSpawnPosition,
+                1 => MiraSpawnPosition,
+                2 => PolusSpawnPosition,
+                3 => DleksSpawnPosition,
+                4 => AirshipSpawnPosition,
+                5 => FungleSpawnPosition,
+                _ => []
+            };
+                
+        foreach (var player in spawnPlayer)
+        {
+            var defPos = player.transform.position;
+            var newPos = newPositions.Any() ? newPositions.Random() :  defPos; 
+            player.NetTransform.RpcSnapTo(newPos);
+        }
+    }
+    
+    public static void RandomSpawnToVent(IEnumerable<PlayerControl> spawnPlayer)
+    {
+        var newPositions = FindVentSpawnPositions();
+                
+        foreach (var player in spawnPlayer)
+        {
+            var defPos = player.transform.position;
+            var newPos = newPositions.Any() ? newPositions.Random() :  defPos; 
+            player.NetTransform.RpcSnapTo(newPos);
+        }
+    }
+    public static readonly Dictionary<PlayerControl, Vent> PlayerVentDic = new();
+
+    [HarmonyPatch(typeof(Vent), nameof(Vent.EnterVent)), HarmonyPostfix]
+    public static void OnEnterVent(PlayerControl pc, Vent __instance) => PlayerVentDic[pc] = __instance;
+        
+    [HarmonyPatch(typeof(Vent._ExitVent_d__40), nameof(Vent._ExitVent_d__40.MoveNext)), HarmonyPostfix]
+    public static void OnExitVent(Vent._ExitVent_d__40 __instance)
+    {
+        if (PlayerVentDic.ContainsKey(__instance.pc))
+        {
+            PlayerVentDic.Remove(__instance.pc);
+        }
+    }
+
+    public static void AllPlayerExitVent()
+    {
+        foreach (var (player, vent) in PlayerVentDic)
+        {
+            player.MyPhysics.RpcExitVent(vent.Id);
+        }
     }
 }

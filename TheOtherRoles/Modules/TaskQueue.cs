@@ -12,13 +12,14 @@ public class TaskQueue : ManagerBase<TaskQueue>
     public bool TaskStarting;
 
     public string CurrentId;
+
+    public Task CurrentTask;
     
     public void StartTask(Action action, string Id)
     {
         var task = new Task(() =>
         {
             CurrentId = Id;
-            TaskStarting = true;
             Info($"Start TaskQueue Id:{Id}");
             try
             {
@@ -29,11 +30,7 @@ public class TaskQueue : ManagerBase<TaskQueue>
                 Exception(e);
                 Error($"加载失败 TaskQueue Id:{Id}");
             }
-
-            finally
-            {
-                StartNew();
-            }
+            
         });
         Tasks.Enqueue(task);
         
@@ -45,11 +42,22 @@ public class TaskQueue : ManagerBase<TaskQueue>
 
     public void StartNew()
     {
-        CurrentId = string.Empty;
-        TaskStarting = false;
+        if (!Tasks.Any() || TaskStarting) return;
+        TaskStarting = true;
+        Task.Run(() =>
+            {
+                Start();
+                TaskStarting = false;
+            }
+        );
+        return;
 
-        if (!Tasks.Any()) return;
-        var task = Tasks.Dequeue();
-        task.Start();
+        void Start()
+        {
+            if (!Tasks.Any()) return;
+            CurrentTask = Tasks.Dequeue();
+            CurrentTask.Start();
+            CurrentTask.GetAwaiter().OnCompleted(Start);
+        }
     }
 }

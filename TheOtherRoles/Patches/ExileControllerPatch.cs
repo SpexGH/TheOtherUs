@@ -315,28 +315,9 @@ namespace TheOtherRoles.Patches
             // AntiTeleport set position
             AntiTeleport.setPosition();
 
-            if (CustomOptionHolder.randomGameStartPosition.getBool() && (AntiTeleport.antiTeleport.FindAll(x => x.PlayerId == CachedPlayer.LocalPlayer.PlayerControl.PlayerId).Count == 0))
+            if (CustomOptionHolder.randomGameStartPosition.getBool() && AmongUsClient.Instance.AmHost && (AntiTeleport.antiTeleport.FindAll(x => x.PlayerId == CachedPlayer.LocalPlayer.PlayerControl.PlayerId).Count == 0))
             {
-                //Random spawn on round start
-
-                if (CustomOptionHolder.randomGameStartToVents.getBool())
-                {
-                    CachedPlayer.LocalPlayer.PlayerControl.transform.position = MapData.FindVentSpawnPositions().Random();
-                }
-                else
-                {
-                    CachedPlayer.LocalPlayer.PlayerControl.transform.position =
-                            GameOptionsManager.Instance.currentNormalGameOptions.MapId switch
-                            {
-                                0 => MapData.SkeldSpawnPosition.Random(),
-                                1 => MapData.MiraSpawnPosition.Random(),
-                                2 => MapData.PolusSpawnPosition.Random(),
-                                3 => MapData.DleksSpawnPosition.Random(),
-                                4 => MapData.AirshipSpawnPosition.Random(),
-                                5 => MapData.FungleSpawnPosition.Random(),
-                                _ => CachedPlayer.LocalPlayer.PlayerControl.transform.position
-                            };
-                }
+                MapData.RandomSpawnAllPlayers();
             }
 
             // Invert add meeting

@@ -39,7 +39,8 @@ public class GameStartManagerPatch
     {
         public static void Postfix(AmongUsClient __instance)
         {
-            if (AmongUsClient.Instance.AmHost) HandshakeHelper.ShareGameMode();
+            if (AmongUsClient.Instance.AmHost) 
+                HandshakeHelper.ShareGameMode();
 
             HandshakeHelper.shareGameVersion();
             HandshakeHelper.shareGameGUID();
@@ -62,16 +63,7 @@ public class GameStartManagerPatch
                 FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoomCode,
                     new Il2CppReferenceArray<Il2CppSystem.Object>(0)) + "\r\n" + code;
 
-            // Send version as soon as CachedPlayer.LocalPlayer.PlayerControl exists
-            
-            if (AmongUsClient.Instance.AmHost) HandshakeHelper.ShareGameMode();
-
-            if (CachedPlayer.LocalPlayer == null) return;
-
             HandshakeHelper.PlayerAgainInfo.Clear();
-
-            HandshakeHelper.shareGameVersion();
-            HandshakeHelper.shareGameGUID();
         }
     }
 

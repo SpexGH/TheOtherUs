@@ -2704,6 +2704,24 @@ namespace TheOtherRoles
             remainingDisperses = CustomOptionHolder.modifierDisperserNumberOfUses.getSelection() + 1;
             dispersesToVent = CustomOptionHolder.modifierDisperserDispersesToVent.getBool();
         }
+        
+        public static void disperse()
+        {
+            AntiTeleport.setPosition();
+            Helpers.showFlash(Cleaner.color);
+            if (AntiTeleport.antiTeleport.FindAll(x => x.PlayerId == CachedPlayer.LocalPlayer.PlayerControl.PlayerId)
+                    .Count != 0 || CachedPlayer.LocalPlayer.Data.IsDead) return;
+            
+            if (MapBehaviour.Instance)
+                MapBehaviour.Instance.Close();
+            
+            if (Minigame.Instance)
+                Minigame.Instance.ForceClose();
+            
+            MapData.AllPlayerExitVent();
+            MapData.RandomSpawnAllPlayers();
+            remainingDisperses--;
+        }
     }
 
     public static class Mini {

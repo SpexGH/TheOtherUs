@@ -1,5 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using UnityEngine;
@@ -12,14 +13,22 @@ public class HatsLoader : MonoBehaviour
 {
     private bool isRunning;
 
+    private static readonly HashSet<string> RepositoryUrls = 
+    [
+        "https://raw.githubusercontent.com/TheOtherRolesAU/TheOtherHats/master"
+    ];
+
     public void FetchHats()
     {
         if (isRunning) return;
-        this.StartCoroutine(CoFetchHats());
+        foreach (var url in RepositoryUrls)
+        {
+            this.StartCoroutine(CoFetchHats(url.GithubUrl()));
+        }
     }
 
     [HideFromIl2Cpp]
-    private IEnumerator CoFetchHats()
+    private IEnumerator CoFetchHats(string RepositoryUrl)
     {
         isRunning = true;
         var www = new UnityWebRequest();
@@ -56,13 +65,13 @@ public class HatsLoader : MonoBehaviour
 
         foreach (var fileName in toDownload)
         {
-            yield return CoDownloadHatAsset(fileName);
+            yield return CoDownloadHatAsset(fileName, RepositoryUrl);
         }
 
         isRunning = false;
     }
 
-    private static IEnumerator CoDownloadHatAsset(string fileName)
+    private static IEnumerator CoDownloadHatAsset(string fileName, string RepositoryUrl)
     {
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
