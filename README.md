@@ -10,37 +10,37 @@ This mod is not affiliated with Among Us or Innersloth LLC, and the content cont
 
 # The Other Roles
 
-该 **The Other Roles** is a mod for [Among Us](https://store.steampowered.com/app/945360/Among_Us) which adds many new roles, new [Settings](#settings) and new [Custom Hats](#custom-hats) to the game.
+ **The Other Roles** is a mod for [Among Us](https://store.steampowered.com/app/945360/Among_Us) which adds many new roles, new [Settings](#settings) and new [Custom Hats](#custom-hats) to the game.
 Even more roles are coming soon. :)
 
 |     Impostor     |  Neutral   |      Crewmate       |   Modifier   |
 | :--------------: | :--------: | :-----------------: | :----------: |
-| Godfather(Mafia) |  Amnisiac  |     NiceGuesser     |  Disperser   |
-|  Mafioso(Mafia)  |   Jester   |        Mayor        |    Torch     |
-|  Janitor(Mafia)  |  Vulture   |     Portalmaker     |  Sunglasses  |
-|    Morphling     |   Lawyer   |      Engineer       |     Bait     |
-|      Bomber      | Prosecutor | PrivateInvestigator |    Flash     |
-|     Poucher      |  Pursuer   |       Sheriff       |    Bloody    |
-|      Mimic       |   Jackal   |       Deputy        | AntiTeleport |
-|   Camouflager    |  Sidekick  |      BodyGuard      |  Tiebreaker  |
-|      Eraser      |  Swooper   |       Lighter       | Multitasker  |
-|     Vampire      |  Arsonist  |       Jumper        |     Mini     |
-|     Cleaner      |  Werewolf  |      Detective      |     Vip      |
-|    Undertaker    |   Thief    |     TimeMaster      | Indomitable  |
-|     Escapist     |            |       Veteren       |    Slueth    |
-|     Warlock      |            |        Medic        |    Cursed    |
-|    Trickster     |            |       Swapper       |    Invert    |
-|   BountyHunter   |            |        Seer         |    Blind     |
-|     Cultist      |            |       Hacker        |   Watcher    |
-|    Terrorist     |            |       Tracker       |    Radar     |
-|   Blackmailer    |            |       Snitch        |  Chameleon   |
-|      Witch       |            |         Spy         |   Shifter    |
-|      Ninja       |            |    SecurityGuard    |              |
+| Godfather(Mafia) |  Amnisiac  |     NiceGuesser     |   Assassin   |
+|  Mafioso(Mafia)  |   Jester   |        Mayor        |  Disperser   |
+|  Janitor(Mafia)  |  Vulture   |     Portalmaker     |    Torch     |
+|    Morphling     |   Lawyer   |      Engineer       |  Sunglasses  |
+|      Bomber      | Prosecutor | PrivateInvestigator |     Bait     |
+|     Poucher      |  Pursuer   |       Sheriff       |    Flash     |
+|      Mimic       |   Jackal   |       Deputy        |    Bloody    |
+|   Camouflager    |  Sidekick  |      BodyGuard      | AntiTeleport |
+|      Eraser      |  Swooper   |       Lighter       |  Tiebreaker  |
+|     Vampire      |  Arsonist  |       Jumper        | Multitasker  |
+|     Cleaner      |  Werewolf  |      Detective      |     Mini     |
+|    Undertaker    |   Thief    |     TimeMaster      |     Vip      |
+|     Escapist     |            |       Veteren       | Indomitable  |
+|     Warlock      |            |        Medic        |    Slueth    |
+|    Trickster     |            |       Swapper       |    Cursed    |
+|   BountyHunter   |            |        Seer         |    Invert    |
+|     Cultist      |            |       Hacker        |    Blind     |
+|    Terrorist     |            |       Tracker       |   Watcher    |
+|   Blackmailer    |            |       Snitch        |    Radar     |
+|      Witch       |            |         Spy         |  Chameleon   |
+|      Ninja       |            |    SecurityGuard    |   Shifter    |
 |      Miner       |            |       Medium        |              |
 |                  |            |       Trapper       |              |
 |                  |            |                     |              |
 
-该 [Role Assignment](#role-assignment) section explains how the roles are being distributed among the players.
+ [Role Assignment](#role-assignment) section explains how the roles are being distributed among the players.
 
 # Releases
 | Among Us - Version | Mod Version | Link                                                         |
@@ -52,95 +52,31 @@ Even more roles are coming soon. :)
 | 2023.11.28s        | v1.3.2      | [Download](https://github.com/SpexGH/TheOtherUs/releases/download/v1.3.2/TheOtherUs.zip) |
 | 2023.11.28s        | v1.3.01     | [Download](https://github.com/SpexGH/TheOtherUs/releases/download/v1.3.01/TheOtherUs.zip) |
 | 2023.11.28s        | v1.3.0      | [Download](https://github.com/SpexGH/TheOtherUs/releases/download/v1.3.0/TheOtherUs.zip) |
-
-<details>
-  <summary>Click to show older versions(TOR)</summary>
-
-| Among Us - Version | Mod Version | Link                                                         |
-| ------------------ | ----------- | ------------------------------------------------------------ |
-| 2023.11.28s        | v4.5.1      | [Download](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.5.1/TheOtherRoles.zip) |
-| 2023.11.28s        | v4.5.0      | [Download](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.5.0/TheOtherRoles.zip) |
-| 2023.07.12s        | v4.4.2      | [Download](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.2/TheOtherRoles.zip) |
-| 2023.07.12s        | v4.4.1      | [Download](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.1/TheOtherRoles.zip) |
-| 2023.07.12s        | v4.4.0      | [Download](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.0/TheOtherRoles.zip) |
-| 2023.07.12s        | v4.3.4      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.4/TheOtherRoles.zip) |
-| 2023.07.12s        | v4.3.3      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.3/TheOtherRoles.zip) |
-| 2023.03.28s        | v4.3.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.2/TheOtherRoles.zip) |
-| 2023.03.28s        | v4.3.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.1/TheOtherRoles.zip) |
-| 2023.02.28s        | v4.3.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.3.0/TheOtherRoles.zip) |
-| 2022.12.14s        | v4.2.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.2.1/TheOtherRoles.zip) |
-| 2022.10.25s        | v4.2.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.2.0/TheOtherRoles.zip) |
-| 2022.9.20s         | v4.1.7      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.7/TheOtherRoles.zip) |
-| 2022.6.21s         | v4.1.6      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.6/TheOtherRoles.zip) |
-| 2022.6.21s         | v4.1.5      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.5/TheOtherRoles.zip) |
-| 2022.3.29s         | v4.1.4      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.4/TheOtherRoles.zip) |
-| 2022.3.29s         | v4.1.3      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.3/TheOtherRoles.zip) |
-| 2022.3.29s         | v4.1.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.2/TheOtherRoles.zip) |
-| 2022.3.29s         | v4.1.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.1/TheOtherRoles.zip) |
-| 2022.3.29s         | v4.1.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.1.0/TheOtherRoles.zip) |
-| 2022.3.29s         | v4.0.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v4.0.0/TheOtherRoles.zip) |
-| 2022.3.29s         | v3.4.5      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.5/TheOtherRoles.zip) |
-| 2022.2.23s         | v3.4.4      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.4/TheOtherRoles.zip) |
-| 2021.12.15s        | v3.4.3      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.3/TheOtherRoles.zip) |
-| 2021.12.15s        | v3.4.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.2/TheOtherRoles.zip) |
-| 2021.12.15s        | v3.4.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.1/TheOtherRoles.zip) |
-| 2021.12.15s        | v3.4.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.4.0/TheOtherRoles.zip) |
-| 2021.12.15s        | v3.3.3      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.3/TheOtherRoles.zip) |
-| 2021.12.15s        | v3.3.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.2/TheOtherRoles.zip) |
-| 2021.12.14s        | v3.3.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.1/TheOtherRoles.zip) |
-| 2021.12.14s        | v3.3.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.3.0/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.2.4      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.4/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.2.3      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.3/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.2.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.2/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.2.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.1/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.2.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.2.0/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.1.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.1.2/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.1.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.1.1/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.1.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.1.0/TheOtherRoles.zip) |
-| 2021.11.9.5s       | v3.0.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v3.0.0/TheOtherRoles.zip) |
-| 2021.6.30s         | v2.9.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.9.2/TheOtherRoles.zip) |
-| 2021.6.30s         | v2.9.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.9.1/TheOtherRoles.zip) |
-| 2021.6.30s         | v2.9.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.9.0/TheOtherRoles.zip) |
-| 2021.6.30s         | v2.8.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.8.1/TheOtherRoles.zip) |
-| 2021.6.30s         | v2.8.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.8.0/TheOtherRoles.zip) |
-| 2021.6.30s         | v2.7.3      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.7.3/TheOtherRoles.zip) |
-| 2021.6.15s         | v2.7.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.7.1/TheOtherRoles.zip) |
-| 2021.6.15s         | v2.7.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.7.0/TheOtherRoles.zip) |
-| 2021.5.25.2s       | v2.6.7      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.7/TheOtherRoles.zip) |
-| 2021.5.10s         | v2.6.6      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.6/TheOtherRoles.zip) |
-| 2021.5.10s         | v2.6.5      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.5/TheOtherRoles.zip) |
-| 2021.5.10s         | v2.6.4      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.4/TheOtherRoles.zip) |
-| 2021.5.10s         | v2.6.3      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.3/TheOtherRoles.zip) |
-| 2021.5.10s         | v2.6.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.2/TheOtherRoles.zip) |
-| 2021.4.14s         | v2.6.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.1/TheOtherRoles.zip) |
-| 2021.4.14s         | v2.6.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.6.0/TheOtherRoles.zip) |
-| 2021.4.14s         | v2.5.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.5.1/TheOtherRoles.zip) |
-| 2021.4.14s         | v2.5.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.5.0/TheOtherRoles.zip) |
-| 2021.4.14s         | v2.4.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.4.0/TheOtherRoles.zip) |
-| 2021.4.14s         | v2.3.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.3.0/TheOtherRoles.zip) |
-| 2021.4.14s         | v2.2.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.2.2/TheOtherRoles.zip) |
-| 2021.4.12s         | v2.2.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.2.1/TheOtherRoles.zip) |
-| 2021.4.12s         | v2.2.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.2.0/TheOtherRoles.zip) |
-| 2021.3.31.3s       | v2.1.0      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.1.0/TheOtherRoles.zip) |
-| 2021.3.31.3s       | v2.0.1 beta | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.0.1/TheOtherRoles.zip) |
-| 2021.3.31.3s       | v2.0.0 beta | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v2.0.0/TheOtherRoles.zip) |
-| 2021.3.5s          | v1.8.2      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.8.2/TheOtherRoles.zip) |
-| 2021.3.5s          | v1.8.1      | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.8.1/TheOtherRoles.zip) |
-| 2021.3.5s          | v1.8        | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.8/TheOtherRoles.zip) |
-| 2021.3.5s          | v1.7        | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.7/TheOtherRoles.zip) |
-| 2021.3.5s          | v1.6        | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.6/TheOtherRoles.zip) |
-| 2021.3.5s          | v1.5        | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.5/TheOtherRoles.zip) |
-| 2021.3.5s          | v1.4        | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.4/TheOtherRoles.zip) |
-| 2021.3.5s          | v1.3        | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.3/TheOtherRoles.zip) |
-| 2020.12.19s        | v1.1        | [Download](https://github.com/Eisbison/TheOtherRoles/releases/download/v1.1/TheOtherRoles.zip) |
-| 2020.12.19s        | v1.0        | [Download](https://github.com/Eisbison/TheOtherRoles/files/6097191/TheOtherRoles.zip) |
-
- </details> 
  
 # Changelog
 
 <details>
   <summary>Click to show the Changelog</summary>
+
+**Version 1.3.6**
+
+- What's New
+
+    * New Impostor Roles: Yo-Yo
+    * Add new options: Block Dead Impostor From Sabotaging
+    * Add new options: Tracking Type: Arrow, Proximity Meter, Both
+    * Add new feature: The host is always displayed to all players, in the meeting ui and ping tracker text
+    * Add a new feature: Ghosts see the icons of all players on their map
+    * Move the option "Show Vents On Map" from Mod Options to the default in the game, and add the option "Only show position of vents during the meeting"
+ 
+- Bug Fixes
+
+    * Fix the problem of born randomly and disperse being delayed
+    * Fix the problem that Shifter can't switch some roles, and now Shifter won't switch role after death
+    * Fix the problem some evil players will show "Snitch is alive 0/0" when there is a Snitch
+    * Fix the problem when Snitch completes 0 missions, roles for evil players may appear
+    * Temporarily delete the option: "Allow Guessing Some Modifiers", Because modifiers can't be guessed for now
+  
 **Version 1.3.6**
 
 - What's New
@@ -151,7 +87,6 @@ Even more roles are coming soon. :)
     * Synchronized Cooldown at the start of game
     * Add new options: Random Spawn To Vents
     * New ending added: Everyone Died
-
     * Neutral: Their tasks are now fake so their tasks won't impact on Crewmates
     * Amnisiac: Delete the limitation of fake Tasks 
     * Sheriff: Fix the problem that can't figure out who is the Deputy in the game
