@@ -35,6 +35,8 @@ static class TORMapOptions
     public static bool ShowVentsOnMeetingMap = true;
     public static bool ShowChatNotifications = true;
     public static bool muteLobbyBGM = true;
+    public static bool DisableGameEnd;
+    public static bool DebugMode;
     public static bool showFPS;
     public static bool disableMedscanWalking;
     public static int restrictDevices;
@@ -63,9 +65,9 @@ static class TORMapOptions
     public static void clearAndReloadMapOptions()
     {
         meetingsCount = 0;
-        camerasToAdd = new List<SurvCamera>();
-        ventsToSeal = new List<Vent>();
-        playerIcons = new Dictionary<byte, PoolablePlayer>(); ;
+        camerasToAdd.Clear();
+        ventsToSeal.Clear();
+        playerIcons.Clear();
 
         maxNumberOfMeetings = Mathf.RoundToInt(CustomOptionHolder.maxNumberOfMeetings.getSelection());
         blockSkippingInEmergencyMeetings = CustomOptionHolder.blockSkippingInEmergencyMeetings.getBool();
@@ -88,6 +90,8 @@ static class TORMapOptions
         ShowVentsOnMap = CustomOptionHolder.ShowVentsOnMap.getBool();
         ShowVentsOnMeetingMap = CustomOptionHolder.ShowVentsOnMeetingMap.getBool();
         preventTaskEnd = CustomOptionHolder.preventTaskEnd.getBool();
+        DebugMode = CustomOptionHolder.debugMode.getBool();
+        DisableGameEnd = CustomOptionHolder.disableGameEnd.getBool();
         //allowModGuess = false;
         allowModGuess = CustomOptionHolder.allowModGuess.getBool();
         firstKillPlayer = null;

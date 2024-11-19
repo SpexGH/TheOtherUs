@@ -494,6 +494,9 @@ public class CustomOptionHolder
     public static CustomOption dynamicMapEnableSubmerged;
     public static CustomOption dynamicMapSeparateSettings;
 
+    public static CustomOption debugMode;
+    public static CustomOption disableGameEnd;
+
     public static CustomOption movePolusVents;
     public static CustomOption swapNavWifi;
     public static CustomOption movePolusVitals;
@@ -668,6 +671,9 @@ public class CustomOptionHolder
         dynamicMapEnableFungle = Create(125, Types.General, "Fungle", rates, dynamicMap, false);
         dynamicMapEnableSubmerged = Create(126, Types.General, "Submerged", rates, dynamicMap, false);
         dynamicMapSeparateSettings = Create(127, Types.General, "Use Random Map Setting Presets", false, dynamicMap, false);
+
+        debugMode = Create(200, Types.General, "Enable", false, null, true, heading: "Debug Mode");
+        disableGameEnd = Create(201, Types.General, "Disable Game End", false, debugMode);
 
         //-------------------------- Impostor Options 10000-19999 -------------------------- //
 

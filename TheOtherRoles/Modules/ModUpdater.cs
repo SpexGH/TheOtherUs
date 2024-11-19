@@ -17,13 +17,11 @@ using UnityEngine.UI;
 
 namespace TheOtherRoles.Modules;
 
-public class ModUpdater : MonoBehaviour
+public class ModUpdater(IntPtr ptr) : MonoBehaviour(ptr)
 {
     public const string RepositoryOwner = "SpexGH";
     public const string RepositoryName = "TheOtherUs";
     public static ModUpdater Instance { get; private set; }
-
-    public ModUpdater(IntPtr ptr) : base(ptr) { }
 
     private bool _busy;
     private bool showPopUp = true;
@@ -60,7 +58,7 @@ public class ModUpdater : MonoBehaviour
         _busy = true;
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
-        www.SetUrl($"https://api.github.com/repos/{RepositoryOwner}/{RepositoryName}/releases/latest");
+        www.SetUrl($"https://api.github.com/repos/{RepositoryOwner}/{RepositoryName}/releases");
         www.downloadHandler = new DownloadHandlerBuffer();
         var operation = www.SendWebRequest();
 
@@ -99,7 +97,7 @@ public class ModUpdater : MonoBehaviour
         var asset = release.Assets.Find(FilterPluginAsset);
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
-        www.SetUrl(asset.DownloadUrl);
+        www.SetUrl(asset.DownloadUrl.GithubUrl());
         www.downloadHandler = new DownloadHandlerBuffer();
         var operation = www.SendWebRequest();
 
@@ -148,16 +146,10 @@ public class ModUpdater : MonoBehaviour
     }
 
     [HideFromIl2Cpp]
-    private static bool FilterLatestRelease(GithubRelease release)
-    {
-        return release.IsNewer(TheOtherRolesPlugin.Version) && release.Assets.Any(FilterPluginAsset);
-    }
+    private static bool FilterLatestRelease(GithubRelease release) => release.IsNewer(TheOtherRolesPlugin.Version) && release.Assets.Any(FilterPluginAsset);
 
     [HideFromIl2Cpp]
-    private static bool FilterPluginAsset(GithubAsset asset)
-    {
-        return asset.Name == "TheOtherRoles.dll";
-    }
+    private static bool FilterPluginAsset(GithubAsset asset) => asset.Name == "TheOtherUs.dll";
 
     [HideFromIl2Cpp]
     private static int SortReleases(GithubRelease a, GithubRelease b)

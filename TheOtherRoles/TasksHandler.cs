@@ -5,7 +5,6 @@ namespace TheOtherRoles;
 [HarmonyPatch]
 public static class TasksHandler
 {
-
     public static Tuple<int, int> taskInfo(NetworkedPlayerInfo playerInfo)
     {
         int TotalTasks = 0;

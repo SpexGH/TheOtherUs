@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using AmongUs.GameOptions;
 using Hazel;
+using InnerNet;
 using Reactor.Utilities.Extensions;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Modules;
@@ -58,6 +59,9 @@ public enum LogLevel
 }
 public static class Helpers
 {
+    public static bool InGame => AmongUsClient.Instance != null && AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started;
+    public static bool IsCountDown => GameStartManager.InstanceExists && GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown;
+    public static bool InMeeting => InGame && MeetingHud.Instance;
 
     public static Dictionary<string, Sprite> CachedSprites = new();
     public static Sprite teamCultistChat;
@@ -69,30 +73,6 @@ public static class Helpers
         if (roleId == RoleId.Cursed) guessable = true;
         return guessable;
     }
-
-    /*
-            public static Sprite getTeamCultistChatButtonSprite()
-        {
-            if (teamCultistChat != null)
-            {
-                return teamCultistChat;
-            }
-            teamCultistChat = loadSpriteFromResources("TheOtherRoles.Resources.TeamJackalChat.png", 115f);
-            return teamCultistChat;
-        }
-
-                public static Sprite getLoversChatButtonSprite() {
-            if (teamLoverChat != null)
-            {
-                return teamLoverChat;
-            }
-            teamLoverChat = loadSpriteFromResources("TheOtherRoles.Resources.LoversChat.png", 150f);
-            return teamLoverChat;
-        }
-        */
-
-    public static bool gameStarted //new
-=> AmongUsClient.Instance != null && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started;
 
     public static bool flipBitwise(bool bit)
     {
@@ -768,7 +748,7 @@ public static class Helpers
         if (SurveillanceMinigamePatch.nightVisionIsActive) return true;
         else if (Ninja.isInvisble && Ninja.ninja == target) return true;
         else if (Jackal.isInvisable && Jackal.jackal == target) return true;
-        else if (TORMapOptions.hideOutOfSightNametags && gameStarted && !source.Data.IsDead && PhysicsHelpers.AnythingBetween(localPlayer.GetTruePosition(), target.GetTruePosition(), Constants.ShadowMask, false)) return true;
+        else if (TORMapOptions.hideOutOfSightNametags && InGame && !source.Data.IsDead && PhysicsHelpers.AnythingBetween(localPlayer.GetTruePosition(), target.GetTruePosition(), Constants.ShadowMask, false)) return true;
         /*
         {
             float num = (isLightsActive() ? 2f : 1.25f);
