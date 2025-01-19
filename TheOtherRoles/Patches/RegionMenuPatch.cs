@@ -23,11 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using UnityEngine;
+using UnityEngine.UI;
 using System;
 using TheOtherRoles.Utilities;
-using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 namespace TheOtherRoles.Patches
 {
@@ -90,11 +90,10 @@ namespace TheOtherRoles.Patches
                 ipField.characterLimit = 30;
                 ipField.AllowSymbols = true;
                 ipField.ForceUppercase = false;
-                ipField.SetText(Main.Ip.Value);
-                __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) =>
-                {
-                    ipField.outputText.SetText(Main.Ip.Value);
-                    ipField.SetText(Main.Ip.Value);
+                ipField.SetText(TheOtherRolesPlugin.Ip.Value);
+                __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
+                    ipField.outputText.SetText(TheOtherRolesPlugin.Ip.Value);
+                    ipField.SetText(TheOtherRolesPlugin.Ip.Value);
                 })));
 
                 ipField.ClearOnFocus = false;
@@ -106,12 +105,12 @@ namespace TheOtherRoles.Patches
 
                 void onEnterOrIpChange()
                 {
-                    Main.Ip.Value = ipField.text;
+                    TheOtherRolesPlugin.Ip.Value = ipField.text;
                 }
 
                 void onFocusLost()
                 {
-                    Main.UpdateRegions();
+                    TheOtherRolesPlugin.UpdateRegions();
                 }
             }
 
@@ -125,11 +124,10 @@ namespace TheOtherRoles.Patches
 
                 portField.transform.localPosition = new Vector3(3.225f, -1.55f, -100f);
                 portField.characterLimit = 5;
-                portField.SetText(Main.Port.Value.ToString());
-                __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) =>
-                {
-                    portField.outputText.SetText(Main.Port.Value.ToString());
-                    portField.SetText(Main.Port.Value.ToString());
+                portField.SetText(TheOtherRolesPlugin.Port.Value.ToString());
+                __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
+                    portField.outputText.SetText(TheOtherRolesPlugin.Port.Value.ToString());
+                    portField.SetText(TheOtherRolesPlugin.Port.Value.ToString());
                 })));
 
 
@@ -145,7 +143,7 @@ namespace TheOtherRoles.Patches
                     ushort port = 0;
                     if (ushort.TryParse(portField.text, out port))
                     {
-                        Main.Port.Value = port;
+                        TheOtherRolesPlugin.Port.Value = port;
                         portField.outputText.color = Color.white;
                     }
                     else
@@ -156,21 +154,21 @@ namespace TheOtherRoles.Patches
 
                 void onFocusLost()
                 {
-                    Main.UpdateRegions();
+                    TheOtherRolesPlugin.UpdateRegions();
                 }
             }
 
             if (serverWarning == null)
             {
                 var tmplt = __instance.ButtonPool.activeChildren[^1];
-                serverWarning = GameObject.Instantiate(tmplt.transform.GetChild(0).gameObject, tmplt.transform);
-                var comp = serverWarning.GetComponent<TMPro.TextMeshPro>();
-                comp.fontSizeMin = 2;
-                comp.fontSizeMax = 2;
-                serverWarning.transform.localPosition = new Vector3(0f, -3f, -10f);
-                __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) =>
-                {
-                    comp.text = cs(Color.red, "Vanilla Servers Are Currently Not Compatible With TOU\nUse scroll wheel if necessary");
+                serverWarning = new GameObject("serverWarning");  // GameObject.Instantiate(tmplt.transform.GetChild(0).gameObject, tmplt.transform);
+                var comp = serverWarning.AddComponent<TMPro.TextMeshPro>();  // serverWarning.GetComponent<TMPro.TextMeshPro>();
+                //serverWarning.transform.SetParent(tmplt.transform, true);
+                comp.fontSize = 0.2f;
+                serverWarning.transform.position = new Vector3(5f, 1f, -200f);
+                __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {
+                    comp.text = Helpers.cs(Color.red, "Vanilla Servers Are Currently Not Compatible With TOR");
+                    serverWarning.transform.position = new Vector3(0f, 1f, -200f);
                 })));
                 serverWarning.SetActive(true);
             }
@@ -193,29 +191,6 @@ namespace TheOtherRoles.Patches
             }
             __instance.Open();
             return false;
-        }
-    }
-    [HarmonyPatch(typeof(RegionMenu))]
-    public class RegionMenuPatch
-    {
-        public static Scroller Scroller;
-
-        [HarmonyPatch(nameof(RegionMenu.Awake)), HarmonyPostfix]
-        public static void Awake_Postfix(RegionMenu __instance)
-        {
-            if (Scroller != null) return;
-
-            var back = __instance.ButtonPool.transform.FindChild("Backdrop");
-            back.transform.localScale *= 10f;
-
-            Scroller = __instance.ButtonPool.transform.parent.gameObject.AddComponent<Scroller>();
-            Scroller.Inner = __instance.ButtonPool.transform;
-            Scroller.MouseMustBeOverToScroll = true;
-            Scroller.ClickMask = back.GetComponent<BoxCollider2D>();
-            Scroller.ScrollWheelSpeed = 0.7f;
-            Scroller.SetYBoundsMin(0f);
-            Scroller.SetYBoundsMax(4f);
-            Scroller.allowY = true;
         }
     }
 }

@@ -141,7 +141,7 @@ class MeetingHudPatch
                         exiled = potentialExiled.ToArray().FirstOrDefault(v => v.PlayerId == tiebreakerVote);
                         tie = false;
 
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetTiebreak, SendOption.Reliable, -1);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetTiebreak, SendOption.Reliable, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.setTiebreak();
                     }
@@ -161,9 +161,9 @@ class MeetingHudPatch
         {
             var spriteRenderer = UnityEngine.Object.Instantiate(__instance.PlayerVotePrefab);
             var showVoteColors = !GameManager.Instance.LogicOptions.GetAnonymousVotes() ||
-                                  (CachedPlayer.LocalPlayer.Data.IsDead && ghostsSeeVotes) ||
-                                  (Mayor.mayor != null && Mayor.mayor == CachedPlayer.LocalPlayer.PlayerControl && Mayor.canSeeVoteColors && TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data).Item1 >= Mayor.tasksNeededToSeeVoteColors) ||
-                                  (Watcher.watcher != null && CachedPlayer.LocalPlayer.PlayerControl == Watcher.watcher);
+                                  (PlayerControl.LocalPlayer.Data.IsDead && ghostsSeeVotes) ||
+                                  (Mayor.mayor != null && Mayor.mayor == PlayerControl.LocalPlayer && Mayor.canSeeVoteColors && TasksHandler.taskInfo(PlayerControl.LocalPlayer.Data).Item1 >= Mayor.tasksNeededToSeeVoteColors) ||
+                                  (Watcher.watcher != null && PlayerControl.LocalPlayer == Watcher.watcher);
             if (showVoteColors)
             {
                 PlayerMaterial.SetColors(voterPlayer.DefaultOutfit.ColorId, spriteRenderer);
@@ -311,7 +311,7 @@ class MeetingHudPatch
             {
                 selections[i] = true;
                 renderer.color = Color.yellow;
-                meetingExtraButtonLabel.text = cs(Color.yellow, "Confirm Swap");
+                meetingExtraButtonLabel.text = cs(Color.yellow, "meetingSwapperSwap");
             }
         }
         else if (selectedCount == 2)
@@ -320,7 +320,7 @@ class MeetingHudPatch
             {
                 renderer.color = Color.red;
                 selections[i] = false;
-                meetingExtraButtonLabel.text = cs(Color.red, "Confirm Swap");
+                meetingExtraButtonLabel.text = cs(Color.red, "meetingSwapperSwap");
             }
         }
     }
@@ -356,15 +356,15 @@ class MeetingHudPatch
         }
         if (firstPlayer != null && secondPlayer != null)
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SwapperSwap, SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SwapperSwap, SendOption.Reliable, -1);
             writer.Write(firstPlayer.TargetPlayerId);
             writer.Write(secondPlayer.TargetPlayerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
 
             RPCProcedure.swapperSwap(firstPlayer.TargetPlayerId, secondPlayer.TargetPlayerId);
-            meetingExtraButtonLabel.text = cs(Color.green, "Swapping!");
+            meetingExtraButtonLabel.text = cs(Color.green, "meetingSwapperSwapping");
             Swapper.charges--;
-            meetingExtraButtonText.text = $"Swaps: {Swapper.charges}";
+            meetingExtraButtonText.text = string.Format("meetingSwapperSwapCount".Translate(), Swapper.charges);
         }
     }
 
@@ -383,7 +383,7 @@ class MeetingHudPatch
 
 
         // Only for the swapper: Reset all the buttons and charges value to their original state.
-        if (CachedPlayer.LocalPlayer.PlayerControl != Swapper.swapper) return;
+        if (PlayerControl.LocalPlayer != Swapper.swapper) return;
 
 
         // check if dying player was a selected player (but not confirmed yet)
@@ -407,8 +407,8 @@ class MeetingHudPatch
             swapperButtonList[i].OnClick.RemoveAllListeners();
             swapperButtonList[i].OnClick.AddListener((Action)(() => swapperOnClick(copyI, __instance)));
         }
-        meetingExtraButtonText.text = $"Swaps: {Swapper.charges}";
-        meetingExtraButtonLabel.text = cs(Color.red, "Confirm Swap");
+        meetingExtraButtonText.text = string.Format("meetingSwapperSwapCount".Translate(), Swapper.charges);
+        meetingExtraButtonLabel.text = cs(Color.red, "meetingSwapperSwap");
 
     }
 
@@ -428,11 +428,11 @@ class MeetingHudPatch
 
         Mayor.voteTwice = !Mayor.voteTwice;
 
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MayorSetVoteTwice, SendOption.Reliable, -1);
+        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MayorSetVoteTwice, SendOption.Reliable, -1);
         writer.Write(Mayor.voteTwice);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-        meetingExtraButtonLabel.text = cs(Mayor.color, "Double Vote: " + (Mayor.voteTwice ? cs(Color.green, "On ") : cs(Color.red, "Off")));
+        meetingExtraButtonLabel.text = cs(Mayor.color, "meetingMayer".Translate() + (Mayor.voteTwice ? cs(Color.green, "optionOn") : cs(Color.red, "optionOff")));
     }
 
     public static GameObject guesserUI;
@@ -470,7 +470,7 @@ class MeetingHudPatch
             __instance.playerStates.ToList().ForEach(x =>
             {
                 x.gameObject.SetActive(true);
-                if (CachedPlayer.LocalPlayer.Data.IsDead && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject);
+                if (PlayerControl.LocalPlayer.Data.IsDead && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject);
             });
             UnityEngine.Object.Destroy(container.gameObject);
         }));
@@ -502,7 +502,7 @@ class MeetingHudPatch
             }
             else if (roleInfo.isModifier) continue;
 
-            var guesserRole = Guesser.niceGuesser != null && CachedPlayer.LocalPlayer.PlayerId == Guesser.niceGuesser.PlayerId
+            var guesserRole = Guesser.niceGuesser != null && PlayerControl.LocalPlayer.PlayerId == Guesser.niceGuesser.PlayerId
                 ? RoleId.NiceGuesser
                 : RoleId.EvilGuesser;
 
@@ -512,7 +512,7 @@ class MeetingHudPatch
                 (!Guesser.evilGuesserCanGuessCrewmate && guesserRole == RoleId.EvilGuesser &&
                  roleInfo.roleId == RoleId.Crewmate)) continue; // Not guessable roles & modifier
 
-            if (Doomsayer.doomsayer != null && CachedPlayer.LocalPlayer.PlayerId == Doomsayer.doomsayer.PlayerId) guesserRole = RoleId.Doomsayer;
+            if (Doomsayer.doomsayer != null && PlayerControl.LocalPlayer.PlayerId == Doomsayer.doomsayer.PlayerId) guesserRole = RoleId.Doomsayer;
 
             switch (guesserRole)
             {
@@ -524,7 +524,7 @@ class MeetingHudPatch
             switch (HandleGuesser.isGuesserGm)
             {
                 case true when roleInfo.roleId is RoleId.NiceGuesser or RoleId.EvilGuesser:
-                case true when CachedPlayer.LocalPlayer.PlayerControl.Data.Role.IsImpostor &&
+                case true when PlayerControl.LocalPlayer.Data.Role.IsImpostor &&
                                !HandleGuesser.evilGuesserCanGuessSpy && roleInfo.roleId == RoleId.Spy:
                     continue; // remove Guesser for guesser game mode
             }
@@ -559,7 +559,7 @@ class MeetingHudPatch
             int copiedIndex = i;
 
             button.GetComponent<PassiveButton>().OnClick.RemoveAllListeners();
-            if (!CachedPlayer.LocalPlayer.Data.IsDead && !playerById(__instance.playerStates[buttonTarget].TargetPlayerId).Data.IsDead) button.GetComponent<PassiveButton>().OnClick.AddListener((Action)(() =>
+            if (!PlayerControl.LocalPlayer.Data.IsDead && !playerById(__instance.playerStates[buttonTarget].TargetPlayerId).Data.IsDead) button.GetComponent<PassiveButton>().OnClick.AddListener((Action)(() =>
             {
                 if (selectedButton != button)
                 {
@@ -573,9 +573,9 @@ class MeetingHudPatch
                     (
                         __instance.state is not (MeetingHud.VoteStates.Voted or MeetingHud.VoteStates.NotVoted)
                         || focusedTarget == null
-                        || (HandleGuesser.remainingShots(CachedPlayer.LocalPlayer.PlayerId) <= 0
-                            && HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerId))
-                        || (CachedPlayer.LocalPlayer.PlayerControl == Doomsayer.doomsayer && !Doomsayer.CanShoot))
+                        || (HandleGuesser.remainingShots(PlayerControl.LocalPlayer.PlayerId) <= 0
+                            && HandleGuesser.isGuesser(PlayerControl.LocalPlayer.PlayerId))
+                        || (PlayerControl.LocalPlayer == Doomsayer.doomsayer && !Doomsayer.CanShoot))
                         return;
 
                     // Depending on the options, shooting the shielded player will not allow the guess, notifiy everyone about the kill attempt and close the window
@@ -584,7 +584,7 @@ class MeetingHudPatch
                         __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
                         UnityEngine.Object.Destroy(container.gameObject);
 
-                        MessageWriter murderAttemptWriter = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShieldedMurderAttempt, SendOption.Reliable, -1);
+                        MessageWriter murderAttemptWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, SendOption.Reliable, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(murderAttemptWriter);
                         RPCProcedure.shieldedMurderAttempt(0);
                         SoundEffectsManager.play("fail");
@@ -597,13 +597,13 @@ class MeetingHudPatch
                         __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
                         UnityEngine.Object.Destroy(container.gameObject);
 
-                        MessageWriter murderAttemptWriter = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShieldedMurderAttempt, SendOption.Reliable, -1);
+                        MessageWriter murderAttemptWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, SendOption.Reliable, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(murderAttemptWriter);
                         RPCProcedure.shieldedMurderAttempt(0);
                         SoundEffectsManager.play("fail");
                         return;
                     }
-                    var dyingTarget = CachedPlayer.LocalPlayer.PlayerControl;
+                    var dyingTarget = PlayerControl.LocalPlayer;
 
                     var mainRoleInfo = RoleInfo.getRoleInfoForPlayer(focusedTarget, true);
 
@@ -636,13 +636,13 @@ class MeetingHudPatch
                         });
 
                     // Shoot player and send chat info if activated
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.GuesserShoot, SendOption.Reliable, -1);
-                    writer.Write(CachedPlayer.LocalPlayer.PlayerId);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GuesserShoot, SendOption.Reliable, -1);
+                    writer.Write(PlayerControl.LocalPlayer.PlayerId);
                     writer.Write(dyingTarget.PlayerId);
                     writer.Write(focusedTarget.PlayerId);
                     writer.Write((byte)roleInfo.roleId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.guesserShoot(CachedPlayer.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.roleId);
+                    RPCProcedure.guesserShoot(PlayerControl.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.roleId);
                 }
             }));
 
@@ -656,15 +656,15 @@ class MeetingHudPatch
     {
         static bool Prefix(MeetingHud __instance)
         {
-            return !(CachedPlayer.LocalPlayer != null && HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerId) && guesserUI != null);
+            return !(PlayerControl.LocalPlayer != null && HandleGuesser.isGuesser(PlayerControl.LocalPlayer.PlayerId) && guesserUI != null);
         }
     }
 
     static void populateButtonsPostfix(MeetingHud __instance)
     {
         // Add Swapper Buttons
-        bool addSwapperButtons = Swapper.swapper != null && CachedPlayer.LocalPlayer.PlayerControl == Swapper.swapper && !Swapper.swapper.Data.IsDead;
-        bool addMayorButton = Mayor.mayor != null && CachedPlayer.LocalPlayer.PlayerControl == Mayor.mayor && !Mayor.mayor.Data.IsDead && Mayor.mayorChooseSingleVote > 0;
+        bool addSwapperButtons = Swapper.swapper != null && PlayerControl.LocalPlayer == Swapper.swapper && !Swapper.swapper.Data.IsDead;
+        bool addMayorButton = Mayor.mayor != null && PlayerControl.LocalPlayer == Mayor.mayor && !Mayor.mayor.Data.IsDead && Mayor.mayorChooseSingleVote > 0;
         if (addSwapperButtons)
         {
             selections = new bool[__instance.playerStates.Length];
@@ -681,7 +681,7 @@ class MeetingHudPatch
                 checkbox.transform.SetParent(playerVoteArea.transform);
                 checkbox.transform.position = template.transform.position;
                 checkbox.transform.localPosition = new Vector3(-0.95f, 0.03f, -1.3f);
-                if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerId)) checkbox.transform.localPosition = new Vector3(-0.5f, 0.03f, -1.3f);
+                if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(PlayerControl.LocalPlayer.PlayerId)) checkbox.transform.localPosition = new Vector3(-0.5f, 0.03f, -1.3f);
                 SpriteRenderer renderer = checkbox.GetComponent<SpriteRenderer>();
                 renderer.sprite = Swapper.getCheckSprite();
                 renderer.color = Color.red;
@@ -714,7 +714,7 @@ class MeetingHudPatch
             Transform infoTransform = __instance.playerStates[0].NameText.transform.parent.FindChild("Info");
             TextMeshPro meetingInfo = infoTransform != null ? infoTransform.GetComponent<TextMeshPro>() : null;
             meetingExtraButtonText = UnityEngine.Object.Instantiate(__instance.playerStates[0].NameText, meetingExtraButtonParent);
-            meetingExtraButtonText.text = addSwapperButtons ? $"Swaps: {Swapper.charges}" : "";
+            meetingExtraButtonText.text = addSwapperButtons ? string.Format("meetingSwapperSwapCount".Translate(), Swapper.charges) : "";
             meetingExtraButtonText.enableWordWrapping = false;
             meetingExtraButtonText.transform.localScale = Vector3.one * 1.7f;
             meetingExtraButtonText.transform.localPosition = new Vector3(-2.5f, 0f, 0f);
@@ -730,16 +730,16 @@ class MeetingHudPatch
             if (addSwapperButtons)
             {
                 meetingExtraButtonLabel.transform.localScale *= 1.7f;
-                meetingExtraButtonLabel.text = cs(Color.red, "Confirm Swap");
+                meetingExtraButtonLabel.text = cs(Color.red, "meetingSwapperSwap");
             }
             else if (addMayorButton)
             {
                 meetingExtraButtonLabel.transform.localScale = new Vector3(meetingExtraButtonLabel.transform.localScale.x * 1.5f, meetingExtraButtonLabel.transform.localScale.x * 1.7f, meetingExtraButtonLabel.transform.localScale.x * 1.7f);
-                meetingExtraButtonLabel.text = cs(Mayor.color, "Double Vote: " + (Mayor.voteTwice ? cs(Color.green, "On ") : cs(Color.red, "Off")));
+                meetingExtraButtonLabel.text = cs(Mayor.color, "meetingMayer".Translate() + (Mayor.voteTwice ? cs(Color.green, "optionOn") : cs(Color.red, "optionOff")));
             }
             PassiveButton passiveButton = meetingExtraButton.GetComponent<PassiveButton>();
             passiveButton.OnClick.RemoveAllListeners();
-            if (!CachedPlayer.LocalPlayer.Data.IsDead)
+            if (!PlayerControl.LocalPlayer.Data.IsDead)
             {
                 if (addSwapperButtons)
                     passiveButton.OnClick.AddListener((Action)(() => swapperConfirm(__instance)));
@@ -764,7 +764,7 @@ class MeetingHudPatch
             }
         } */
 
-        bool isGuesser = HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerId);
+        bool isGuesser = HandleGuesser.isGuesser(PlayerControl.LocalPlayer.PlayerId);
 
         // Add overlay for spelled players
         if (Witch.witch != null && Witch.futureSpelled != null)
@@ -777,23 +777,25 @@ class MeetingHudPatch
                     rend.transform.SetParent(pva.transform);
                     rend.gameObject.layer = pva.Megaphone.gameObject.layer;
                     rend.transform.localPosition = new Vector3(-0.5f, -0.03f, -1f);
-                    if (CachedPlayer.LocalPlayer.PlayerControl == Swapper.swapper && isGuesser) rend.transform.localPosition = new Vector3(-0.725f, -0.15f, -1f);
+                    if (PlayerControl.LocalPlayer == Swapper.swapper && isGuesser) rend.transform.localPosition = new Vector3(-0.725f, -0.15f, -1f);
                     rend.sprite = Witch.getSpelledOverlaySprite();
                 }
             }
         }
 
         // Add Guesser Buttons
-        int remainingShots = HandleGuesser.remainingShots(CachedPlayer.LocalPlayer.PlayerId);
+        int remainingShots = HandleGuesser.remainingShots(PlayerControl.LocalPlayer.PlayerId);
+        var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerControl.LocalPlayer.Data);
 
-        if (isGuesser && !CachedPlayer.LocalPlayer.Data.IsDead && remainingShots > 0)
+        if (isGuesser && !PlayerControl.LocalPlayer.Data.IsDead && remainingShots > 0)
         {
             Doomsayer.CanShoot = true;
             for (int i = 0; i < __instance.playerStates.Length; i++)
             {
                 PlayerVoteArea playerVoteArea = __instance.playerStates[i];
-                if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == CachedPlayer.LocalPlayer.PlayerId) continue;
-                if (CachedPlayer.LocalPlayer != null && CachedPlayer.LocalPlayer.PlayerControl == Eraser.eraser && Eraser.alreadyErased.Contains(playerVoteArea.TargetPlayerId)) continue;
+                if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Eraser.eraser && Eraser.alreadyErased.Contains(playerVoteArea.TargetPlayerId)) continue;
+                if (PlayerControl.LocalPlayer != null && !Helpers.isEvil(PlayerControl.LocalPlayer) && playerCompleted < HandleGuesser.tasksToUnlock) continue;
 
                 GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
                 GameObject targetBox = UnityEngine.Object.Instantiate(template, playerVoteArea.transform);
@@ -846,8 +848,8 @@ class MeetingHudPatch
             if (Snitch.snitch != null && roomTracker != null)
             {
                 var roomWriter = AmongUsClient.Instance.StartRpcImmediately(
-                    CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareRoom, SendOption.Reliable);
-                roomWriter.Write(CachedPlayer.LocalPlayer.PlayerId);
+                    PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareRoom, SendOption.Reliable);
+                roomWriter.Write(PlayerControl.LocalPlayer.PlayerId);
                 roomWriter.Write(roomId);
                 AmongUsClient.Instance.FinishRpcImmediately(roomWriter);
             }
@@ -855,12 +857,12 @@ class MeetingHudPatch
             // Resett Bait list
             Bait.active = new Dictionary<DeadPlayer, float>();
             // Save AntiTeleport position, if the player is able to move (i.e. not on a ladder or a gap thingy)
-            if (CachedPlayer.LocalPlayer.PlayerPhysics.enabled && (CachedPlayer.LocalPlayer.PlayerControl.moveable || CachedPlayer.LocalPlayer.PlayerControl.inVent
+            if (PlayerControl.LocalPlayer.MyPhysics.enabled && (PlayerControl.LocalPlayer.moveable || PlayerControl.LocalPlayer.inVent
                 || HudManagerStartPatch.hackerVitalsButton.isEffectActive || HudManagerStartPatch.hackerAdminTableButton.isEffectActive || HudManagerStartPatch.securityGuardCamButton.isEffectActive
-                || (Portal.isTeleporting && Portal.teleportedPlayers.Last().playerId == CachedPlayer.LocalPlayer.PlayerId)))
+                || (Portal.isTeleporting && Portal.teleportedPlayers.Last().playerId == PlayerControl.LocalPlayer.PlayerId)))
             {
-                if (!CachedPlayer.LocalPlayer.PlayerControl.inMovingPlat)
-                    AntiTeleport.position = CachedPlayer.LocalPlayer.transform.position;
+                if (!PlayerControl.LocalPlayer.inMovingPlat)
+                    AntiTeleport.position = PlayerControl.LocalPlayer.transform.position;
             }
 
             // Medium meeting start time
@@ -876,42 +878,42 @@ class MeetingHudPatch
             target = meetingTarget;
             isRoundOne = false;
 
-            if (Blackmailer.blackmailed == CachedPlayer.LocalPlayer.PlayerControl) { Coroutines.Start(BlackmailShhh()); }
+            if (Blackmailer.blackmailed == PlayerControl.LocalPlayer) { Coroutines.Start(BlackmailShhh()); }
 
 
             // Add Portal info into Portalmaker Chat:
-            if (Portalmaker.portalmaker != null && (CachedPlayer.LocalPlayer.PlayerControl == Portalmaker.portalmaker || shouldShowGhostInfo()) && !Portalmaker.portalmaker.Data.IsDead)
+            if (Portalmaker.portalmaker != null && (PlayerControl.LocalPlayer == Portalmaker.portalmaker || shouldShowGhostInfo()) && !Portalmaker.portalmaker.Data.IsDead)
             {
                 if (Portal.teleportedPlayers.Count > 0)
                 {
-                    string msg = "Portal Log:\n";
+                    string msg = "meetingPortalLog".Translate();
                     foreach (var entry in Portal.teleportedPlayers)
                     {
                         float timeBeforeMeeting = ((float)(DateTime.UtcNow - entry.time).TotalMilliseconds) / 1000;
-                        msg += Portalmaker.logShowsTime ? $"{(int)timeBeforeMeeting}s ago: " : "";
-                        msg = msg + $"{entry.name} used the teleporter\n";
+                        msg += Portalmaker.logShowsTime ? string.Format("meetingPortalLog1".Translate(), (int)timeBeforeMeeting) : "";
+                        msg = msg + string.Format("meetingPortalLog2".Translate(), entry.name);
                     }
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Portalmaker.portalmaker, $"{msg}");
                 }
             }
 
             // Add trapped Info into Trapper chat
-            if (Trapper.trapper != null && (CachedPlayer.LocalPlayer.PlayerControl == Trapper.trapper || shouldShowGhostInfo()) && !Trapper.trapper.Data.IsDead)
+            if (Trapper.trapper != null && (PlayerControl.LocalPlayer == Trapper.trapper || shouldShowGhostInfo()) && !Trapper.trapper.Data.IsDead)
             {
                 if (Trap.traps.Any(x => x.revealed))
-                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Trapper.trapper, "Trap Logs:");
+                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Trapper.trapper, "meetingTrapperTrapLog".Translate());
                 foreach (Trap trap in Trap.traps)
                 {
                     if (!trap.revealed) continue;
-                    string message = $"Trap {trap.instanceId}: \n";
+                    string message = string.Format("meetingTrapperTrap".Translate(), trap.instanceId);
                     trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
                     foreach (PlayerControl p in trap.trappedPlayer)
                     {
                         if (Trapper.infoType == 0) message += RoleInfo.GetRolesString(p, false, false, true) + "\n";
                         else if (Trapper.infoType == 1)
                         {
-                            if (isEvil(p) || p.Data.Role.IsImpostor) message += "Evil Role \n";
-                            else message += "Good Role \n";
+                            if (isEvil(p) || p.Data.Role.IsImpostor) message += "meetingTrapperTrapLogEvil".Translate();
+                            else message += "meetingTrapperTrapLogGood".Translate();
                         }
                         else message += p.Data.PlayerName + "\n";
                     }
@@ -974,14 +976,14 @@ class MeetingHudPatch
         private static void Postfix(MeetingHud __instance)
         {
             ChatController chat = FastDestroyableSingleton<HudManager>.Instance.Chat;
-            PlayerControl playerControl = CachedPlayer.LocalPlayer.PlayerControl;
+            PlayerControl playerControl = PlayerControl.LocalPlayer;
             int num = (int)chat.timeSinceLastMessage;
-            foreach (CachedPlayer allPlayer in CachedPlayer.AllPlayers)
+            foreach (PlayerControl allPlayer in PlayerControl.AllPlayerControls)
             {
                 PlayerControl playerControl2 = allPlayer;
                 if (playerControl2 == playerControl && !playerControl2.Data.IsDead && num == 0)
                 {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetMeetingChatOverlay, SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetMeetingChatOverlay, SendOption.Reliable, -1);
                     writer.Write(playerControl2.PlayerId);
                     writer.Write(playerControl.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -1001,7 +1003,7 @@ class MeetingHudPatch
             {
                 if (Blackmailer.blackmailed != null)
                 {
-                    if (Blackmailer.blackmailed == CachedPlayer.LocalPlayer.PlayerControl)
+                    if (Blackmailer.blackmailed == PlayerControl.LocalPlayer)
                     {
                         return false;
                     }
@@ -1023,11 +1025,11 @@ class MeetingHudPatch
         {
             shookAlready = false;
             if (Blackmailer.blackmailed == null) return;
-            if (Blackmailer.blackmailed.Data.PlayerId == CachedPlayer.LocalPlayer.PlayerId && !Blackmailer.blackmailed.Data.IsDead)
+            if (Blackmailer.blackmailed.Data.PlayerId == PlayerControl.LocalPlayer.PlayerId && !Blackmailer.blackmailed.Data.IsDead)
             {
                 // Nothing here for now. What to do when local player who is blackmailed starts meeting
                 //Coroutines.Start(BlackmailShhh());
-                if (Blackmailer.blackmailed == CachedPlayer.LocalPlayer.PlayerControl) { Coroutines.Start(BlackmailShhh()); }
+                if (Blackmailer.blackmailed == PlayerControl.LocalPlayer) { Coroutines.Start(BlackmailShhh()); }
 
             }
         }

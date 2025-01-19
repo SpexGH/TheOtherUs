@@ -10,6 +10,7 @@ class GuesserGM
 
     public PlayerControl guesser;
     public int shots = Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeNumberOfShots.getFloat());
+    public int tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeCrewGuesserNumberOfTasks.getFloat());
     public GuesserGM(PlayerControl player)
     {
         guesser = player;
@@ -31,6 +32,7 @@ class GuesserGM
         if (g == null) return;
         g.guesser = null;
         g.shots = Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeNumberOfShots.getFloat());
+        g.tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeCrewGuesserNumberOfTasks.getFloat());
 
         guessers.Remove(g);
     }

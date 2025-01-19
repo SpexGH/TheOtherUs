@@ -1,6 +1,5 @@
 using System;
 using Hazel;
-using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -41,7 +40,7 @@ namespace TheOtherRoles.CustomGameModes
                 {
                     TORMapOptions.gameMode = (CustomGamemodes)((int)(TORMapOptions.gameMode + 1) % Enum.GetNames(typeof(CustomGamemodes)).Length);
                     __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p => { pButton.buttonText.text = Helpers.cs(Color.yellow, GameModeText.GetComponent<TextMeshPro>().text); })));
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGamemode, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareGamemode, Hazel.SendOption.Reliable, -1);
                     writer.Write((byte)TORMapOptions.gameMode);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.shareGamemode((byte)TORMapOptions.gameMode);

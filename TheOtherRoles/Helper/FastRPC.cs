@@ -74,7 +74,7 @@ internal class FastRpcWriter(MessageWriter writer)
     {
         if (targetObjectId == 255)
         {
-            targetObjectId = CachedPlayer.LocalPlayer.PlayerControl.NetId;
+            targetObjectId = PlayerControl.LocalPlayer.NetId;
             return this;
         }
 

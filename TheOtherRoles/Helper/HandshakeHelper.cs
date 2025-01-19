@@ -11,7 +11,7 @@ public static class HandshakeHelper
 
     public static void shareGameVersion()
     {
-        var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.VersionHandshake, SendOption.Reliable, -1);
+        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VersionHandshake, SendOption.Reliable, -1);
         writer.Write((byte)TheOtherRolesPlugin.Version.Major);
         writer.Write((byte)TheOtherRolesPlugin.Version.Minor);
         writer.Write((byte)TheOtherRolesPlugin.Version.Build);

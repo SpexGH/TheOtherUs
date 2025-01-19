@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using TheOtherRoles.Objects;
-using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles.CustomGameModes;
@@ -25,19 +24,19 @@ public static class HideNSeek
     public static float hunterWaitingTime = 15f;
     public static bool isHunter()
     {
-        return isHideNSeekGM && CachedPlayer.LocalPlayer != null && CachedPlayer.LocalPlayer.Data.Role.IsImpostor;
+        return isHideNSeekGM && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data.Role.IsImpostor;
     }
 
-    public static List<CachedPlayer> getHunters()
+    public static List<PlayerControl> getHunters()
     {
-        List<CachedPlayer> hunters = new(CachedPlayer.AllPlayers);
+        List<PlayerControl> hunters = new List<PlayerControl>(PlayerControl.AllPlayerControls.ToArray());
         hunters.RemoveAll(x => !x.Data.Role.IsImpostor);
         return hunters;
     }
 
     public static bool isHunted()
     {
-        return isHideNSeekGM && CachedPlayer.LocalPlayer != null && !CachedPlayer.LocalPlayer.Data.Role.IsImpostor;
+        return isHideNSeekGM && PlayerControl.LocalPlayer != null && !PlayerControl.LocalPlayer.Data.Role.IsImpostor;
     }
 
     public static void clearAndReload()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Hazel;
 using Reactor.Utilities.Extensions;
+using TheOtherRoles.Modules;
 using TheOtherRoles.Utilities;
 using UnityEngine;
 using static TheOtherRoles.Helper.HandshakeHelper;
@@ -31,7 +32,7 @@ public class GameStartManagerPatch
     {
         public static void Postfix(AmongUsClient __instance)
         {
-            if (CachedPlayer.LocalPlayer != null)
+            if (PlayerControl.LocalPlayer != null)
             {
                 shareGameVersion();
             }
@@ -75,7 +76,7 @@ public class GameStartManagerPatch
 
         public static void Postfix(GameStartManager __instance)
         {
-            // Send version as soon as CachedPlayer.LocalPlayer.PlayerControl exists
+            // Send version as soon as PlayerControl.LocalPlayer exists
             if (PlayerControl.LocalPlayer != null && !versionSent)
             {
                 versionSent = true;
@@ -94,7 +95,7 @@ public class GameStartManagerPatch
                 else if (!playerVersions.ContainsKey(client.Id))
                 {
                     versionMismatch = true;
-                    message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a different or no version of The Other Us\n</color>";
+                    message += $"<color=#FF0000FF>{string.Format(ModTranslation.getString("errorNotInstalled"), $"{client.Character.Data.PlayerName}")}\n</color>";
                 }
                 else
                 {
@@ -102,18 +103,17 @@ public class GameStartManagerPatch
                     int diff = TheOtherRolesPlugin.Version.CompareTo(PV.version);
                     if (diff > 0)
                     {
-                        message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has an older version of The Other Us (v{playerVersions[client.Id].version})\n</color>";
+                        message += $"<color=#FF0000FF>{string.Format(ModTranslation.getString("errorOlderVersion"), $"{client.Character.Data.PlayerName}")} (v{playerVersions[client.Id].version.ToString()})\n</color>";
                         versionMismatch = true;
                     }
                     else if (diff < 0)
                     {
-                        message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a newer version of The Other Us (v{playerVersions[client.Id].version})\n</color>";
+                        message += $"<color=#FF0000FF>{string.Format(ModTranslation.getString("errorNewerVersion"), $"{client.Character.Data.PlayerName}")} (v{playerVersions[client.Id].version.ToString()})\n</color>";
                         versionMismatch = true;
                     }
                     else if (!PV.GuidMatches())
-                    {
-                        // version presumably matches, check if Guid matches
-                        message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a modified version of TOU v{playerVersions[client.Id].version.ToString()}\n<size=40%>({PV.guid})</size>\n</color>";
+                    { // version presumably matches, check if Guid matches
+                        message += $"<color=#FF0000FF>{string.Format(ModTranslation.getString("errorWrongVersion"), $"{client.Character.Data.PlayerName}")} v{playerVersions[client.Id].version.ToString()} <size=30%>({PV.guid.ToString()})</size>\n</color>";
                         versionMismatch = true;
                     }
                 }
@@ -146,7 +146,7 @@ public class GameStartManagerPatch
                 // Make starting info available to clients:
                 if (startingTimer <= 0 && __instance.startState == GameStartManager.StartingStates.Countdown)
                 {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetGameStarting, SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetGameStarting, SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setGameStarting();
 
@@ -188,14 +188,14 @@ public class GameStartManagerPatch
                         SceneChanger.ChangeScene("MainMenu");
                     }
 
-                    __instance.GameStartText.text = $"<color=#FF0000FF>The host has no or a different version of The Other Us\nYou will be kicked in {Math.Round(10 - kickingTimer)}s</color>";
+                    __instance.GameStartText.text = $"<color=#FF0000FF>{string.Format(ModTranslation.getString("errorHostNoVersion"), Math.Round(10 - kickingTimer))}</color>";
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 5;
                     __instance.GameStartText.transform.localScale = new Vector3(2f, 2f, 1f);
                     __instance.GameStartTextParent.SetActive(true);
                 }
                 else if (versionMismatch)
                 {
-                    __instance.GameStartText.text = $"<color=#FF0000FF>Players With Different Versions:\n</color>" + message;
+                    __instance.GameStartText.text = $"<color=#FF0000FF>{ModTranslation.getString("errorDifferentVersion")}\n</color>" + message;
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 5;
                     __instance.GameStartText.transform.localScale = new Vector3(2f, 2f, 1f);
                     __instance.GameStartTextParent.SetActive(true);
@@ -229,7 +229,7 @@ public class GameStartManagerPatch
 
                     void StopStartFunc()
                     {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.StopStart, SendOption.Reliable, AmongUsClient.Instance.HostId);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.StopStart, SendOption.Reliable, AmongUsClient.Instance.HostId);
                         writer.Write(PlayerControl.LocalPlayer.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         copiedStartButton.Destroy();
@@ -262,9 +262,9 @@ public class GameStartManagerPatch
 
             if (!AmongUsClient.Instance) return;
 
-            if (AmongUsClient.Instance.AmHost && sendGamemode && CachedPlayer.LocalPlayer != null)
+            if (AmongUsClient.Instance.AmHost && sendGamemode && PlayerControl.LocalPlayer != null)
             {
-                var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                     (byte)CustomRPC.ShareGamemode, SendOption.Reliable, -1);
                 writer.Write((byte)TORMapOptions.gameMode);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -310,7 +310,7 @@ public class GameStartManagerPatch
                 {
                     byte mapId = (byte)CustomOptionHolder.hideNSeekMap.getSelection();
                     if (mapId >= 3) mapId++;
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                    var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                         (byte)CustomRPC.DynamicMapOption, SendOption.Reliable, -1);
                     writer.Write(mapId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -362,7 +362,7 @@ public class GameStartManagerPatch
                         CustomOptionHolder.presetSelection.updateSelection(chosenMapId + 3);
                     if (chosenMapId >= 3) chosenMapId++; // Skip dlekS
 
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                    var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                         (byte)CustomRPC.DynamicMapOption, SendOption.Reliable, -1);
                     writer.Write(chosenMapId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);

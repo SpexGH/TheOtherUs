@@ -34,7 +34,7 @@ public class CustomButton
     public HudManager hudManager;
     public bool mirror;
     public KeyCode? hotkey;
-    public string buttonText;
+    public string buttonText = "";
     public bool isHandcuffed;
     private static readonly int Desat = Shader.PropertyToID("_Desat");
 
@@ -92,7 +92,7 @@ public class CustomButton
             OnClick();
 
             // Deputy skip onClickEvent if handcuffed
-            if (Deputy.handcuffedKnows.ContainsKey(CachedPlayer.LocalPlayer.PlayerId) && Deputy.handcuffedKnows[CachedPlayer.LocalPlayer.PlayerId] > 0f) return;
+            if (Deputy.handcuffedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId) && Deputy.handcuffedKnows[PlayerControl.LocalPlayer.PlayerId] > 0f) return;
 
             if (HasEffect && !isEffectActive)
             {
@@ -171,8 +171,8 @@ public class CustomButton
 
     public void Update()
     {
-        var localPlayer = CachedPlayer.LocalPlayer;
-        var moveable = localPlayer.PlayerControl.moveable;
+        var localPlayer = PlayerControl.LocalPlayer;
+        var moveable = localPlayer.moveable;
 
         if (localPlayer.Data == null || MeetingHud.Instance || ExileController.Instance || !HasButton())
         {
@@ -185,7 +185,7 @@ public class CustomButton
         { // This had to be reordered, so that the handcuffs do not stop the underlying timers from running
             if (HasEffect && isEffectActive)
                 DeputyTimer -= Time.deltaTime;
-            else if (!localPlayer.PlayerControl.inVent && moveable)
+            else if (!localPlayer.inVent && moveable)
                 DeputyTimer -= Time.deltaTime;
         }
 
@@ -235,7 +235,7 @@ public class CustomButton
         {
             if (HasEffect && isEffectActive)
                 Timer -= Time.deltaTime;
-            else if (!localPlayer.PlayerControl.inVent && moveable)
+            else if (!localPlayer.inVent && moveable)
                 Timer -= Time.deltaTime;
         }
 

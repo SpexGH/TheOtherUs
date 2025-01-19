@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TheOtherRoles.Modules;
 using TheOtherRoles.Utilities;
 using UnityEngine;
 using static TheOtherRoles.TheOtherRoles;
@@ -53,13 +54,14 @@ public class Portal
         firstPortal.animationFgRenderer.flipX = flip;
         secondPortal.animationFgRenderer.flipX = flip;
         if (Morphling.morphling != null && Morphling.morphTimer > 0) playerControl = Morphling.morphTarget;  // Will output info of morph-target instead
-        string playerNameDisplay = Portalmaker.logOnlyHasColors ? "A player (" + (isLighterColor(playerControl) ? "L" : "D") + ")" : playerControl.Data.PlayerName;
+        var colorLD = isLighterColor(playerControl) ? "playerColorL".Translate() : "playerColorD".Translate();
+        string playerNameDisplay = Portalmaker.logOnlyHasColors ? string.Format("portalPlayerColor".Translate(), colorLD) : playerControl.Data.PlayerName;
 
         int colorId = playerControl.Data.DefaultOutfit.ColorId;
 
         if (Camouflager.camouflageTimer > 0 || MushroomSabotageActive())
         {
-            playerNameDisplay = "A camouflaged player";
+            playerNameDisplay = "portalPlayerCamo".Translate();
             colorId = 6;
         }
 
@@ -92,7 +94,7 @@ public class Portal
     public Portal(Vector2 p)
     {
         portalGameObject = new GameObject("Portal") { layer = 11 };
-        //Vector3 position = new Vector3(p.x, p.y, CachedPlayer.LocalPlayer.transform.position.z + 1f);
+        //Vector3 position = new Vector3(p.x, p.y, PlayerControl.LocalPlayer.transform.position.z + 1f);
         Vector3 position = new(p.x, p.y, (p.y / 1000f) + 0.01f);
 
         // Create the portal            
@@ -110,7 +112,7 @@ public class Portal
         animationFgRenderer.material = FastDestroyableSingleton<HatManager>.Instance.PlayerMaterial;
 
         // Only render the inactive portals for the Portalmaker
-        bool playerIsPortalmaker = CachedPlayer.LocalPlayer.PlayerControl == Portalmaker.portalmaker;
+        bool playerIsPortalmaker = PlayerControl.LocalPlayer == Portalmaker.portalmaker;
         portalGameObject.SetActive(playerIsPortalmaker);
         portalFgAnimationGameObject.SetActive(true);
 

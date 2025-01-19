@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.RemoteConfigSettingsHelper;
 
 namespace TheOtherRoles.Modules;
 
@@ -92,7 +93,7 @@ public class ModUpdater(IntPtr ptr) : MonoBehaviour(ptr)
 
         var button = popup.transform.GetChild(2).gameObject;
         button.SetActive(false);
-        popup.TextAreaTMP.text = $"Updating TOU\nPlease wait...";
+        popup.TextAreaTMP.text = "updatingTOU".Translate();
 
         var asset = release.Assets.Find(FilterPluginAsset);
         var www = new UnityWebRequest();
@@ -104,17 +105,17 @@ public class ModUpdater(IntPtr ptr) : MonoBehaviour(ptr)
         while (!operation.isDone)
         {
             int stars = Mathf.CeilToInt(www.downloadProgress * 10);
-            string progress = $"Updating TOU\nPlease wait...\nDownloading...\n{new string((char)0x25A0, stars)}{new string((char)0x25A1, 10 - stars)}";
+            string progress = "downloadingTOU".Translate() + $"\n{new string((char)0x25A0, stars)}{new string((char)0x25A1, 10 - stars)}";
             popup.TextAreaTMP.text = progress;
             yield return new WaitForEndOfFrame();
         }
 
         if (www.isNetworkError || www.isHttpError)
         {
-            popup.TextAreaTMP.text = "Update wasn't successful\nTry again later,\nor update manually.";
+            popup.TextAreaTMP.text = "updateNotSuccessful".Translate();
             yield break;
         }
-        popup.TextAreaTMP.text = $"Updating TOU\nPlease wait...\n\nDownload complete\ncopying file...";
+        popup.TextAreaTMP.text = "updateCopying".Translate();
 
         var filePath = Path.Combine(Paths.PluginPath, asset.Name);
 
@@ -139,7 +140,7 @@ public class ModUpdater(IntPtr ptr) : MonoBehaviour(ptr)
 
         if (!hasError)
         {
-            popup.TextAreaTMP.text = $"TheOtherUs\nupdated successfully\nPlease restart the game.";
+            popup.TextAreaTMP.text = "updateSuccessful".Translate();
         }
         button.SetActive(true);
         _busy = false;
@@ -183,13 +184,13 @@ public class ModUpdater(IntPtr ptr) : MonoBehaviour(ptr)
         }));
 
         var text = button.transform.GetComponentInChildren<TMPro.TMP_Text>();
-        string t = "Update TOU";
+        string t = "updateButton".Translate();
         StartCoroutine(Effects.Lerp(0.1f, (Action<float>)(p => text.SetText(t))));
         passiveButton.OnMouseOut.AddListener((Action)(() => text.color = Color.red));
         passiveButton.OnMouseOver.AddListener((Action)(() => text.color = Color.white));
-        var announcement = $"<size=150%>A new THE OTHER US update to {latestRelease.Tag} is available</size>\n\n{latestRelease.Description}";
+        var announcement = string.Format("updateAnnouncement".Translate(), latestRelease.Tag) + "\n\n{latestRelease.Description}";
         var mgr = FindObjectOfType<MainMenuManager>(true);
-        if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "TOU Update", date: latestRelease.PublishedAt));
+        if (showPopUp) mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "titleAnnouncement".Translate(), date: latestRelease.PublishedAt));
         showPopUp = false;
 
     }

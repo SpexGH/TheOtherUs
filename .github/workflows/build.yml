@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.nuget/packages
@@ -20,7 +20,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -36,7 +36,7 @@ jobs:
 
       - name: Download and Unzip BepInEx
         run: |
-          wget https://builds.bepinex.dev/projects/bepinex_be/725/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.725%2Be1974e2.zip -O BepInEx.zip
+          wget https://builds.bepinex.dev/projects/bepinex_be/697/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.697%2B5362580.zip -O BepInEx.zip
           unzip BepInEx.zip -d ./Release/
           sudo chmod -R 777 ./Release
 

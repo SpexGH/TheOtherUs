@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TheOtherRoles.Modules;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
@@ -13,26 +14,26 @@ namespace TheOtherRoles.Patches;
 public static class ClientOptionsPatch
 {
     private static readonly SelectionBehaviour[] AllOptions = [
-        new("Ghosts See Tasks & Other Info", () =>
-            TORMapOptions.ghostsSeeInformation = Main.GhostsSeeInformation.Value = !Main.GhostsSeeInformation.Value, Main.GhostsSeeInformation.Value),
-        new("Ghosts Can See Votes", () =>
-            TORMapOptions.ghostsSeeVotes = Main.GhostsSeeVotes.Value = !Main.GhostsSeeVotes.Value, Main.GhostsSeeVotes.Value),
-        new("Ghosts Can See Roles", () =>
-            TORMapOptions.ghostsSeeRoles = Main.GhostsSeeRoles.Value = !Main.GhostsSeeRoles.Value, Main.GhostsSeeRoles.Value),
-        new("Ghosts Can Additionally See Modifier", () =>
-            TORMapOptions.ghostsSeeModifier = Main.GhostsSeeModifier.Value = !Main.GhostsSeeModifier.Value, Main.GhostsSeeModifier.Value),
-        new("Show Lighter / Darker", () =>
-            TORMapOptions.showLighterDarker = Main.ShowLighterDarker.Value = !Main.ShowLighterDarker.Value, Main.ShowLighterDarker.Value),
-        new("Better Cursor", () =>
-            TORMapOptions.toggleCursor = Main.ToggleCursor.Value = !Main.ToggleCursor.Value, Main.ToggleCursor.Value),
-        new("Enable Sound Effects", () =>
-            TORMapOptions.enableSoundEffects = Main.EnableSoundEffects.Value = !Main.EnableSoundEffects.Value, Main.EnableSoundEffects.Value),
-        new("ShowFPS", () =>
-            TORMapOptions.showFPS = Main.ShowFPS.Value = !Main.ShowFPS.Value, Main.ShowFPS.Value),
-        new("Show Chat Notifications", () =>
-            TORMapOptions.ShowChatNotifications = Main.ShowChatNotifications.Value = !Main.ShowChatNotifications.Value, Main.ShowChatNotifications.Value),
-        new ("Mute Lobby BGM", () => 
-            TORMapOptions.muteLobbyBGM = Main.MuteLobbyBGM.Value = !Main.MuteLobbyBGM.Value, Main.MuteLobbyBGM.Value),
+        new("ghostsSeeInformation", () =>
+            TORMapOptions.ghostsSeeInformation = Main.GhostsSeeInformation.Value = !Main.GhostsSeeInformation.Value, Main.GhostsSeeInformation.Value, 1),
+        new("ghostsSeeVotes", () =>
+            TORMapOptions.ghostsSeeVotes = Main.GhostsSeeVotes.Value = !Main.GhostsSeeVotes.Value, Main.GhostsSeeVotes.Value, 2),
+        new("ghostsSeeRoles", () =>
+            TORMapOptions.ghostsSeeRoles = Main.GhostsSeeRoles.Value = !Main.GhostsSeeRoles.Value, Main.GhostsSeeRoles.Value, 3),
+        new("ghostsSeeModifier", () =>
+            TORMapOptions.ghostsSeeModifier = Main.GhostsSeeModifier.Value = !Main.GhostsSeeModifier.Value, Main.GhostsSeeModifier.Value, 4),
+        new("showLighterDarker", () =>
+            TORMapOptions.showLighterDarker = Main.ShowLighterDarker.Value = !Main.ShowLighterDarker.Value, Main.ShowLighterDarker.Value, 5),
+        new("toggleCursor", () =>
+            TORMapOptions.toggleCursor = Main.ToggleCursor.Value = !Main.ToggleCursor.Value, Main.ToggleCursor.Value, 6),
+        new("enableSoundEffects", () =>
+            TORMapOptions.enableSoundEffects = Main.EnableSoundEffects.Value = !Main.EnableSoundEffects.Value, Main.EnableSoundEffects.Value, 7),
+        new("showFPS", () =>
+            TORMapOptions.showFPS = Main.ShowFPS.Value = !Main.ShowFPS.Value, Main.ShowFPS.Value, 8),
+        new("ShowChatNotifications", () =>
+            TORMapOptions.ShowChatNotifications = Main.ShowChatNotifications.Value = !Main.ShowChatNotifications.Value, Main.ShowChatNotifications.Value, 9),
+        new ("muteLobbyBGM", () => 
+            TORMapOptions.muteLobbyBGM = Main.MuteLobbyBGM.Value = !Main.MuteLobbyBGM.Value, Main.MuteLobbyBGM.Value ,10),
     ];
 
     private static GameObject popUp;
@@ -113,7 +114,7 @@ public static class ClientOptionsPatch
         moreOptions.transform.localScale = new Vector3(0.66f, 1, 1);
 
         moreOptions.gameObject.SetActive(true);
-        moreOptions.Text.text = "Mod Options...";
+        moreOptions.Text.text = "moreOptions".Translate();
         moreOptions.Text.transform.localScale = new Vector3(1 / 0.66f, 1, 1);
         var moreOptionsButton = moreOptions.GetComponent<PassiveButton>();
         moreOptionsButton.OnClick = new ButtonClickedEvent();
@@ -155,7 +156,7 @@ public static class ClientOptionsPatch
         var title = Object.Instantiate(titleText, popUp.transform);
         title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.3f;
         title.gameObject.SetActive(true);
-        title.text = "More Options...";
+        title.text = "modOption".Translate();
         title.name = "TitleText";
     }
 
@@ -195,7 +196,7 @@ public static class ClientOptionsPatch
 
             passiveButton.OnClick.AddListener((Action)(() =>
             {
-                if (info.Title == "Better Cursor")
+                if (info.Number == 6)
                 {
                     enableCursor(false);
                 }
@@ -224,12 +225,14 @@ public static class ClientOptionsPatch
         public string Title;
         public Func<bool> OnClick;
         public bool DefaultValue;
+        public float Number;
 
-        public SelectionBehaviour(string title, Func<bool> onClick, bool defaultValue)
+        public SelectionBehaviour(string title, Func<bool> onClick, bool defaultValue, float number)
         {
-            Title = title;
+            Title = title.Translate();
             OnClick = onClick;
             DefaultValue = defaultValue;
+            Number = number;
         }
     }
 }

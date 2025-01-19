@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AmongUs.GameOptions;
+using TheOtherRoles.Modules;
 using UnityEngine;
 
 namespace TheOtherRoles.Patches;
@@ -22,17 +23,17 @@ class CreateOptionsPickerPatch
         CustomGamemodes gm = (CustomGamemodes)((int)mode - 2);
         if (gm == CustomGamemodes.Guesser)
         {
-            __instance.GameModeText.text = "TOR Guesser";
+            __instance.GameModeText.text = "gameModeTextGuesser".Translate();
             TORMapOptions.gameMode = CustomGamemodes.Guesser;
         }
         else if (gm == CustomGamemodes.HideNSeek)
         {
-            __instance.GameModeText.text = "TOR Hide N Seek";
+            __instance.GameModeText.text = "gameModeTextHns".Translate();
             TORMapOptions.gameMode = CustomGamemodes.HideNSeek;
         }
         else if (gm == CustomGamemodes.PropHunt)
         {
-            __instance.GameModeText.text = "TOR Prop Hunt";
+            __instance.GameModeText.text = "gameModeTextPH".Translate();
             TORMapOptions.gameMode = CustomGamemodes.PropHunt;
         }
         return false;
@@ -44,15 +45,15 @@ class CreateOptionsPickerPatch
     {
         if (TORMapOptions.gameMode == CustomGamemodes.Guesser)
         {
-            __instance.GameModeText.text = "TOR Guesser";
+            __instance.GameModeText.text = "gameModeTextGuesser".Translate();
         }
         else if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
         {
-            __instance.GameModeText.text = "TOR Hide N Seek";
+            __instance.GameModeText.text = "gameModeTextHns".Translate();
         }
         else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
         {
-            __instance.GameModeText.text = "TOR Prop Hunt";
+            __instance.GameModeText.text = "gameModeTextPH".Translate();
         }
     }
 }
@@ -79,9 +80,9 @@ class GameModeMenuPatch
                     chatLanguageButton.Text.text = DestroyableSingleton<TranslationController>.Instance.GetString(GameModesHelpers.ModeToName[entry], new Il2CppReferenceArray<Il2CppSystem.Object>(0));
                 else
                 {
-                    chatLanguageButton.Text.text = i == 3 ? "TOR Guesser" : "TOR Hide N Seek";
+                    chatLanguageButton.Text.text = i == 3 ? "gameModeTextGuesser".Translate() : "gameModeTextHns".Translate();
                     if (i == 5)
-                        chatLanguageButton.Text.text = "TOR Prop Hunt";
+                        chatLanguageButton.Text.text = "gameModeTextPH".Translate();
                 }
                 chatLanguageButton.Button.OnClick.RemoveAllListeners();
                 chatLanguageButton.Button.OnClick.AddListener((System.Action)delegate

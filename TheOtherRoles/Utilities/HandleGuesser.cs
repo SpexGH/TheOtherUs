@@ -11,6 +11,7 @@ public static class HandleGuesser
     public static bool killsThroughShield = true;
     public static bool evilGuesserCanGuessSpy = true;
     public static bool guesserCantGuessSnitch;
+    public static int tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeCrewGuesserNumberOfTasks.getFloat());
 
     public static Sprite getTargetSprite()
     {
@@ -33,15 +34,15 @@ public static class HandleGuesser
 
     public static bool CanMultipleShots(PlayerControl dyingTarget)
     {
-        if (dyingTarget == CachedPlayer.LocalPlayer.PlayerControl)
+        if (dyingTarget == PlayerControl.LocalPlayer)
             return false;
 
-        if (isGuesser(CachedPlayer.LocalPlayer.PlayerId)
-            && remainingShots(CachedPlayer.LocalPlayer.PlayerId) > 1
+        if (isGuesser(PlayerControl.LocalPlayer.PlayerId)
+            && remainingShots(PlayerControl.LocalPlayer.PlayerId) > 1
             && hasMultipleShotsPerMeeting)
             return true;
 
-        return CachedPlayer.LocalPlayer.PlayerControl == Doomsayer.doomsayer && Doomsayer.hasMultipleShotsPerMeeting &&
+        return PlayerControl.LocalPlayer == Doomsayer.doomsayer && Doomsayer.hasMultipleShotsPerMeeting &&
                Doomsayer.CanShoot;
     }
 
@@ -62,6 +63,7 @@ public static class HandleGuesser
             hasMultipleShotsPerMeeting = CustomOptionHolder.guesserGamemodeHasMultipleShotsPerMeeting.getBool();
             killsThroughShield = CustomOptionHolder.guesserGamemodeKillsThroughShield.getBool();
             evilGuesserCanGuessSpy = CustomOptionHolder.guesserGamemodeEvilCanKillSpy.getBool();
+            tasksToUnlock = Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeCrewGuesserNumberOfTasks.getFloat());
         }
         else
         {

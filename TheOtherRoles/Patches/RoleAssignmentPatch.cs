@@ -60,7 +60,7 @@ class RoleManagerSelectRolesPatch
     public static bool isGuesserGamemode => TORMapOptions.gameMode == CustomGamemodes.Guesser;
     public static void Postfix()
     {
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ResetVaribles, SendOption.Reliable, -1);
+        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, SendOption.Reliable, -1);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
         RPCProcedure.resetVariables();
         if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek || TORMapOptions.gameMode == CustomGamemodes.PropHunt || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return; // Don't assign Roles in Hide N Seek
@@ -457,7 +457,7 @@ class RoleManagerSelectRolesPatch
             var possibleTargets = new List<PlayerControl>();
             if (!Lawyer.isProsecutor)
             { // Lawyer
-                foreach (PlayerControl p in CachedPlayer.AllPlayers)
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls)
                 {
                     if (!p.Data.IsDead && !p.Data.Disconnected &&
                         p != Lovers.lover1 && p != Lovers.lover2 && (p.Data.Role.IsImpostor || p == Jackal.jackal || p == Juggernaut.juggernaut || p == Werewolf.werewolf || (Lawyer.targetCanBeJester && p == Jester.jester)))
@@ -466,7 +466,7 @@ class RoleManagerSelectRolesPatch
             }
             else
             { // Prosecutor
-                foreach (PlayerControl p in CachedPlayer.AllPlayers)
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls)
                 {
                     if (!p.Data.IsDead && !p.Data.Disconnected && p != Lovers.lover1 && p != Lovers.lover2 && p != Mini.mini && !p.Data.Role.IsImpostor && !isNeutral(p) && p != Swapper.swapper)
                         possibleTargets.Add(p);
@@ -475,14 +475,14 @@ class RoleManagerSelectRolesPatch
 
             if (possibleTargets.Count == 0)
             {
-                MessageWriter w = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, SendOption.Reliable, -1);
+                MessageWriter w = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(w);
                 RPCProcedure.lawyerPromotesToPursuer();
             }
             else
             {
                 var target = possibleTargets[rnd.Next(0, possibleTargets.Count)];
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerSetTarget, SendOption.Reliable, -1);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.LawyerSetTarget, SendOption.Reliable, -1);
                 writer.Write(target.PlayerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.lawyerSetTarget(target.PlayerId);
@@ -544,6 +544,7 @@ class RoleManagerSelectRolesPatch
             RoleId.Disperser,
             RoleId.Cursed,
             RoleId.Chameleon,
+            RoleId.Armored,
             RoleId.Shifter
         });
 
@@ -677,7 +678,7 @@ class RoleManagerSelectRolesPatch
             byte playerId = playerList[index].PlayerId;
             playerList.RemoveAt(index);
 
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetGuesserGm, SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetGuesserGm, SendOption.Reliable, -1);
             writer.Write(playerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.setGuesserGm(playerId);
@@ -707,7 +708,7 @@ class RoleManagerSelectRolesPatch
         byte playerId = playerList[index].PlayerId;
         playerList.RemoveAt(index);
 
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetModifier, SendOption.Reliable, -1);
+        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetModifier, SendOption.Reliable, -1);
         writer.Write(modifierId);
         writer.Write(playerId);
         writer.Write(flag);
@@ -921,8 +922,12 @@ class RoleManagerSelectRolesPatch
                 selection = CustomOptionHolder.modifierChameleon.getSelection();
                 if (multiplyQuantity) selection *= CustomOptionHolder.modifierChameleonQuantity.getQuantity();
                 break;
+            case RoleId.Armored:
+                selection = CustomOptionHolder.modifierArmored.getSelection();
+                break;
             case RoleId.Shifter:
-                selection = CustomOptionHolder.modifierShifter.getSelection(); break;
+                selection = CustomOptionHolder.modifierShifter.getSelection();
+                break;
             case RoleId.EvilGuesser:
                 if (!isGuesserGamemode)
                 {
@@ -943,7 +948,7 @@ class RoleManagerSelectRolesPatch
         while (playerRoleMap.Any())
         {
             byte amount = (byte)Math.Min(playerRoleMap.Count, 20);
-            var writer = AmongUsClient.Instance!.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.WorkaroundSetRoles, SendOption.Reliable, -1);
+            var writer = AmongUsClient.Instance!.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.WorkaroundSetRoles, SendOption.Reliable, -1);
             writer.Write(amount);
             for (int i = 0; i < amount; i++)
             {
