@@ -103,6 +103,7 @@ namespace TheOtherRoles
         public static TMPro.TMP_Text portalmakerButtonText1;
         public static TMPro.TMP_Text portalmakerButtonText2;
         public static TMPro.TMP_Text huntedShieldCountText;
+        public static TMPro.TMP_Text disperserChargesText;
 
         public static void setCustomButtonCooldowns() {
             if (!initialized) {
@@ -135,6 +136,7 @@ namespace TheOtherRoles
             vampireKillButton.MaxTimer = Vampire.cooldown;
             trackerTrackPlayerButton.MaxTimer = 0f;
             jumperButton.MaxTimer = Jumper.jumperJumpTime;
+            disperserDisperseButton.MaxTimer = Disperser.cooldown;
             escapistButton.MaxTimer = Escapist.escapistEscapeTime;
             bodyGuardGuardButton.MaxTimer = 0f;
             garlicButton.MaxTimer = 0f;
@@ -696,19 +698,30 @@ namespace TheOtherRoles
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.Disperse, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.disperse();
-      //              SoundEffectsManager.play("shifterShift");
+                    SoundEffectsManager.play("disperserDisperse");
+
+                    disperserDisperseButton.Timer = disperserDisperseButton.MaxTimer;
                 },
                 () => { return Disperser.disperser != null && Disperser.disperser == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead; },
                 () => {
+                    if (disperserChargesText != null) disperserChargesText.text = $"{Disperser.remainingDisperses}";
                     return Disperser.remainingDisperses > 0 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
                 },
-                () => { },
+                () => {
+                    if (Disperser.remainingDisperses > 0) disperserDisperseButton.Timer = disperserDisperseButton.MaxTimer;
+                },
                 Disperser.getButtonSprite(),
-                new Vector3(0, 0f, 0),
+                new Vector3(0, 1f, 0),
                 __instance,
                 null,
-                true
+                true,
+                buttonText:"DISPERSE"
             );
+            disperserChargesText = GameObject.Instantiate(disperserDisperseButton.actionButton.cooldownTimerText, disperserDisperseButton.actionButton.cooldownTimerText.transform.parent);
+            disperserChargesText.text = "";
+            disperserChargesText.enableWordWrapping = false;
+            disperserChargesText.transform.localScale = Vector3.one * 0.5f;
+            disperserChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
             // Morphling morph
             
@@ -1126,7 +1139,7 @@ namespace TheOtherRoles
                 () => { return Vampire.garlicButton && CachedPlayer.LocalPlayer.PlayerControl.CanMove && !Vampire.localPlacedGarlic; },
                 () => { },
                 Vampire.getGarlicButtonSprite(),
-                new Vector3(0, 1f, 0),
+                new Vector3(0, -0.06f, 0),
                 __instance,
                 null,
                 true

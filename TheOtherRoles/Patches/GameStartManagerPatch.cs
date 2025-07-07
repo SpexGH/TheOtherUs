@@ -8,7 +8,7 @@ using System;
 using TheOtherRoles.Players;
 using TheOtherRoles.Utilities;
 using System.Linq;
-using static TheOtherRoles.TheOtherRoles;
+using Reactor.Utilities.Extensions;
 
 namespace TheOtherRoles.Patches {
     public class GameStartManagerPatch  {
@@ -48,7 +48,8 @@ namespace TheOtherRoles.Patches {
             public static float startingTimer = 0;
             private static bool update = false;
             private static string currentText = "";
-        
+            private static GameObject copiedStartButton;
+
             public static void Prefix(GameStartManager __instance) {
                 if (!GameData.Instance ) return; // No instance
                 __instance.MinPlayers = 1;
@@ -101,12 +102,40 @@ namespace TheOtherRoles.Patches {
                         __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
                     }
 
+                    if (__instance.startState != GameStartManager.StartingStates.Countdown)
+                        copiedStartButton?.Destroy();
+
                     // Make starting info available to clients:
                     if (startingTimer <= 0 && __instance.startState == GameStartManager.StartingStates.Countdown) {
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetGameStarting, Hazel.SendOption.Reliable, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.setGameStarting();
+
+                        // Activate Stop-Button
+                        copiedStartButton = GameObject.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.gameObject.transform.parent);
+                        copiedStartButton.transform.localPosition = __instance.StartButton.transform.localPosition;
+                        copiedStartButton.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.StopClean.png", 180f);
+                        copiedStartButton.SetActive(true);
+                        var startButtonText = copiedStartButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                        startButtonText.text = "STOP";
+                        startButtonText.fontSize *= 0.8f;
+                        startButtonText.fontSizeMax = startButtonText.fontSize;
+                        startButtonText.gameObject.transform.localPosition = Vector3.zero;
+                        PassiveButton startButtonPassiveButton = copiedStartButton.GetComponent<PassiveButton>();
+
+                        void StopStartFunc() {
+                            __instance.ResetStartState();
+                            copiedStartButton.Destroy();
+                            startingTimer = 0;
+                        }
+                        startButtonPassiveButton.OnClick.AddListener((Action)(() => StopStartFunc()));
+                        __instance.StartCoroutine(Effects.Lerp(.1f, new System.Action<float>((p) => {
+                            startButtonText.text = "STOP";
+                        })));
+
                     }
+                    if (__instance.startState == GameStartManager.StartingStates.Countdown)
+                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 0.6f;
                 }
 
                 // Client update with handshake infos
@@ -126,31 +155,42 @@ namespace TheOtherRoles.Patches {
                         __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
                     } else {
                         __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition;
-                        if (__instance.startState != GameStartManager.StartingStates.Countdown && startingTimer <= 0) {
+                        if (!__instance.GameStartText.text.StartsWith("Starting"))
                             __instance.GameStartText.text = String.Empty;
-                        }
-                        else {
-                            __instance.GameStartText.text = $"Starting in {(int)startingTimer + 1}";
-                            if (startingTimer <= 0) {
-                                __instance.GameStartText.text = String.Empty;
-                            }
-                        }
-                    }
-                }
-
-                if (Input.GetKeyDown(KeyCode.LeftShift) && GameStartManager.InstanceExists && GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown && startingTimer <= 4)
-                {
-                    GameStartManager.Instance.countDownTimer = 0;
-                }
-                //カウントダウンキャンセル
-                if (Input.GetKeyDown(KeyCode.C) && GameStartManager.InstanceExists && GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown)
-                {
-                    GameStartManager.Instance.ResetStartState();
-                    if (Cultist.isCultistGame) {
-                        GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors = 2;
-       //                 Cultist.isCultistGame = false;
                     }
 
+                    if (!__instance.GameStartText.text.StartsWith("Starting") || !CustomOptionHolder.anyPlayerCanStopStart.getBool())
+                        copiedStartButton?.Destroy();
+                    if (CustomOptionHolder.anyPlayerCanStopStart.getBool() && copiedStartButton == null && __instance.GameStartText.text.StartsWith("Starting")) {
+
+                        // Activate Stop-Button
+                        copiedStartButton = GameObject.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.gameObject.transform.parent);
+                        copiedStartButton.transform.localPosition = __instance.StartButton.transform.localPosition;
+                        copiedStartButton.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.StopClean.png", 180f);
+                        copiedStartButton.SetActive(true);
+                        var startButtonText = copiedStartButton.GetComponentInChildren<TMPro.TextMeshPro>();
+                        startButtonText.text = "STOP";
+                        startButtonText.fontSize *= 0.8f;
+                        startButtonText.fontSizeMax = startButtonText.fontSize;
+                        startButtonText.gameObject.transform.localPosition = Vector3.zero;
+                        PassiveButton startButtonPassiveButton = copiedStartButton.GetComponent<PassiveButton>();
+
+                        void StopStartFunc() {
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.StopStart, Hazel.SendOption.Reliable, AmongUsClient.Instance.HostId);
+                            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                            copiedStartButton.Destroy();
+                            __instance.GameStartText.text = String.Empty;
+                            startingTimer = 0;
+                        }
+                        startButtonPassiveButton.OnClick.AddListener((Action)(() => StopStartFunc()));
+                        __instance.StartCoroutine(Effects.Lerp(.1f, new System.Action<float>((p) => {
+                            startButtonText.text = "STOP";
+                        })));
+
+                    }
+                    if (__instance.GameStartText.text.StartsWith("Starting") && CustomOptionHolder.anyPlayerCanStopStart.getBool())
+                        __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 0.6f;
                 }
 
                 // Start Timer
@@ -213,21 +253,7 @@ namespace TheOtherRoles.Patches {
                         writer.Write(mapId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.dynamicMapOption(mapId);
-                    }       
-
-                    if (Cultist.isCultistGame)  {
-                       GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors = 2;
-                       Cultist.isCultistGame = false;
-                    }
-                    bool cultistCheck = CustomOptionHolder.cultistSpawnRate.getSelection() != 0 && (rnd.Next(1, 101) <= CustomOptionHolder.cultistSpawnRate.getSelection() * 10);
-                    if (cultistCheck) {
-                      // We should have Custist (Cultist is only supported on 2 Impostors)
-                      Cultist.isCultistGame = true;
-                      GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors = 1;
-                    } else if (cultistCheck){
-                      Cultist.isCultistGame = false;
-                    }
-
+                    }            
                     else if (CustomOptionHolder.dynamicMap.getBool() && continueStart) {
                         // 0 = Skeld
                         // 1 = Mira HQ

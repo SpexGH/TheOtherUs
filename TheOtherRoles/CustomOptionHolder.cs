@@ -21,8 +21,11 @@ namespace TheOtherRoles {
         public static CustomOption modifiersCountMin;
         public static CustomOption modifiersCountMax;
 
-        public static CustomOption enableCodenameHorsemode;
-        public static CustomOption enableCodenameDisableHorses;
+        public static CustomOption anyPlayerCanStopStart;
+
+        //public static CustomOption enableCodenameHorsemode;
+        //public static CustomOption enableCodenameDisableHorses;
+        public static CustomOption enableEventMode;
 
         public static CustomOption cultistSpawnRate;
 
@@ -369,12 +372,16 @@ namespace TheOtherRoles {
 
         public static CustomOption modifierTorch;
         public static CustomOption modifierTorchQuantity;
+        public static CustomOption modifierTorchVision;
 
         public static CustomOption modifierMultitasker;
         public static CustomOption modifierMultitaskerQuantity;
 
         public static CustomOption modifierDisperser;
-        
+        public static CustomOption modifierDisperserCooldown;
+        public static CustomOption modifierDisperserNumberOfUses;
+        public static CustomOption modifierDisperserDispersesToVent;
+
         public static CustomOption modifierMini;
         public static CustomOption modifierMiniGrowingUpDuration;
         public static CustomOption modifierMiniGrowingUpInMeeting;
@@ -458,6 +465,7 @@ namespace TheOtherRoles {
         public static CustomOption guesserGamemodeNeutralNumber;
         public static CustomOption guesserGamemodeImpNumber;
         public static CustomOption guesserForceJackalGuesser;
+        public static CustomOption guesserGamemodeSidekickIsAlwaysGuesser;
         public static CustomOption guesserForceThiefGuesser;
         public static CustomOption guesserGamemodeHaveModifier;
         public static CustomOption guesserGamemodeNumberOfShots;
@@ -546,9 +554,11 @@ namespace TheOtherRoles {
             // Role Options
             presetSelection = CustomOption.Create(0, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Preset"), presets, null, true);
             activateRoles = CustomOption.Create(1, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Enable Mod Roles And Block Vanilla Roles"), true, null, true);
+            anyPlayerCanStopStart = CustomOption.Create(2, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Any Player Can Stop The Start"), false, null, false);
 
-            if (Utilities.EventUtility.canBeEnabled) enableCodenameHorsemode = CustomOption.Create(10423, Types.General, cs(Color.green, "Enable Codename Horsemode"), true, null, true);
-            if (Utilities.EventUtility.canBeEnabled) enableCodenameDisableHorses = CustomOption.Create(10424, Types.General, cs(Color.green, "Disable Horses"), false, enableCodenameHorsemode, false);
+            //if (Utilities.EventUtility.canBeEnabled) enableCodenameHorsemode = CustomOption.Create(10423, Types.General, cs(Color.green, "Enable Codename Horsemode"), true, null, true);
+            //if (Utilities.EventUtility.canBeEnabled) enableCodenameDisableHorses = CustomOption.Create(10424, Types.General, cs(Color.green, "Disable Horses"), false, enableCodenameHorsemode, false);
+            if (Utilities.EventUtility.canBeEnabled) enableEventMode = CustomOption.Create(10423, Types.General, cs(Color.green, "Enable Special Mode"), true, null, true);
 
             // Using new id's for the options to not break compatibilty with older versions
             crewmateRolesCountMin = CustomOption.Create(300, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Minimum Crewmate Roles"), 15f, 0f, 15f, 1f, null, true);
@@ -890,7 +900,10 @@ namespace TheOtherRoles {
             // Modifier (1000 - 1999)
             modifiersAreHidden = CustomOption.Create(1009, Types.Modifier, cs(Color.yellow, "Hide After Death Modifiers"), true, null, true);
 
-            modifierDisperser = CustomOption.Create(200220, Types.Modifier, cs(Color.red, "Disperser"), rates, null, true);
+            modifierDisperser = CustomOption.Create(1110, Types.Modifier, cs(Color.red, "Disperser"), rates, null, true);
+            modifierDisperserCooldown = CustomOption.Create(1112, Types.Modifier, "Disperser Cooldown", 30f, 10f, 60f, 2.5f, modifierDisperser);
+            modifierDisperserNumberOfUses = CustomOption.Create(1114, Types.Modifier, "Number Of Uses", 1, 1, 5, 1, modifierDisperser);
+            modifierDisperserDispersesToVent = CustomOption.Create(1113, Types.Modifier, "Disperser To Vent", true, modifierDisperser);
 
             modifierBloody = CustomOption.Create(1000, Types.Modifier, cs(Color.yellow, "Bloody"), rates, null, true);
             modifierBloodyQuantity = CustomOption.Create(1001, Types.Modifier, cs(Color.yellow, "Bloody Quantity"), ratesModifier, modifierBloody);
@@ -918,6 +931,7 @@ namespace TheOtherRoles {
 
             modifierTorch = CustomOption.Create(1053, Types.Modifier, cs(Color.yellow, "Torch"), rates, null, true);
             modifierTorchQuantity = CustomOption.Create(1054, Types.Modifier, cs(Color.yellow, "Torch Quantity"), ratesModifier, modifierTorch);
+            modifierTorchVision = CustomOption.Create(1055, Types.Modifier, cs(Color.yellow, "Vision With Torch"), 1.5f, 1f, 3f, 0.125f, modifierTorch);
 
             modifierMultitasker = CustomOption.Create(10523233, Types.Modifier, cs(Color.yellow, "Multitasker"), rates, null, true);
             modifierMultitaskerQuantity = CustomOption.Create(10232354, Types.Modifier, cs(Color.yellow, "Multitasker Quantity"), ratesModifier, modifierMultitasker);
@@ -961,6 +975,7 @@ namespace TheOtherRoles {
             guesserGamemodeNeutralNumber = CustomOption.Create(2002, Types.Guesser, cs(Guesser.color, "Number of Neutral Guessers"), 15f, 1f, 15f, 1f, null, true);
             guesserGamemodeImpNumber = CustomOption.Create(2003, Types.Guesser, cs(Guesser.color, "Number of Impostor Guessers"), 15f, 1f, 15f, 1f, null, true);
             guesserForceJackalGuesser = CustomOption.Create(2007, Types.Guesser, "Force Jackal Guesser", false, null, true);
+            guesserGamemodeSidekickIsAlwaysGuesser = CustomOption.Create(2012, Types.Guesser, "Sidekick Is Always Guesser", false, null);
             guesserForceThiefGuesser = CustomOption.Create(2011, Types.Guesser, "Force Thief Guesser", false, null, true);
             guesserGamemodeHaveModifier = CustomOption.Create(2004, Types.Guesser, "Guessers Can Have A Modifier", true, null);
             guesserGamemodeNumberOfShots = CustomOption.Create(2005, Types.Guesser, "Guesser Number Of Shots", 3f, 1f, 15f, 1f, null);
@@ -1039,7 +1054,7 @@ namespace TheOtherRoles {
             shieldFirstKill = CustomOption.Create(8, Types.General, "Shield Last Game First Kill", false);
             hideOutOfSightNametags = CustomOption.Create(6006, Types.General, "Hide Obstructed Player Names", false);
             hideVentAnimOnShadows = CustomOption.Create(822445, Types.General, "Hide Vent Animation Out Of Vision", false);
-            finishTasksBeforeHauntingOrZoomingOut = CustomOption.Create(9, Types.General, "Finish Tasks Before Haunting Or Zooming Out", true);
+            finishTasksBeforeHauntingOrZoomingOut = CustomOption.Create(13, Types.General, "Finish Tasks Before Haunting Or Zooming Out", true);
             camsNightVision = CustomOption.Create(11, Types.General, "Cams Switch To Night Vision If Lights Are Off", false, null, true);
             camsNoNightVisionIfImpVision = CustomOption.Create(12, Types.General, "Impostor Vision Ignores Night Vision Cams", false, camsNightVision, false);
             impostorSeeRoles = CustomOption.Create(9, Types.General, "Impostors Can See The Roles Of Their Team", false);
