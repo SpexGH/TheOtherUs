@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AmongUs.Data;
+using AmongUs.Data.Player;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
@@ -143,8 +144,8 @@ public class TheOtherRolesPlugin : BasePlugin
 }
 
 // Deactivate bans, since I always leave my local testing game and ban myself
-[HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
-public static class AmBannedPatch
+[HarmonyPatch(typeof(PlayerBanData), nameof(PlayerBanData.IsBanned), MethodType.Getter)]
+public static class IsBannedPatch
 {
     public static void Postfix(out bool __result)
     {

@@ -37,7 +37,7 @@ Even more roles are coming soon. :)
 |    Terrorist     |            |       Tracker       |    Radar     |
 |   Blackmailer    |            |       Snitch        |  Chameleon   |
 |      Witch       |            |         Spy         |   Shifter    |
-|      Ninja       |            |    SecurityGuard    |              |
+|      Ninja       |            |    SecurityGuard    |   Armored    |
 |      Miner       |            |       Medium        |              |
 |                  |            |       Trapper       |              |
 |                  |            |                     |              |
@@ -61,6 +61,28 @@ Even more roles are coming soon. :)
 
 <details>
   <summary>Click to show the Changelog</summary>
+
+**Version 2.0.3**
+- Updated to Among Us version 16.1.0 (Vanilla Updates)
+- Added a new modifier, Armored. The first time the armored would die by an ordinary kill, they are protected by their Armor. (NesTT17 & Gendelo, idea by zFinnyX) 
+- Added the possibility to use the shift keys to (re-)join a lobby, if you just left a lobby or you have a lobby code copied to the clipboard. (twix & Gendelo)
+- Added a setting to Guesser Mode: "Number Of Tasks Needed To Unlock Shooting For Crew Guesser" (NesTT17, idea by DracoL1ch & multiple other players)
+- Fixed a bug with the Tracker's Proximity Meter - it now disappears after the meeting if the target is dead and no new target can be tracked.
+- Fixed a bug with the "Fill Crewmates" option, where selecting a range for min/max neutral roles would often lead to players being plain crewmates without a role
+- Fixed a bug where a passive lover death of a role that can suicide would sometimes give the medium incorrect info.
+- Fixed a bug where the zoom out button would be shown to ghosts during meetings.
+- Changed the way options are shown in the menu: Disabling an option (e.g. a role or modifier spawn chance) will now hide its depending sub-options again (like pre 4.6.0 with the old menu)
+- Change: Significantly decreased the size of our mod by using compression. (Thanks to miniduikboat for giving us a gentle push)
+- Added an optional Role Draft mode, where players can select their role out of some roles that are shown to them.
+- Added a new option to allow the medic to shift the medic shield as well - no more invincible medics.
+- Added partial key rebinding - all kill buttons will now use the vanilla kill button shortcut, same for vent and each roles first ability.
+- Fixed the way options view panel to match vanilla changes
+- Fixed options not showing/hiding sub-options when switching Presets
+- Fixed a bug where voting the witch would not save the target
+- Fixed a some bugs with the trapper, bomber and portal
+- Fixed a bug in PropHunt where you players could not transform into props
+- Fixed the summary button for the last game appearing outside the lobby sometimes
+- Changed the positioning of the ping tracker in meetings
 
 **Version 1.3.6**
 
@@ -188,9 +210,11 @@ Thanks to miniduikboot & GD for hosting modded servers (and so much more)
 [TheEpicRoles](https://github.com/LaicosVK/TheEpicRoles) - Idea for the first kill shield (partly) and the tabbed option menu (fully + some code), by **LaicosVK** **DasMonschta** **Nova**\
 [Ninja](#ninja), [Thief](#thief), [Lawyer](#lawyer) / [Pursuer](#pursuer), [Deputy](#deputy), [Portalmaker](#portalmaker), [Guesser Modifier](#guesser-modifier) - Idea: [K3ndo](https://github.com/K3ndoo) ; Developed by [Gendelo](https://github.com/gendelo3) & [Mallöris](https://github.com/Mallaris) \
 [ugackMiner53](https://github.com/ugackMiner53/PropHunt) - Idea and core code for the Prop Hunt game mode
+Role Draft Music: [Unreal Superhero 3 by Kenët & Rez](https://www.youtube.com/watch?v=9STiQ8cCIo0)
 
 # Settings
 The mod adds a few new settings to Among Us (in addition to the role settings):
+- **Enable Role Draft:** see [Role Draft](#role)
 - **Number of Crewmates:** The number of Crewmate roles can be set inside a lobby.
 - **Fill Crewmate Roles (Ignores Min/Max):** Everyone will get a role, even if the settings say there would be plain Crewmates (needs enough roles over 0%).
 - **Number of Neutrals:** The number of Neutral roles can be set inside a lobby.
@@ -202,9 +226,9 @@ The mod adds a few new settings to Among Us (in addition to the role settings):
 - **Hide Player Names:** Hides the names of all players that have role which is unknown to you. Team Lovers/Impostors/Jackal still see the names of their teammates. Impostors can also see the name of the Spy and everyone can still see the age of the mini.
 - **Allow Parallel MedBay Scans:** Allows players to perform their MedBay scans at the same time.
 - **Shield Last Game First Kill** The first killed player of the previous round will be shielded for all players visible until the first meeting.
-- **Finish Tasks Before Haunting Or Zooming Out ** The zoom out function as well as haunting will be hidden for the player until all their tasks are finished
+- **Finish Tasks Before Haunting Or Zooming Out** The zoom out function as well as haunting will be hidden for the player until all their tasks are finished
 - **Admin Table Shows Dead Bodies**
-- **Cams Switch To Night Vision If Lights Are Off**  No colors and cosmetics can be seen on the cameras when the lights are off. Mini can be spottet!
+- **Cams Switch To Night Vision If Lights Are Off**  No colors and cosmetics can be seen on the cameras when the lights are off. Mini can be spotted!
 - **Impostor Vision Ignores Night Vision Cams**
 - **Play On A Random Map** If enabled it allows you to set percentages for each current map, except ehT dlekS. 
 - **Ghosts Can See Roles.**
@@ -226,13 +250,6 @@ You can configure:
 
 Please note, that if the configured option exceeds the available number of tasks of a map, the tasks will be limited to that number of tasks. \
 Example: If you configure 4 common tasks on Airship crewmates will only receive 2 common tasks, as airship doesn't offer more than 2 common tasks.
-
-| Map | Common Tasks | Short Tasks | Long Tasks |
-|----------|:-------------:|:-------------:|:-------------:|
-| Skeld / Dleks | 2 | 19 | 8
-| Mira HQ | 2 | 13 | 11
-| Polus | 4 | 14 | 15
-| Airship | 2 | 23 | 15
 -----------------------
 
 ### Random Maps
@@ -294,7 +311,21 @@ The count you set will only be reached, if there are enough Crewmates/Impostors 
 **Example:**\
 Settings: 2 special Crewmate roles, Snitch: 100%, Hacker: 10%, Tracker: 30%\
 Result: Snitch is assigned, then one role out of the pool [Hacker, Tracker, Tracker, Tracker] is being selected\
-Note: Changing the settings to Hacker: 20%, Tracker: 60% would statistically result in the same outcome .
+Note: Changing the settings to Hacker: 20%, Tracker: 60% would statistically result in the same outcome.
+
+## Role Draft
+
+If the Role Draft is enabled, at the beginning of the game, all players will be allowed to select a role in random order, one after the other. The Role Draft respects the Min/Max Settings for roles for each faction and tries to enforce spawning roles which are set to 100%.
+If not enough roles are available, some players will be able to select Crewmate/Impostor (plain roles). The role draft screen has options to show the picked roles on the left side of the screen. If a player fails to pick a role after a set amount of time, a random available role (including also the roles that are not displayed) will be assigned instead. 
+
+### Game Options
+| Name | Description |
+|----------|:-------------:|
+| Max Amount of Roles To Choose From | If possible, the game will show this amount of roles to choose from to each player
+| Time For Selection | Time until a random role will be selected and assigned
+| Show Picked Roles | If off, the picks will be shown  
+| Hide Impostor Roles | If the roles are shown, hide the impostor roles
+| Hide Neutral Roles | If the roles are shown, hide all neutral roles
 
 
 ## Mafia
@@ -316,8 +347,8 @@ The Janitor is an Impostor who cannot kill, but they can hide dead bodies instea
 
 ## Morphling
 ### **Team: Impostors**
-The Morphling is an Impostor which can additionally scan the appearance of a player. After an arbitrary time they can take on that appearance for 10s.\
-\
+The Morphling is an Impostor which can additionally scan the appearance of a player.\
+After an arbitrary time they can take on that appearance for a set duration which can be changed in the options.\
 **NOTE:**
 - They shrink to the size of the Mini when they copy its look.
 - The Hacker sees the new color on the admin table.
@@ -402,7 +433,7 @@ Depending on the options they can also erase them (Impostors will lose their spe
 ## Trickster
 ### **Team: Impostors**
 The Trickster is an Impostor that can place 3 jack-in-the-boxes that are invisible at first to other players.\
-If the Trickster has placed all of their boxes they will be converted into a vent network usable only by the Trickster themself, but the boxes are revealed to the others.\
+If the Trickster has placed all of their boxes they will be converted into a vent network after the next Meeting, usable only by the Trickster themself, but the boxes are also revealed to the others.\
 If the boxes are converted to a vent network, the Trickster gains a new ability "Lights out" to limit the visibility of Non-Impostors, that cannot be fixed by other players. Lights are automatically restored after a while.\
 \
 **NOTE:**
@@ -604,7 +635,7 @@ After dousing everyone alive the Arsonist can ignite all the players which resul
 | Name | Description |
 |----------|:-------------:|
 | Arsonist Spawn Chance | -
-| Arsonist Countdown | -
+| Arsonist Cooldown | -
 | Arsonist Douse Duration | The time it takes to douse a player
 -----------------------
 
@@ -623,8 +654,8 @@ The team Jackal enables multiple new outcomes of the game, listing some examples
 - The Crew could be eliminated, then the Team Jackal fight against the Impostors (The Crew can still make a task win in this scenario)
 
 The priority of the win conditions is the following:
-1. Crewmate Mini lose by vote
-2. Jester wins by vote
+1. Jester wins by vote (even as Mini)
+2. Crewmate Mini lose by vote
 3. Arsonist win
 4. Team Impostor wins by sabotage
 5. Team Crew wins by tasks (also possible if the whole Crew is dead)
@@ -643,14 +674,19 @@ If both Impostors and Jackals are in the game, the game continues even if all Cr
 ### Game Options
 | Name | Description
 |----------|:-------------:|
-| Jackal Spawn Chance | - |
-| Jackal/Sidekick Kill Cooldown | Kill cooldown |
-| Jackal Create Sidekick Cooldown | Cooldown before a Sidekick can be created |
-| Jackal can use vents | Yes/No |
-| Jackal can create a Sidekick | Yes/No |
-| Jackals promoted from Sidekick can create a Sidekick | Yes/No (to prevent the Jackal team from growing) |
-| Jackals can make an Impostor to their Sidekick | Yes/No (to prevent a Jackal from turning an Impostor into a Sidekick, if they use the ability on an Impostor they see the Impostor as Sidekick, but the Impostor isn't converted to Sidekick. If this option is set to "No" Jackal and Sidekick can kill each other.) |
-| Jackal and Sidekick have Impostor vision | - |
+| Jackal Spawn Chance | -
+| Jackal/Sidekick Kill Cooldown | Kill Cooldown
+| Jackal Create Sidekick Cooldown | Cooldown before a Sidekick can be created
+| Jackal Can Use Vents | Yes/No
+| Jackal Can Sabotage Lights | Yes/No
+| Jackal Can Create A Sidekick | Yes/No
+| Sidekick Gets Promoted To Jackal On Jackal Death | Yes/No
+| Sidekick Can Kill | Yes/No
+| Sidekick Can Vent | Yes/No
+| Sidekick Can Sabotage Lights | Yes/No
+| Jackals Promoted From Sidekick Can Create A Sidekick | Yes/No (to prevent the Jackal team from growing)
+| Jackals Can Make An Impostor To His Sidekick | Yes/No (to prevent a Jackal from turning an Impostor into a Sidekick, if they use the ability on an Impostor they see the Impostor as Sidekick, but the Impostor isn't converted to Sidekick. If this option is set to "No" Jackal and Sidekick can kill each other.)
+| Jackal And Sidekick Have Impostor Vision | -
 -----------------------
 
 ## Sidekick
@@ -667,9 +703,9 @@ Upon the death of the Jackal (depending on the options), they might get promoted
 | Name | Description
 |----------|:-------------:|
 | Jackal/Sidekick Kill Cooldown | Uses the same kill cooldown setting as the Jackal |
-| Sidekick gets promoted to Jackal on Jackal death |  Yes/No |
-| Sidekick can kill | Yes/No |
-| Sidekick can use vents | Yes/No |
+| Sidekick Gets Promoted To Jackal On Jackal Death |  Yes/No |
+| Sidekick Can Kill | Yes/No |
+| Sidekick Can Use Vents | Yes/No |
 -----------------------
 
 ## Vulture
@@ -686,7 +722,7 @@ If there is a Vulture in the game, there can't be a Cleaner.
 | Name | Description |
 |----------|:-------------:|
 | Vulture Spawn Chance | -
-| Vulture Countdown | -
+| Vulture Cooldown | -
 | Number Of Corpses Needed To Be Eaten | Corpes needed to be eaten to win the game
 | Vulture Can Use Vents | -
 | Show Arrows Pointing Towards The Corpes | -
@@ -773,7 +809,7 @@ the Sheriff. While the Thief hasn't fired, their tasks do not count towards the 
 | Name | Description |
 |----------|:-------------:|
 | Thief Spawn Chance | -
-| Thief Countdown | -
+| Thief Cooldown | -
 | Thief Can Kill Sheriff | -
 | Thief Has Impostor Vision | -
 | Thief Can Use Vents | -
@@ -803,7 +839,6 @@ The Mayor has the option to vote with only one vote instead of two (via a button
 The Engineer (if alive) can fix a certain amount of sabotages per game from anywhere on the map.\
 The Engineer can use vents.\
 If the Engineer is inside a vent, depending on the options the members of the team Jackal/Impostors will see a blue outline around all vents on the map (in order to warn them).\
-Because of the vents the Engineer might not be able to start some tasks using the "Use" button, you can double-click on the tasks instead.
 
 **NOTE:**
 - The kill button of Impostors activates if they stand next to a vent where the Engineer is. They can also kill them there. No other action (e.g. Morphling sample, Shifter shift, ...) can affect players inside vents.
@@ -814,7 +849,7 @@ Because of the vents the Engineer might not be able to start some tasks using th
 | Engineer Spawn Chance | -
 | Number Of Sabotage Fixes| -
 | Impostors See Vents Highlighted | -
-| Jackal and Sidekick See Vents Highlighted | -
+| Jackal And Sidekick See Vents Highlighted | -
 -----------------------
 
 ## Sheriff
@@ -942,7 +977,7 @@ The Medic's other feature shows when they report a corpse: they will see how lon
 | Show Shielded Player | Sets who sees if a player has a shield | "Everyone", "Shielded + Medic", "Medic"
 | Shielded Player Sees Murder Attempt| Whether a shielded player sees if someone tries to kill them | True/false |
 | Shield Will Be Activated | Sets when the shield will be active | "Instantly", "Instantly, Visible After Meeting", "After Meeting"
-| Medic Sees Murder Attempt On Shielded Player | - | If anyone tries to harm the shielded player (Impostor, Sheriff, Guesser, ...), the Medic will see a red flash
+| Medic Sees Murder Attempt On Shielded Player | If anyone tries to harm the shielded player (Impostor, Sheriff, Guesser, ...), the Medic will see a red flash | - |
 -----------------------
 
 ## Swapper
@@ -960,8 +995,8 @@ The Swapper now has initial swap charges and can recharge those charges after co
 | Name | Description
 |----------|:-------------:|
 | Swapper Spawn Chance | -
-| Swapper can call emergency meeting | Option to disable the emergency button for the Swapper
-| Swapper can only swap others | Sets whether the Swapper can swap themself or not
+| Swapper Can Call Emergency Meeting | Option to disable the emergency button for the Swapper
+| Swapper Can Only Swap Others | Sets whether the Swapper can swap themself or not
 | Initial Swap Charges | -
 | Number Of Tasks Needed For Recharging | -
 -----------------------
@@ -1205,7 +1240,7 @@ If killed, the Bloody Modifier will leave a trail for x-seconds on their killer.
 |----------|:-------------:|
 | Bloody Spawn Chance | -
 | Bloody Quantity | -
-| Trail duration | -
+| Trail Duration | -
 -----------------------
 
 ## Anti Teleport
@@ -1300,7 +1335,7 @@ The vision will also be affected when lights out.
 |----------|:-------------:|
 | Sunglasses Spawn Chance | -
 | Sunglasses Quantity | -
-| Vision with sunglasses | -
+| Vision With sunglasses | -
 -----------------------
 
 ## Mini
@@ -1442,6 +1477,22 @@ The Disperser modifier is an Impostor only modifier. This modifier gives the imp
 
 -----------------------
 
+## Armored
+
+The Armored is a Modifier that protects the player from the first shot that would have killed them. There can only be one Armored player per round.
+\
+**NOTE:**
+- Armored is only active during the round and does not protect from guesses or votes. 
+- Armored is applied after all other shields or protections, so that the Armor only breaks if the player would have otherwise died.
+- If a killer tries to kill the Armored, they will see the Armor break with a nice animation.
+- The Armored player has no indicator whatsoever if the Armor is still active, unless they break it (Warlock, Sheriff, Thief)
+
+### Game Options
+| Name | Description
+|----------|:-------------:|
+| Armored Spawn Chance | -
+-----------------------
+
 # Gamemodes
 Gamemodes can be switched when creating a lobby or inside the lobby by using a command in the chat:
 `/gm <gamemode>`. Use the following gamemodes: `guess` or `gm`,`prophunt` or `ph`, `hidenseek` or `hns`. If `/gm` is used without argument or the argument can't be parsed, the lobby will switch to classic mode.
@@ -1465,6 +1516,7 @@ Players can additionally have a modifier, if enabled (e.g. Medic Guesser Mini).
 | Guessers Can Have A Modifier | -
 | Guesser Number Of Shots | -
 | Guesser Can Shoot Multiple Times Per Meeting | -
+| Number Of Tasks Needed To Unlock Shooting For Crew Guesser | - 
 | Guesses Ignore The Medic Shield | -
 | Evil Guesser Can Guess The Spy | -
 | Guesser Can't Guess Snitch When Tasks Completed | -
@@ -1551,7 +1603,7 @@ When a Prop dies, they will either join the Hunter team or die (setting).
 | Unstuck Duration | -        | Kill Cooldown After Hit | -            | Invisibility Duration | -
 | Hunter Vision | -           | Reveal Prop Cooldown | -               | Speedboost Enabled | -
 | Prop Vision | -             | Reveal Prop Duration | -               | Speedboost Cooldown | -
-|  | -             | Reveal Time Punish | deducted from rem. timer | Speedboost Duration | - 
+|  | -             | Reveal Time Punish | Deducted from rem. timer | Speedboost Duration | - 
 |  | -                         |  Hunter Admin Cooldown | - | Speedboost Ratio | Factor with which speed is multiplied 
 |  | -                       | Find Cooldown | -
 |  | -               | Find Duration | -

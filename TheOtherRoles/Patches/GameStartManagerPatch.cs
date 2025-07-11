@@ -31,7 +31,7 @@ public class GameStartManagerPatch
     {
         public static void Postfix(AmongUsClient __instance)
         {
-            if (CachedPlayer.LocalPlayer != null)
+            if (PlayerControl.LocalPlayer != null)
             {
                 shareGameVersion();
             }
@@ -75,7 +75,7 @@ public class GameStartManagerPatch
 
         public static void Postfix(GameStartManager __instance)
         {
-            // Send version as soon as CachedPlayer.LocalPlayer.PlayerControl exists
+            // Send version as soon as PlayerControl.LocalPlayer exists
             if (PlayerControl.LocalPlayer != null && !versionSent)
             {
                 versionSent = true;
@@ -146,7 +146,7 @@ public class GameStartManagerPatch
                 // Make starting info available to clients:
                 if (startingTimer <= 0 && __instance.startState == GameStartManager.StartingStates.Countdown)
                 {
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetGameStarting, SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetGameStarting, SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setGameStarting();
 
@@ -164,8 +164,12 @@ public class GameStartManagerPatch
                     void StopStartFunc()
                     {
                         __instance.ResetStartState();
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.StopStart, Hazel.SendOption.Reliable, -1);
+                        writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
                         copiedStartButton.Destroy();
                         startingTimer = 0;
+                        SoundManager.Instance.StopSound(GameStartManager.Instance.gameStartSound);
                     }
                     startButtonPassiveButton.OnClick.AddListener((Action)(() => StopStartFunc()));
                     __instance.StartCoroutine(Effects.Lerp(.1f, new Action<float>((p) =>
@@ -229,12 +233,13 @@ public class GameStartManagerPatch
 
                     void StopStartFunc()
                     {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.StopStart, SendOption.Reliable, AmongUsClient.Instance.HostId);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.StopStart, Hazel.SendOption.Reliable, -1);
                         writer.Write(PlayerControl.LocalPlayer.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         copiedStartButton.Destroy();
                         __instance.GameStartText.text = string.Empty;
                         startingTimer = 0;
+                        SoundManager.Instance.StopSound(GameStartManager.Instance.gameStartSound);
                     }
                     startButtonPassiveButton.OnClick.AddListener((Action)(() => StopStartFunc()));
                     __instance.StartCoroutine(Effects.Lerp(.1f, new Action<float>((p) =>
@@ -262,9 +267,9 @@ public class GameStartManagerPatch
 
             if (!AmongUsClient.Instance) return;
 
-            if (AmongUsClient.Instance.AmHost && sendGamemode && CachedPlayer.LocalPlayer != null)
+            if (AmongUsClient.Instance.AmHost && sendGamemode && PlayerControl.LocalPlayer != null)
             {
-                var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                     (byte)CustomRPC.ShareGamemode, SendOption.Reliable, -1);
                 writer.Write((byte)TORMapOptions.gameMode);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -310,7 +315,7 @@ public class GameStartManagerPatch
                 {
                     byte mapId = (byte)CustomOptionHolder.hideNSeekMap.getSelection();
                     if (mapId >= 3) mapId++;
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                    var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                         (byte)CustomRPC.DynamicMapOption, SendOption.Reliable, -1);
                     writer.Write(mapId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -362,7 +367,7 @@ public class GameStartManagerPatch
                         CustomOptionHolder.presetSelection.updateSelection(chosenMapId + 3);
                     if (chosenMapId >= 3) chosenMapId++; // Skip dlekS
 
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                    var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                         (byte)CustomRPC.DynamicMapOption, SendOption.Reliable, -1);
                     writer.Write(chosenMapId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);

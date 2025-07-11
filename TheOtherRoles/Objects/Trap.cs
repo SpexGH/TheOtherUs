@@ -19,7 +19,7 @@ class Trap
     public bool triggerable;
     private int usedCount;
     private int neededCount = Trapper.trapCountToReveal;
-    public List<PlayerControl> trappedPlayer = new();
+    public List<byte> trappedPlayer = new();
     private Arrow arrow = new(Color.blue);
 
     private static Sprite trapSprite;
@@ -42,7 +42,7 @@ class Trap
         trapRenderer.sprite = getTrapSprite();
         trap.SetActive(false);
         trapRenderer.color = Color.white * new Vector4(1, 1, 1, 0.5f);
-        if (CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) trap.SetActive(true);
+        if (PlayerControl.LocalPlayer.PlayerId == Trapper.trapper.PlayerId) trap.SetActive(true);
         instanceId = ++instanceCounter;
         traps.Add(this);
         arrow.Update(position);
@@ -85,18 +85,18 @@ class Trap
         Trap t = traps.FirstOrDefault(x => x.instanceId == trapId);
         PlayerControl player = playerById(playerId);
         if (Trapper.trapper == null || t == null || player == null) return;
-        bool localIsTrapper = CachedPlayer.LocalPlayer.PlayerId == Trapper.trapper.PlayerId;
+        bool localIsTrapper = PlayerControl.LocalPlayer.PlayerId == Trapper.trapper.PlayerId;
         if (!trapPlayerIdMap.ContainsKey(playerId)) trapPlayerIdMap.Add(playerId, t);
         t.usedCount++;
         t.triggerable = false;
-        if (playerId == CachedPlayer.LocalPlayer.PlayerId || playerId == Trapper.trapper.PlayerId)
+        if (playerId == PlayerControl.LocalPlayer.PlayerId || playerId == Trapper.trapper.PlayerId)
         {
             t.trap.SetActive(true);
             SoundEffectsManager.play("trapperTrap");
         }
         player.moveable = false;
         player.NetTransform.Halt();
-        Trapper.playersOnMap.Add(player);
+        Trapper.playersOnMap.Add(player.PlayerId);
         if (localIsTrapper) t.arrow.arrow.SetActive(true);
 
         FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Trapper.trapDuration, new Action<float>((p) =>
@@ -104,7 +104,7 @@ class Trap
             if (p == 1f)
             {
                 player.moveable = true;
-                Trapper.playersOnMap.RemoveAll(x => x == player);
+                Trapper.playersOnMap.RemoveAll(x => x == player.PlayerId);
                 if (trapPlayerIdMap.ContainsKey(playerId)) trapPlayerIdMap.Remove(playerId);
                 t.arrow.arrow.SetActive(false);
             }
@@ -115,7 +115,7 @@ class Trap
             t.revealed = true;
         }
 
-        t.trappedPlayer.Add(player);
+        t.trappedPlayer.Add(player.PlayerId);
         t.triggerable = true;
 
     }
@@ -123,7 +123,7 @@ class Trap
     public static void Update()
     {
         if (Trapper.trapper == null) return;
-        CachedPlayer player = CachedPlayer.LocalPlayer;
+        PlayerControl player = PlayerControl.LocalPlayer;
         Vent vent = MapUtilities.CachedShipStatus.AllVents[0];
         float closestDistance = float.MaxValue;
 
@@ -133,9 +133,9 @@ class Trap
         foreach (Trap trap in traps)
         {
             if (trap.arrow.arrow.active) trap.arrow.Update();
-            if (trap.revealed || !trap.triggerable || trap.trappedPlayer.Contains(player.PlayerControl)) continue;
-            if (player.PlayerControl.inVent || !player.PlayerControl.CanMove) continue;
-            float distance = Vector2.Distance(trap.trap.transform.position, player.PlayerControl.GetTruePosition());
+            if (trap.revealed || !trap.triggerable || trap.trappedPlayer.Contains(player.PlayerId)) continue;
+            if (player.inVent || !player.CanMove) continue;
+            float distance = Vector2.Distance(trap.trap.transform.position, player.GetTruePosition());
             if (distance <= ud && distance < closestDistance)
             {
                 closestDistance = distance;
@@ -144,7 +144,7 @@ class Trap
         }
         if (target != null && player.PlayerId != Trapper.trapper.PlayerId && !player.Data.IsDead)
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TriggerTrap, SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.TriggerTrap, SendOption.Reliable, -1);
             writer.Write(player.PlayerId);
             writer.Write(target.instanceId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);

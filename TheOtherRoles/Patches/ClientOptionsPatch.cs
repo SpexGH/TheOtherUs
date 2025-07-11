@@ -25,9 +25,12 @@ public static class ClientOptionsPatch
             TORMapOptions.showLighterDarker = Main.ShowLighterDarker.Value = !Main.ShowLighterDarker.Value, Main.ShowLighterDarker.Value),
         new("Better Cursor", () =>
             TORMapOptions.toggleCursor = Main.ToggleCursor.Value = !Main.ToggleCursor.Value, Main.ToggleCursor.Value),
-        new("Enable Sound Effects", () =>
-            TORMapOptions.enableSoundEffects = Main.EnableSoundEffects.Value = !Main.EnableSoundEffects.Value, Main.EnableSoundEffects.Value),
-        new("ShowFPS", () =>
+        new("Enable Sound Effects", () =>  {
+            TORMapOptions.enableSoundEffects = Main.EnableSoundEffects.Value = !Main.EnableSoundEffects.Value;
+             if (!TORMapOptions.enableSoundEffects) SoundEffectsManager.stopAll();
+             return TORMapOptions.enableSoundEffects;
+            }, Main.EnableSoundEffects.Value),
+        new("Show FPS On Ping Text", () =>
             TORMapOptions.showFPS = Main.ShowFPS.Value = !Main.ShowFPS.Value, Main.ShowFPS.Value),
         new("Show Chat Notifications", () =>
             TORMapOptions.ShowChatNotifications = Main.ShowChatNotifications.Value = !Main.ShowChatNotifications.Value, Main.ShowChatNotifications.Value),
@@ -203,7 +206,7 @@ public static class ClientOptionsPatch
                 button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
             }));
 
-            passiveButton.OnMouseOver.AddListener((Action)(() => button.Background.color = new Color32(34, 139, 34, byte.MaxValue)));
+            passiveButton.OnMouseOver.AddListener((Action)(() => button.Background.color = button.onState ? new Color32(34, 139, 34, byte.MaxValue) : new Color32(139, 34, 34, byte.MaxValue)));
             passiveButton.OnMouseOut.AddListener((Action)(() => button.Background.color = button.onState ? Color.green : Palette.ImpostorRed));
 
             foreach (var spr in button.gameObject.GetComponentsInChildren<SpriteRenderer>())

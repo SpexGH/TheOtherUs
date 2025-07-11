@@ -9,9 +9,9 @@ using static TheOtherRoles.TheOtherRoles;
 
 namespace TheOtherRoles.Patches;
 
-[HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
+[HarmonyPatch(typeof(ExileController), nameof(ExileController.BeginForGameplay))]
 [HarmonyPriority(Priority.First)]
-internal class ExileControllerBeginPatch
+internal class ExileControllerBeginForGameplayPatch
 {
     public static NetworkedPlayerInfo lastExiled;
     public static void Prefix(ExileController __instance, [HarmonyArgument(0)] ref ExileController.InitProperties init)
@@ -21,7 +21,7 @@ internal class ExileControllerBeginPatch
         // Medic shield
         if (Medic.medic != null && AmongUsClient.Instance.AmHost && Medic.futureShielded != null && !Medic.medic.Data.IsDead)
         { // We need to send the RPC from the host here, to make sure that the order of shifting and setting the shield is correct(for that reason the futureShifted and futureShielded are being synced)
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MedicSetShielded, SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MedicSetShielded, SendOption.Reliable, -1);
             writer.Write(Medic.futureShielded.PlayerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.medicSetShielded(Medic.futureShielded.PlayerId);
@@ -31,7 +31,7 @@ internal class ExileControllerBeginPatch
         // Shifter shift
         if (Shifter.shifter != null && AmongUsClient.Instance.AmHost && Shifter.futureShift != null)
         { // We need to send the RPC from the host here, to make sure that the order of shifting and erasing is correct (for that reason the futureShifted and futureErased are being synced)
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShifterShift, SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShifterShift, SendOption.Reliable, -1);
             writer.Write(Shifter.futureShift.PlayerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.shifterShift(Shifter.futureShift.PlayerId);
@@ -43,7 +43,7 @@ internal class ExileControllerBeginPatch
         {  // We need to send the RPC from the host here, to make sure that the order of shifting and erasing is correct (for that reason the futureShifted and futureErased are being synced)
             foreach (PlayerControl target in Eraser.futureErased)
             {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ErasePlayerRoles, SendOption.Reliable, -1);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ErasePlayerRoles, SendOption.Reliable, -1);
                 writer.Write(target.PlayerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.erasePlayerRoles(target.PlayerId);
@@ -78,17 +78,17 @@ internal class ExileControllerBeginPatch
                         continue;
                     if (target == Lawyer.target && Lawyer.lawyer != null)
                     {
-                        MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, SendOption.Reliable, -1);
+                        MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.LawyerPromotesToPursuer, SendOption.Reliable, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(writer2);
                         RPCProcedure.lawyerPromotesToPursuer();
                     }
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedExilePlayer, SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedExilePlayer, SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.uncheckedExilePlayer(target.PlayerId);
 
-                    MessageWriter writer3 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable, -1);
-                    writer3.Write(CachedPlayer.LocalPlayer.PlayerId);
+                    MessageWriter writer3 = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable, -1);
+                    writer3.Write(PlayerControl.LocalPlayer.PlayerId);
                     writer3.Write((byte)RPCProcedure.GhostInfoTypes.DeathReasonAndKiller);
                     writer3.Write(target.PlayerId);
                     writer3.Write((byte)DeadPlayer.CustomDeathReason.WitchExile);
@@ -149,7 +149,8 @@ internal class ExileControllerWrapUpPatch
     {
         public static void Postfix(ExileController __instance)
         {
-            WrapUpPostfix(__instance.initData.networkedPlayer);
+            NetworkedPlayerInfo networkedPlayer = __instance.initData.networkedPlayer;
+            WrapUpPostfix((networkedPlayer != null) ? networkedPlayer.Object : null);
         }
     }
 
@@ -158,7 +159,8 @@ internal class ExileControllerWrapUpPatch
     {
         public static void Postfix(AirshipExileController __instance)
         {
-            WrapUpPostfix(__instance.initData.networkedPlayer);
+            NetworkedPlayerInfo networkedPlayer = __instance.initData.networkedPlayer;
+            WrapUpPostfix((networkedPlayer != null) ? networkedPlayer.Object : null);
         }
     }
 
@@ -177,7 +179,7 @@ internal class ExileControllerWrapUpPatch
         if (!SubmergedCompatibility.IsSubmerged) return;
         if (obj.name.Contains("ExileCutscene"))
         {
-            WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
+            WrapUpPostfix(obj.GetComponent<ExileController>().initData.networkedPlayer?.Object);
         }
         else if (obj.name.Contains("SpawnInMinigame"))
         {
@@ -186,7 +188,7 @@ internal class ExileControllerWrapUpPatch
         }
     }
 
-    private static void WrapUpPostfix(NetworkedPlayerInfo exiled)
+    private static void WrapUpPostfix(PlayerControl exiled)
     {
         // Prosecutor win condition
         if (exiled != null && Lawyer.lawyer != null && Lawyer.target != null && Lawyer.isProsecutor && Lawyer.target.PlayerId == exiled.PlayerId && !Lawyer.lawyer.Data.IsDead)
@@ -208,14 +210,14 @@ internal class ExileControllerWrapUpPatch
         CustomButton.MeetingEndedUpdate();
 
         // Mini set adapted cooldown
-        if (Mini.mini != null && CachedPlayer.LocalPlayer.PlayerControl == Mini.mini && Mini.mini.Data.Role.IsImpostor)
+        if (Mini.mini != null && PlayerControl.LocalPlayer == Mini.mini && Mini.mini.Data.Role.IsImpostor)
         {
             var multiplier = Mini.isGrownUp() ? 0.66f : 2f;
             Mini.mini.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown * multiplier);
         }
 
         // Seer spawn souls
-        if (Seer.deadBodyPositions != null && Seer.seer != null && CachedPlayer.LocalPlayer.PlayerControl == Seer.seer && (Seer.mode == 0 || Seer.mode == 2))
+        if (Seer.deadBodyPositions != null && Seer.seer != null && PlayerControl.LocalPlayer == Seer.seer && (Seer.mode == 0 || Seer.mode == 2))
         {
             foreach (Vector3 pos in Seer.deadBodyPositions)
             {
@@ -250,18 +252,18 @@ internal class ExileControllerWrapUpPatch
         if (Blackmailer.blackmailer != null && Blackmailer.blackmailed != null)
         {
             // Blackmailer reset blackmailed
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UnblackmailPlayer, SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UnblackmailPlayer, SendOption.Reliable, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.unblackmailPlayer();
         }
 
         // Arsonist deactivate dead poolable players
-        if (Arsonist.arsonist != null && Arsonist.arsonist == CachedPlayer.LocalPlayer.PlayerControl)
+        if (Arsonist.arsonist != null && Arsonist.arsonist == PlayerControl.LocalPlayer)
         {
             int visibleCounter = 0;
             Vector3 newBottomLeft = IntroCutsceneOnDestroyPatch.bottomLeft;
             var BottomLeft = newBottomLeft + new Vector3(-0.25f, -0.25f, 0);
-            foreach (PlayerControl p in CachedPlayer.AllPlayers)
+            foreach (PlayerControl p in PlayerControl.AllPlayerControls.ToArray())
             {
                 if (!TORMapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
                 if (p.Data.IsDead || p.Data.Disconnected)
@@ -283,11 +285,11 @@ internal class ExileControllerWrapUpPatch
         }
 
         // Force Bounty Hunter Bounty Update
-        if (BountyHunter.bountyHunter != null && BountyHunter.bountyHunter == CachedPlayer.LocalPlayer.PlayerControl)
+        if (BountyHunter.bountyHunter != null && BountyHunter.bountyHunter == PlayerControl.LocalPlayer)
             BountyHunter.bountyUpdateTimer = 0f;
 
         // Medium spawn souls
-        if (Medium.medium != null && CachedPlayer.LocalPlayer.PlayerControl == Medium.medium)
+        if (Medium.medium != null && PlayerControl.LocalPlayer == Medium.medium)
         {
             if (Medium.souls != null)
             {
@@ -355,9 +357,9 @@ internal class ExileControllerMessagePatch
     {
         try
         {
-            if (ExileController.Instance != null && ExileController.Instance.initData.networkedPlayer != null)
+            if (ExileController.Instance != null && ExileController.Instance.initData != null)
             {
-                PlayerControl player = playerById(ExileController.Instance.initData.networkedPlayer.Object.PlayerId);
+                PlayerControl player = ExileController.Instance.initData.networkedPlayer.Object;
                 if (player == null) return;
                 // Exile role text
                 if (id == StringNames.ExileTextPN || id == StringNames.ExileTextSN || id == StringNames.ExileTextPP || id == StringNames.ExileTextSP)

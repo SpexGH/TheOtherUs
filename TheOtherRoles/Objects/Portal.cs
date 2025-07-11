@@ -92,7 +92,7 @@ public class Portal
     public Portal(Vector2 p)
     {
         portalGameObject = new GameObject("Portal") { layer = 11 };
-        //Vector3 position = new Vector3(p.x, p.y, CachedPlayer.LocalPlayer.transform.position.z + 1f);
+        //Vector3 position = new Vector3(p.x, p.y, PlayerControl.LocalPlayer.transform.position.z + 1f);
         Vector3 position = new(p.x, p.y, (p.y / 1000f) + 0.01f);
 
         // Create the portal            
@@ -110,7 +110,7 @@ public class Portal
         animationFgRenderer.material = FastDestroyableSingleton<HatManager>.Instance.PlayerMaterial;
 
         // Only render the inactive portals for the Portalmaker
-        bool playerIsPortalmaker = CachedPlayer.LocalPlayer.PlayerControl == Portalmaker.portalmaker;
+        bool playerIsPortalmaker = PlayerControl.LocalPlayer == Portalmaker.portalmaker;
         portalGameObject.SetActive(playerIsPortalmaker);
         portalFgAnimationGameObject.SetActive(true);
 
@@ -119,7 +119,7 @@ public class Portal
         {
             secondPortal = this;
         }
-        var lastRoom = FastDestroyableSingleton<HudManager>.Instance?.roomTracker.LastRoom.RoomId;
+        var lastRoom = FastDestroyableSingleton<HudManager>.Instance?.roomTracker?.LastRoom?.RoomId;
         room = lastRoom != null ? DestroyableSingleton<TranslationController>.Instance.GetString((SystemTypes)lastRoom) : "Open Field";
     }
 

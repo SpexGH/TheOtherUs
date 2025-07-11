@@ -19,9 +19,19 @@ public class CustomOptionHolder
     public static CustomOption modifiersCountMin;
     public static CustomOption modifiersCountMax;
 
+    public static CustomOption isDraftMode;
+    public static CustomOption draftModeAmountOfChoices;
+    public static CustomOption draftModeTimeToChoose;
+    public static CustomOption draftModeShowRoles;
+    public static CustomOption draftModeHideImpRoles;
+    public static CustomOption draftModeHideNeutralRoles;
+
     public static CustomOption anyPlayerCanStopStart;
 
     public static CustomOption enableEventMode;
+    public static CustomOption eventReallyNoMini;
+    public static CustomOption eventKicksPerRound;
+    public static CustomOption eventHeavyAge;
 
     public static CustomOption cultistSpawnRate;
 
@@ -456,6 +466,8 @@ public class CustomOptionHolder
     public static CustomOption modifierChameleonFadeDuration;
     public static CustomOption modifierChameleonMinVisibility;
 
+    public static CustomOption modifierArmored;
+    public static CustomOption modifierShifterShiftsMedicShield;
 
     public static CustomOption modifierShifter;
 
@@ -525,6 +537,7 @@ public class CustomOptionHolder
     public static CustomOption guesserGamemodeKillsThroughShield;
     public static CustomOption guesserGamemodeEvilCanKillSpy;
     public static CustomOption guesserGamemodeCantGuessSnitchIfTaksDone;
+    public static CustomOption guesserGamemodeCrewGuesserNumberOfTasks;
 
     // Hide N Seek Gamemode
     public static CustomOption hideNSeekHunterCount;
@@ -612,9 +625,16 @@ public class CustomOptionHolder
 
         if (Utilities.EventUtility.canBeEnabled) enableEventMode = Create(3, Types.General, cs(Color.green, "Enable Special Mode"), true, null, true);
 
+        isDraftMode = Create(600, Types.General, cs(Color.yellow, "Enable Role Draft"), false, null, true, null, "Role Draft");
+        draftModeAmountOfChoices = Create(601, Types.General, cs(Color.yellow, "Max Amount Of Roles\nTo Choose From"), 5f, 2f, 15f, 1f, isDraftMode, false);
+        draftModeTimeToChoose = Create(602, Types.General, cs(Color.yellow, "Time For Selection"), 5f, 3f, 20f, 1f, isDraftMode, false);
+        draftModeShowRoles = Create(603, Types.General, cs(Color.yellow, "Show Picked Roles"), false, isDraftMode, false);
+        draftModeHideImpRoles = Create(604, Types.General, cs(Color.yellow, "Hide Impostor Roles"), false, draftModeShowRoles, false);
+        draftModeHideNeutralRoles = Create(605, Types.General, cs(Color.yellow, "Hide Neutral Roles"), false, draftModeShowRoles, false);
+
         anyPlayerCanStopStart = Create(2, Types.General, cs(new Color32(204, 204, 0, 255), "Any Player Can Stop The Start"), false, null, false);
         // Using new id's for the options to not break compatibilty with older versions
-        neutralRolesCountMin = Create(8, Types.General, cs(new Color32(204, 204, 0, 255), "Minimum Neutral Roles"), 15f, 0f, 15f, 1f, heading: "Min/Max Roles");
+        neutralRolesCountMin = Create(8, Types.General, cs(new Color32(204, 204, 0, 255), "Minimum Neutral Roles"), 15f, 0f, 15f, 1f, null, true, heading: "Min/Max Roles");
         neutralRolesCountMax = Create(9, Types.General, cs(new Color32(204, 204, 0, 255), "Maximum Neutral Roles"), 15f, 0f, 15f, 1f);
         modifiersCountMin = Create(12, Types.General, cs(new Color32(204, 204, 0, 255), "Minimum Modifiers"), 15f, 0f, 15f, 1f);
         modifiersCountMax = Create(13, Types.General, cs(new Color32(204, 204, 0, 255), "Maximum Modifiers"), 15f, 0f, 15f, 1f);
@@ -1076,6 +1096,12 @@ public class CustomOptionHolder
         modifierMini = Create(1110, Types.Modifier, cs(Color.yellow, "Mini"), rates, null, true);
         modifierMiniGrowingUpDuration = Create(1111, Types.Modifier, "Mini Growing Up Duration", 400f, 100f, 1500f, 100f, modifierMini);
         modifierMiniGrowingUpInMeeting = Create(1112, Types.Modifier, "Mini Grows Up In Meeting", true, modifierMini);
+        if (Utilities.EventUtility.canBeEnabled || Utilities.EventUtility.isEnabled)
+        {
+            eventKicksPerRound = CustomOption.Create(10424, Types.Modifier, cs(Color.green, "Maximum Kicks Mini Suffers"), 4f, 0f, 14f, 1f, modifierMini);
+            eventHeavyAge = CustomOption.Create(10425, Types.Modifier, cs(Color.green, "Age At Which Mini Is Heavy"), 12f, 6f, 18f, 0.5f, modifierMini);
+            eventReallyNoMini = CustomOption.Create(10426, Types.Modifier, cs(Color.green, "Really No Mini :("), false, modifierMini, invertedParent: true);
+        }
 
         modifierGiant = Create(1240, Types.Modifier, cs(Color.yellow, "Giant"), rates, null, true);
         modifierGiantSpped = Create(1241, Types.Modifier, "modifierGiantSpped", 0.75f, 0.5f, 1.25f, 0.05f, modifierGiant);
@@ -1108,19 +1134,23 @@ public class CustomOptionHolder
         modifierChameleonFadeDuration = Create(1213, Types.Modifier, "Fade Duration", 1f, 0.25f, 10f, 0.25f, modifierChameleon);
         modifierChameleonMinVisibility = Create(1214, Types.Modifier, "Minimum Visibility", ["0%", "10%", "20%", "30%", "40%", "50%"], modifierChameleon);
 
+        modifierArmored = Create(1101, Types.Modifier, cs(Color.yellow, "Armored"), rates, null, true);
+
         modifierShifter = Create(1220, Types.Modifier, cs(Color.yellow, "Shifter"), rates, null, true);
+        modifierShifterShiftsMedicShield = Create(1102, Types.Modifier, "Can Shift Medic Shield", false, modifierShifter);
 
         //-------------------------- Guesser Gamemode 2000 - 2999 -------------------------- //
 
-        guesserGamemodeCrewNumber = Create(2001, Types.Guesser, cs(Guesser.color, "Number of Crew Guessers"), 15f, 1f, 15f, 1f, null, true, heading: "Amount of Guessers");
-        guesserGamemodeNeutralNumber = Create(2002, Types.Guesser, cs(Guesser.color, "Number of Neutral Guessers"), 15f, 1f, 15f, 1f);
-        guesserGamemodeImpNumber = Create(2003, Types.Guesser, cs(Guesser.color, "Number of Impostor Guessers"), 15f, 1f, 15f, 1f);
+        guesserGamemodeCrewNumber = Create(2001, Types.Guesser, cs(Guesser.color, "Number of Crew Guessers"), 15f, 0f, 15f, 1f, null, true, heading: "Amount of Guessers");
+        guesserGamemodeNeutralNumber = Create(2002, Types.Guesser, cs(Guesser.color, "Number of Neutral Guessers"), 15f, 0f, 15f, 1f, null);
+        guesserGamemodeImpNumber = Create(2003, Types.Guesser, cs(Guesser.color, "Number of Impostor Guessers"), 15f, 0f, 15f, 1f, null);
         guesserForceJackalGuesser = Create(2007, Types.Guesser, "Force Jackal Guesser", false, null, true, heading: "Force Guessers");
         guesserGamemodeSidekickIsAlwaysGuesser = Create(2012, Types.Guesser, "Sidekick Is Always Guesser", false);
         guesserForceThiefGuesser = Create(2011, Types.Guesser, "Force Thief Guesser", false);
         guesserGamemodeHaveModifier = Create(2004, Types.Guesser, "Guessers Can Have A Modifier", true, null, true, heading: "General Guesser Settings");
         guesserGamemodeNumberOfShots = Create(2005, Types.Guesser, "Guesser Number Of Shots", 3f, 1f, 15f, 1f);
         guesserGamemodeHasMultipleShotsPerMeeting = Create(2006, Types.Guesser, "Guesser Can Shoot Multiple Times Per Meeting", false);
+        guesserGamemodeCrewGuesserNumberOfTasks = Create(2013, Types.Guesser, "Number Of Tasks Needed To Unlock Shooting\nFor Crew Guesser", 0f, 0f, 15f, 1f, null);
         guesserGamemodeKillsThroughShield = Create(2008, Types.Guesser, "Guesses Ignore The Medic Shield", true);
         guesserGamemodeEvilCanKillSpy = Create(2009, Types.Guesser, "Evil Guesser Can Guess The Spy", true);
         guesserGamemodeCantGuessSnitchIfTaksDone = Create(2010, Types.Guesser, "Guesser Can't Guess Snitch When Tasks Completed", true);

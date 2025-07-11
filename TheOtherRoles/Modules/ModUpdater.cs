@@ -121,7 +121,7 @@ public class ModUpdater(IntPtr ptr) : MonoBehaviour(ptr)
         if (File.Exists(filePath + ".old")) File.Delete(filePath + "old");
         if (File.Exists(filePath)) File.Move(filePath, filePath + ".old");
 
-        var persistTask = File.WriteAllBytesAsync(filePath, www.downloadHandler.data);
+        var persistTask = File.WriteAllBytesAsync(filePath, www.downloadHandler.GetUnstrippedData());
         var hasError = false;
         while (!persistTask.IsCompleted)
         {

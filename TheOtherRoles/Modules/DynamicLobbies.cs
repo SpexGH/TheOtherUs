@@ -27,7 +27,7 @@ public static class DynamicLobbies
                         handled = true;
                         if (!Int32.TryParse(text.Substring(6), out LobbyLimit))
                         {
-                            __instance.AddChat(CachedPlayer.LocalPlayer.PlayerControl, "Invalid Size\nUsage: /size {amount}");
+                            __instance.AddChat(PlayerControl.LocalPlayer, "Invalid Size\nUsage: /size {amount}");
                         }
                         else
                         {
@@ -36,12 +36,12 @@ public static class DynamicLobbies
                             {
                                 GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers = LobbyLimit;
                                 FastDestroyableSingleton<GameStartManager>.Instance.LastPlayerCount = LobbyLimit;
-                                CachedPlayer.LocalPlayer.PlayerControl.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.currentGameOptions, false));  // TODO Maybe simpler?? 
-                                __instance.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"Lobby Size changed to {LobbyLimit} players");
+                                PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.currentGameOptions, false));  // TODO Maybe simpler?? 
+                                __instance.AddChat(PlayerControl.LocalPlayer, $"Lobby Size changed to {LobbyLimit} players");
                             }
                             else
                             {
-                                __instance.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"Lobby Size is already {LobbyLimit}");
+                                __instance.AddChat(PlayerControl.LocalPlayer, $"Lobby Size is already {LobbyLimit}");
                             }
                         }
                     }
@@ -58,7 +58,7 @@ public static class DynamicLobbies
     [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HostGame))]
     public static class InnerNetClientHostPatch
     {
-        public static void Prefix(InnerNetClient __instance, [HarmonyArgument(0)] GameOptionsData settings)
+        public static void Prefix(InnerNetClient __instance, [HarmonyArgument(0)] LegacyGameOptions settings)
         {
             int maxPlayers;
             try
@@ -73,7 +73,7 @@ public static class DynamicLobbies
             settings.MaxPlayers = 15; // Force 15 Player Lobby on Server
             DataManager.Settings.Multiplayer.ChatMode = QuickChatModes.FreeChatOrQuickChat;
         }
-        public static void Postfix(InnerNetClient __instance, [HarmonyArgument(0)] GameOptionsData settings)
+        public static void Postfix(InnerNetClient __instance, [HarmonyArgument(0)] LegacyGameOptions settings)
         {
             settings.MaxPlayers = LobbyLimit;
         }

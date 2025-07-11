@@ -73,13 +73,13 @@ static class AdditionalTempData
 
 
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameEnd))]
-public class OnGameEndPatch
+public static class OnGameEndPatch
 {
-    private static GameOverReason gameOverReason;
+    public static GameOverReason gameOverReason = GameOverReason.CrewmatesByTask;
     public static void Prefix(AmongUsClient __instance, [HarmonyArgument(0)] ref EndGameResult endGameResult)
     {
         gameOverReason = endGameResult.GameOverReason;
-        if ((int)endGameResult.GameOverReason >= 10) endGameResult.GameOverReason = GameOverReason.ImpostorByKill;
+        if ((int)endGameResult.GameOverReason >= 10) endGameResult.GameOverReason = GameOverReason.ImpostorsByKill;
 
         // Reset zoomed out ghosts
         toggleZoom(reset: true);
@@ -89,7 +89,7 @@ public class OnGameEndPatch
     {
         AdditionalTempData.clear();
 
-        foreach (var playerControl in CachedPlayer.AllPlayers)
+        foreach (var playerControl in PlayerControl.AllPlayerControls.ToArray())
         {
             var roles = RoleInfo.getRoleInfoForPlayer(playerControl);
             var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
@@ -217,7 +217,7 @@ public class OnGameEndPatch
             {
                 AdditionalTempData.winCondition = WinCondition.LoversTeamWin;
                 EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl p in CachedPlayer.AllPlayers)
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls.ToArray())
                 {
                     if (p == null) continue;
                     if (p == Lovers.lover1 || p == Lovers.lover2)
@@ -441,6 +441,39 @@ public class EndGameManagerSetUpPatch
                 textRenderer.text = "Juggernaut Wins";
                 textRenderer.color = Juggernaut.color;
                 break;
+            case WinCondition.Default:
+                switch (OnGameEndPatch.gameOverReason)
+                {
+                    case GameOverReason.ImpostorDisconnect:
+                        textRenderer.text = "Last Crewmate Disconnected";
+                        textRenderer.color = Color.red;
+                        break;
+                    case GameOverReason.ImpostorsByKill:
+                        textRenderer.text = "Impostors Win - By Kill";
+                        textRenderer.color = Color.red;
+                        break;
+                    case GameOverReason.ImpostorsBySabotage:
+                        textRenderer.text = "Impostors Win - By Sabotage";
+                        textRenderer.color = Color.red;
+                        break;
+                    case GameOverReason.ImpostorsByVote:
+                        textRenderer.text = "Impostors Win - By Vote, Guess or DC";
+                        textRenderer.color = Color.red;
+                        break;
+                    case GameOverReason.CrewmatesByTask:
+                        textRenderer.text = "Crew Wins - Taskwin";
+                        textRenderer.color = Color.white;
+                        break;
+                    case GameOverReason.CrewmateDisconnect:
+                        textRenderer.text = "Crew Wins - No Evil Killers Left";
+                        textRenderer.color = Color.white;
+                        break;
+                    case GameOverReason.CrewmatesByVote:
+                        textRenderer.text = "Crew Wins - No Evil Killers Left";
+                        textRenderer.color = Color.white;
+                        break;
+                }
+                break;
         }
 
         foreach (WinCondition cond in AdditionalTempData.additionalWinConditions)
@@ -489,6 +522,7 @@ public class EndGameManagerSetUpPatch
             var roleSummaryTextMeshRectTransform = roleSummaryTextMesh.GetComponent<RectTransform>();
             roleSummaryTextMeshRectTransform.anchoredPosition = new Vector2(position.x + 3.5f, position.y - 0.1f);
             roleSummaryTextMesh.text = roleSummaryText.ToString();
+            Helpers.previousEndGameSummary = $"<size=110%>{roleSummaryText.ToString()}</size>";
         }
         AdditionalTempData.clear();
     }
@@ -606,7 +640,7 @@ class CheckEndCriteriaPatch
             )
         {
             //__instance.enabled = false;
-            GameManager.Instance.RpcEndGame(GameOverReason.HumansByTask, false);
+            GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByTask, false);
             return true;
         }
         return false;
@@ -719,13 +753,13 @@ class CheckEndCriteriaPatch
             switch (GameData.LastDeathReason)
             {
                 case DeathReason.Exile:
-                    endReason = GameOverReason.ImpostorByVote;
+                    endReason = GameOverReason.ImpostorsByVote;
                     break;
                 case DeathReason.Kill:
-                    endReason = GameOverReason.ImpostorByKill;
+                    endReason = GameOverReason.ImpostorsByKill;
                     break;
                 default:
-                    endReason = GameOverReason.ImpostorByVote;
+                    endReason = GameOverReason.ImpostorsByVote;
                     break;
             }
             GameManager.Instance.RpcEndGame(endReason, false);
@@ -739,12 +773,12 @@ class CheckEndCriteriaPatch
         if (HideNSeek.isHideNSeekGM && HideNSeek.timer <= 0 && !HideNSeek.isWaitingTimer)
         {
             //__instance.enabled = false;
-            GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
+            GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByVote, false);
             return true;
         }
         if (PropHunt.isPropHuntGM && PropHunt.timer <= 0 && PropHunt.timerRunning)
         {
-            GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
+            GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByVote, false);
             return true;
         }
         if (statistics.TeamImpostorsAlive == 0 &&
@@ -753,7 +787,7 @@ class CheckEndCriteriaPatch
             statistics.TeamWerewolfAlive == 0)
         {
             //__instance.enabled = false;
-            GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
+            GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByVote, false);
             return true;
         }
         return false;
@@ -762,7 +796,7 @@ class CheckEndCriteriaPatch
     private static void EndGameForSabotage(ShipStatus __instance)
     {
         //__instance.enabled = false;
-        GameManager.Instance.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
+        GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsBySabotage, false);
         return;
     }
 

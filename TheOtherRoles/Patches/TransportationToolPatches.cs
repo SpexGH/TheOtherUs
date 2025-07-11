@@ -23,7 +23,7 @@ public static class TransportationToolPatches
     [HarmonyPatch(typeof(ZiplineBehaviour), nameof(ZiplineBehaviour.Use), new Type[] { typeof(PlayerControl), typeof(bool) })]
     public static void prefix3(ZiplineBehaviour __instance, PlayerControl player, bool fromTop)
     {
-        AntiTeleport.position = CachedPlayer.LocalPlayer.transform.position;
+        AntiTeleport.position = PlayerControl.LocalPlayer.transform.position;
     }
 
     [HarmonyPostfix]
@@ -41,13 +41,13 @@ public static class TransportationToolPatches
                 {
                     if (player == Morphling.morphling && Morphling.morphTimer > 0)
                     {
-                        hand.SetPlayerColor(Morphling.morphTarget.CurrentOutfit, PlayerMaterial.MaskType.None, 1);
+                        hand.SetPlayerColor(Morphling.morphTarget.CurrentOutfit, PlayerMaterial.MaskType.None, 1f);
                         // Also set hat color, cause the line destroys it...
                         player.RawSetHat(Morphling.morphTarget.Data.DefaultOutfit.HatId, Morphling.morphTarget.Data.DefaultOutfit.ColorId);
                     }
                     else
                     {
-                        hand.SetPlayerColor(player.CurrentOutfit, PlayerMaterial.MaskType.None, 1);
+                        hand.SetPlayerColor(player.CurrentOutfit, PlayerMaterial.MaskType.None, 1f);
                     }
                 }
                 else
@@ -63,7 +63,7 @@ public static class TransportationToolPatches
     [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ClimbLadder))]
     public static void prefix()
     {
-        AntiTeleport.position = CachedPlayer.LocalPlayer.transform.position;
+        AntiTeleport.position = PlayerControl.LocalPlayer.transform.position;
     }
 
     [HarmonyPostfix]
@@ -85,6 +85,6 @@ public static class TransportationToolPatches
     [HarmonyPatch(typeof(MovingPlatformBehaviour), nameof(MovingPlatformBehaviour.UsePlatform))]
     public static void prefix2()
     {
-        AntiTeleport.position = CachedPlayer.LocalPlayer.transform.position;
+        AntiTeleport.position = PlayerControl.LocalPlayer.transform.position;
     }
 }

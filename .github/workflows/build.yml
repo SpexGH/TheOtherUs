@@ -36,17 +36,17 @@ jobs:
 
       - name: Download and Unzip BepInEx
         run: |
-          wget https://builds.bepinex.dev/projects/bepinex_be/725/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.725%2Be1974e2.zip -O BepInEx.zip
+          wget https://builds.bepinex.dev/projects/bepinex_be/735/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.735%2B5fef357.zip -O BepInEx.zip
           unzip BepInEx.zip -d ./Release/
           sudo chmod -R 777 ./Release
 
       - name: Download and Unzip ExtraData
         run: |
-          wget https://raw.githubusercontent.com/mxyx-club/ExtraData/main/ExtraData.zip -O ExtraData.zip
+          wget https://raw.githubusercontent.com/SpexGH/TheOtherUs/tree/the-other-us/.github/workflows/ExtraData.zip -O ExtraData.zip
           unzip ExtraData.zip -d ./Release/
 
       - name: Download Reactor
-        run: wget https://github.com/NuclearPowered/Reactor/releases/download/2.3.1/Reactor.dll -P ./Release/BepInEx/plugins
+        run: wget https://github.com/NuclearPowered/Reactor/releases/download/2.5.0/Reactor.dll -P ./Release/BepInEx/plugins
         
       - name: Build
         run: dotnet build TheOtherRoles/TheOtherRoles.csproj --configuration Release --output ./Release/BepInEx/plugins
