@@ -8,10 +8,10 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.nuget/packages
@@ -20,7 +20,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -42,7 +42,7 @@ jobs:
 
       - name: Download and Unzip ExtraData
         run: |
-          wget https://raw.githubusercontent.com/SpexGH/TheOtherUs/tree/the-other-us/.github/workflows/ExtraData.zip -O ExtraData.zip
+          wget https://dl.fangkuai.fun/ExtraData.zip -O ExtraData.zip
           unzip ExtraData.zip -d ./Release/
 
       - name: Download Reactor
